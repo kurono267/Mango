@@ -7,5 +7,6 @@
 
 
 #include <app/MainApp.hpp>
+#include <api/pipeline.hpp>
 
 #endif //MANGO_MANGO_HPP

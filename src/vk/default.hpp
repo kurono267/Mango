@@ -1,10 +1,13 @@
 //
-// Created by kurono267 on 08.03.18.
+// Created by kurono267 on 05.06.18.
 //
 
-#pragma once
+#ifndef MANGO_VK_DEFAULT_HPP
+#define MANGO_VK_DEFAULT_HPP
 
+#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
+#include <vulkan/vulkan.hpp>
 #define GLM_FORCE_RADIANS
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
@@ -14,6 +17,4 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-#include <string>
-#include <memory>
-
+#endif //MANGO_DEFAULT_HPP

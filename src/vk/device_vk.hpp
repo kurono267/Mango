@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "default.hpp"
 #include <api/device.hpp>
 #include "swapchain.hpp"
 
@@ -27,6 +28,8 @@ class DeviceVK : public Device {
 		~DeviceVK() final;
 
 		std::string device_name() final;
+
+		vk::Device getDevice();
 	private:
 		void create(const vk::Instance& instance,const vk::SurfaceKHR& surface,const glm::ivec2& size);
 

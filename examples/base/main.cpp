@@ -2,6 +2,7 @@
 #include <chrono>
 #include <api/instance.hpp>
 #include <vk/instance_vk.hpp>
+#include <vk/pipeline_vk.hpp>
 
 using namespace mango;
 
@@ -17,6 +18,16 @@ class TestApp : public BaseApp {
 			_instance->init("Test",mainWnd->window(),mainWnd->wndSize());
 
 			std::cout << _instance->device()->device_name() << std::endl;
+
+			RenderPattern rp;
+
+			spPipeline pipeline = _instance->createPipeline(rp);
+			pipeline->addShader(ShaderStage::Vertex,"glsl/test.vert");
+			pipeline->addShader(ShaderStage::Fragment,"glsl/test.frag");
+
+			spRenderPass pass = _instance->createRenderPass();
+			pipeline->setRenderPass();
+
 			return true;
 		}
 		bool draw(){

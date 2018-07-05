@@ -10,7 +10,7 @@ using namespace mango::vulkan;
 
 const std::vector<const char*> deviceExtensions = {
 	VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-	VK_KHX_MULTIVIEW_EXTENSION_NAME
+	VK_KHR_MULTIVIEW_EXTENSION_NAME
 };
 
 struct QueueFamilyIndices {
@@ -171,4 +171,8 @@ void DeviceVK::createLogicalDevice(){
 std::string DeviceVK::device_name(){
 	vk::PhysicalDeviceProperties pdProp = _pDevice.getProperties();
 	return pdProp.deviceName;
+}
+
+vk::Device DeviceVK::getDevice() {
+	return _device;
 }

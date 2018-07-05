@@ -3,9 +3,12 @@
 //
 
 #include <iostream>
+#include <mango.hpp>
 #include "instance_vk.hpp"
+#include "pipeline_vk.hpp"
 
 using namespace mango::vulkan;
+using namespace mango;
 
 InstanceVK::InstanceVK(){
 
@@ -132,4 +135,8 @@ std::vector<const char*> InstanceVK::getRequiredExtensions() {
 	}
 
 	return extensions;
+}
+
+spPipeline InstanceVK::createPipeline(const RenderPattern& rp){
+	return PipelineVK::make(rp);
 }

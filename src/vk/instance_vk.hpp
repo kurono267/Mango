@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <api/default.hpp>
+#include "default.hpp"
 #include <api/instance.hpp>
 #include "device_vk.hpp"
 
@@ -17,6 +17,8 @@ class InstanceVK : public Instance {
 
 		void init(const std::string& title, GLFWwindow* window,const glm::ivec2& size) final;
 		spDevice device() final;
+
+		spPipeline createPipeline(const RenderPattern& rp);
 	protected:
 		void initVulkan();
 		void createInstance();
