@@ -17,9 +17,16 @@ class RenderPassVK : public RenderPass {
 		RenderPassVK() = default;
 		virtual ~RenderPassVK() = default;
 
-		void addAttachment(const Attachment& a);
+		vk::RenderPass create(const spDeviceVK& device);
 	protected:
-		vk::RenderPass              _renderPass;
+		std::vector<vk::AttachmentDescription>   _attachmentsDesc;
+		std::vector<vk::AttachmentReference>     _attachmentsRef;
+		vk::AttachmentReference _depthRef;
+		vk::AttachmentDescription _depthDesc;
+
+		vk::SubpassDescription    _subPass;
+		vk::SubpassDependency     _subPassDep[2];
+		vk::RenderPassCreateInfo  _renderPassInfo;
 };
 
 class PipelineVK : public mango::Pipeline {

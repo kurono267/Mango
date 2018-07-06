@@ -131,3 +131,7 @@ bool RenderPattern::isDynamicScissor() const {
 bool RenderPattern::isDynamicViewport() const {
 	return _dynamicViewport;
 }
+
+void RenderPass::addAttachment(const Attachment& a){
+	_attachments.push_back(a);
+}

@@ -7,6 +7,71 @@
 
 using namespace mango::vulkan;
 
+vk::RenderPass RenderPassVK::create(const spDeviceVK& device){
+	_attachmentsDesc.clear();
+	_attachmentsRef.clear();
+	for(auto a : _attachments){
+		vk::AttachmentDescription desc;
+
+		desc.setFormat(mango::vulkan::formatVK(a.format));
+		desc.setSamples(mango::vulkan::sampleCountVK(a.samples));
+		desc.setLoadOp(vk::AttachmentLoadOp::eClear);
+		if(!a.depth)desc.setStoreOp(vk::AttachmentStoreOp::eStore);
+		else desc.setStoreOp(vk::AttachmentStoreOp::eDontCare);
+		desc.setStencilLoadOp(vk::AttachmentLoadOp::eDontCare);
+		desc.setStencilStoreOp(vk::AttachmentStoreOp::eDontCare);
+		if(!a.depth)desc.setInitialLayout(vk::ImageLayout::ePresentSrcKHR);
+		else desc.setInitialLayout(vk::ImageLayout::eDepthStencilAttachmentOptimal);
+		if(!a.depth)desc.setFinalLayout(vk::ImageLayout::ePresentSrcKHR);
+		else desc.setFinalLayout(vk::ImageLayout::eDepthStencilAttachmentOptimal);
+
+		vk::AttachmentReference ref;
+		ref.setAttachment(a.index);
+		if(!a.depth)ref.setLayout(vk::ImageLayout::eColorAttachmentOptimal);
+		else ref.setLayout(vk::ImageLayout::eDepthStencilAttachmentOptimal);
+
+		if(a.depth){
+			_depthDesc = desc;
+			_depthRef = ref;
+		} else {
+			_attachmentsDesc.push_back(desc);
+			_attachmentsRef.push_back(ref);
+		}
+	}
+	_attachmentsDesc.push_back(_depthDesc);
+	_attachmentsRef.push_back(_depthRef);
+
+	_subPass.setPipelineBindPoint(vk::PipelineBindPoint::eGraphics);
+	_subPass.setColorAttachmentCount(_attachmentsRef.size()-1);
+	_subPass.setPColorAttachments(_attachmentsRef.data());
+	_subPass.setPDepthStencilAttachment(&_depthRef);
+
+	_subPassDep[0].srcSubpass = VK_SUBPASS_EXTERNAL;
+	_subPassDep[0].dstSubpass = 0;
+	_subPassDep[0].srcStageMask = vk::PipelineStageFlagBits::eBottomOfPipe;
+	_subPassDep[0].dstStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
+	_subPassDep[0].srcAccessMask = vk::AccessFlagBits::eMemoryRead;
+	_subPassDep[0].dstAccessMask = vk::AccessFlagBits::eColorAttachmentRead| vk::AccessFlagBits::eColorAttachmentWrite;
+	_subPassDep[0].dependencyFlags = vk::DependencyFlagBits::eByRegion;
+
+	_subPassDep[1].srcSubpass = 0;
+	_subPassDep[1].dstSubpass = VK_SUBPASS_EXTERNAL;
+	_subPassDep[1].srcStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
+	_subPassDep[1].dstStageMask = vk::PipelineStageFlagBits::eBottomOfPipe;
+	_subPassDep[1].srcAccessMask = vk::AccessFlagBits::eColorAttachmentRead| vk::AccessFlagBits::eColorAttachmentWrite;
+	_subPassDep[1].dstAccessMask = vk::AccessFlagBits::eMemoryRead;
+	_subPassDep[1].dependencyFlags = vk::DependencyFlagBits::eByRegion;
+
+	_renderPassInfo.setAttachmentCount(_attachmentsDesc.size());
+	_renderPassInfo.setPAttachments(_attachmentsDesc.data());
+	_renderPassInfo.setSubpassCount(1);
+	_renderPassInfo.setPSubpasses(&_subPass);
+	_renderPassInfo.setDependencyCount(2);
+	_renderPassInfo.setPDependencies(_subPassDep);
+
+	return device->getDevice().createRenderPass(_renderPassInfo);
+}
+
 PipelineVK::PipelineVK(const mango::RenderPattern &rp) : Pipeline(rp) {}
 
 PipelineVK::~PipelineVK() {
@@ -58,20 +123,28 @@ void PipelineVK::create(const mango::spDevice &device) {
 	auto vk_rasterizer = rasterizationStateVK(_renderPattern.getRasterizationState());
 
 	// Convert MultiSampling state
+	auto vk_multisampling = multisampleStateVK(_renderPattern.getMultisamplingState());
 
+	// Convert Depth Stencil state
+	auto vk_depthstencil = depthStateVK(_renderPattern.getDepthState());
+
+	// Convert Blend State
+	auto vk_blendstate = blendStateVK(_renderPattern.getBlendAttachments());
+
+	auto vk_assembly = vk::PipelineInputAssemblyStateCreateInfo(vk::PipelineInputAssemblyStateCreateFlags(),topologyVK(_renderPattern.getTopology()));
 
 	vk::GraphicsPipelineCreateInfo pipelineInfo(vk::PipelineCreateFlags(),
 		_shaders.size(),_shaders.data(),
-		&vertexInputInfo,&_renderpattern._assembly,
+		&vertexInputInfo,&vk_assembly,
 		nullptr,
 		&_viewportState,
 		&vk_rasterizer,
-		&_renderpattern._multisampling,
-		&_renderpattern._depthStencil, // Depth and stencil
-		&_renderpattern._blend,
+		&vk_multisampling,
+		&vk_depthstencil, // Depth and stencil
+		&vk_blendstate,
 		dynamicStates.size()==0?nullptr:&dynamicStatesCreteInfo,
 		_pLayout,
-		_renderPass,0);
+		_renderPass->create(vk_device),0);
 
 	_pipeline = _device.createGraphicsPipelines(nullptr,pipelineInfo)[0];
 }

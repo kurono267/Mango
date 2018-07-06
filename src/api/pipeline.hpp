@@ -117,7 +117,9 @@ class RenderPass {
 		RenderPass() = default;
 		virtual ~RenderPass() = default;
 
-		virtual void addAttachment(const Attachment& a) = 0;
+		void addAttachment(const Attachment& a);
+	protected:
+		std::vector<Attachment> _attachments;
 };
 
 typedef std::shared_ptr<RenderPass> spRenderPass;

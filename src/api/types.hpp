@@ -89,7 +89,7 @@ enum class BlendFactor {
 enum class CompareOp {
 	Never,
 	Less,
-	qual,
+	Equal,
 	LessOrEqual,
 	Greater,
 	NotEqual,

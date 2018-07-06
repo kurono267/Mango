@@ -53,4 +53,6 @@ class DeviceVK : public Device {
 		glm::ivec2         _size;
 };
 
+typedef std::shared_ptr<DeviceVK> spDeviceVK;
+
 };
