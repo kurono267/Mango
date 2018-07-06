@@ -176,3 +176,15 @@ std::string DeviceVK::device_name(){
 vk::Device DeviceVK::getDevice() {
 	return _device;
 }
+
+vk::PhysicalDevice DeviceVK::getPDevice(){
+	return _pDevice;
+}
+
+vk::CommandPool DeviceVK::getCommandPool(){
+	return _pool;
+}
+
+vk::Queue DeviceVK::getGraphicsQueue(){
+	return _graphicsQueue;
+}

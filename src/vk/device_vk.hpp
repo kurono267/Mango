@@ -30,6 +30,9 @@ class DeviceVK : public Device {
 		std::string device_name() final;
 
 		vk::Device getDevice();
+		vk::PhysicalDevice getPDevice();
+		vk::CommandPool getCommandPool();
+		vk::Queue getGraphicsQueue();
 	private:
 		void create(const vk::Instance& instance,const vk::SurfaceKHR& surface,const glm::ivec2& size);
 

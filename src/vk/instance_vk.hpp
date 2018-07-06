@@ -19,6 +19,7 @@ class InstanceVK : public Instance {
 		spDevice device() final;
 
 		spPipeline createPipeline(const RenderPattern& rp);
+		spBuffer createBuffer(const BufferType& type,const size_t& size,void* data = nullptr);
 	protected:
 		void initVulkan();
 		void createInstance();

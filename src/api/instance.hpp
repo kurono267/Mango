@@ -5,6 +5,7 @@
 #pragma once
 
 #include "device.hpp"
+#include "buffer.hpp"
 
 namespace mango {
 
@@ -18,6 +19,7 @@ class Instance {
 		virtual spDevice device() = 0;
 
 		virtual spPipeline createPipeline(const RenderPattern& rp) = 0;
+		virtual spBuffer createBuffer(const BufferType& type,const size_t& size,void* data = nullptr) = 0;
 };
 
 };
