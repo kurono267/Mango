@@ -1,6 +1,6 @@
 set(MANGO_SRC
 app/MainApp.cpp
-        api/pipeline.cpp api/buffer.hpp)
+        api/pipeline.cpp api/buffer.hpp api/mesh.cpp api/mesh.hpp)
 
 set(MANGO_VK
 vk/instance_vk.cpp

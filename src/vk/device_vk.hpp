@@ -7,6 +7,8 @@
 #include "default.hpp"
 #include <api/device.hpp>
 #include "swapchain.hpp"
+#include "api/pipeline.hpp"
+#include "api/buffer.hpp"
 
 namespace mango::vulkan {
 
@@ -21,7 +23,7 @@ const std::vector<const char*> validationLayers = {
     "VK_LAYER_LUNARG_parameter_validation"
 };
 
-class DeviceVK : public Device {
+class DeviceVK : public Device, public std::enable_shared_from_this {
 	friend class InstanceVK;
 	public:
 		DeviceVK();
@@ -33,6 +35,10 @@ class DeviceVK : public Device {
 		vk::PhysicalDevice getPDevice();
 		vk::CommandPool getCommandPool();
 		vk::Queue getGraphicsQueue();
+
+		spRenderPass createRenderPass();
+		spPipeline createPipeline(const RenderPattern& rp);
+		spBuffer createBuffer(const BufferType& type,const size_t& size,void* data = nullptr);
 	private:
 		void create(const vk::Instance& instance,const vk::SurfaceKHR& surface,const glm::ivec2& size);
 

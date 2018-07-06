@@ -2,6 +2,7 @@
 // Created by kurono267 on 05.06.18.
 //
 
+#include <api/mesh.hpp>
 #include "pipeline_vk.hpp"
 #include "convert_vk.hpp"
 
@@ -105,8 +106,16 @@ void PipelineVK::create(const mango::spDevice &device) {
 
 	// Set Vertex format
 
-	auto bindingDescription = vertexBinding;
-    auto attributeDescriptions = vertexAttrib;
+	auto sVertexBindDesc = sVertex::bindingDesc();
+	auto sVertexAttrDesc = sVertex::attributes();
+
+	auto bindingDescription = vk::VertexInputBindingDescription(sVertexBindDesc.binding,sVertexBindDesc.binding);
+    std::vector<vk::VertexInputAttributeDescription> attributeDescriptions;
+    for(auto attr : sVertexAttrDesc){
+        attributeDescriptions.push_back(vk::VertexInputAttributeDescription(
+            attr.location,attr.binding,formatVK(attr.format),attr.offset
+        ));
+    }
 
     vk::PipelineVertexInputStateCreateInfo vertexInputInfo(
     	vk::PipelineVertexInputStateCreateFlags(),

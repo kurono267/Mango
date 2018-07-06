@@ -137,13 +137,3 @@ std::vector<const char*> InstanceVK::getRequiredExtensions() {
 
 	return extensions;
 }
-
-spPipeline InstanceVK::createPipeline(const RenderPattern& rp){
-	return PipelineVK::make(rp);
-}
-
-spBuffer InstanceVK::createBuffer(const BufferType& type,const size_t& size,void* data){
-	auto buffer = std::make_shared<BufferVK>();
-	buffer->create(_device,type,size,data);
-	return buffer;
-}

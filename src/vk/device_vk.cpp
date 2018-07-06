@@ -4,7 +4,10 @@
 
 #include <iostream>
 #include <set>
+#include <mango.hpp>
 #include "device_vk.hpp"
+#include "pipeline_vk.hpp"
+#include "buffer_vk.hpp"
 
 using namespace mango::vulkan;
 
@@ -187,4 +190,18 @@ vk::CommandPool DeviceVK::getCommandPool(){
 
 vk::Queue DeviceVK::getGraphicsQueue(){
 	return _graphicsQueue;
+}
+
+mango::spPipeline DeviceVK::createPipeline(const RenderPattern& rp){
+	return PipelineVK::make(rp);
+}
+
+mango::spBuffer DeviceVK::createBuffer(const BufferType& type,const size_t& size,void* data = nullptr){
+	auto buffer = std::make_shared<BufferVK>();
+	buffer->create(shared_from_this(),type,size,data);
+	return buffer;
+}
+
+mango::spRenderPass DeviceVK::createRenderPass(){
+	return std::make_shared<RenderPassVK>();
 }

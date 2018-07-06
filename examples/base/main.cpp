@@ -21,12 +21,13 @@ class TestApp : public BaseApp {
 
 			RenderPattern rp;
 
-			spPipeline pipeline = _instance->createPipeline(rp);
+			spPipeline pipeline = _instance->device()->createPipeline(rp);
 			pipeline->addShader(ShaderStage::Vertex,"glsl/test.vert");
 			pipeline->addShader(ShaderStage::Fragment,"glsl/test.frag");
 
-			spRenderPass pass = _instance->createRenderPass();
-			pipeline->setRenderPass();
+			spRenderPass pass = _instance->device()->createRenderPass();
+
+			pipeline->setRenderPass(pass);
 
 			return true;
 		}
