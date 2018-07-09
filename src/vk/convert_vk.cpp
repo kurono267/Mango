@@ -9,7 +9,7 @@ using namespace mango::vulkan;
 vk::Viewport viewportVK(const mango::Viewport& _mango){
 	vk::Viewport _vk;
 	_vk.x = _mango.start.x; _vk.y = _mango.start.y;
-	_vk.width = _mango.size.x; vk.height = _mango.size.y;
+	_vk.width = _mango.size.x; _vk.height = _mango.size.y;
 	_vk.minDepth = _mango.minDepth; _vk.maxDepth = _mango.maxDepth;
 	return _vk;
 }
@@ -539,4 +539,31 @@ vk::Format formatVK(const mango::Format& _mango){
 		case mango::Format::Pvrtc22BppSrgbBlockIMG:return vk::Format::ePvrtc22BppSrgbBlockIMG;
 		case mango::Format::Pvrtc24BppSrgbBlockIMG:return vk::Format::ePvrtc24BppSrgbBlockIMG;
 	}
+}
+
+vk::ComponentSwizzle componentSwizzleVK(const mango::ComponentSwizzle& _mango){
+	switch( _mango ) {
+		case mango::ComponentSwizzle::Identity:
+		return vk::ComponentSwizzle::eIdentity;
+		case mango::ComponentSwizzle::One:
+		return vk::ComponentSwizzle::eOne;
+		case mango::ComponentSwizzle::Zero:
+		return vk::ComponentSwizzle::eZero;
+		case mango::ComponentSwizzle::R:
+		return vk::ComponentSwizzle::eR;
+		case mango::ComponentSwizzle::G:
+		return vk::ComponentSwizzle::eG;
+		case mango::ComponentSwizzle::B:
+		return vk::ComponentSwizzle::eB;
+		case mango::ComponentSwizzle::A:
+		return vk::ComponentSwizzle::eA;
+	}
+}
+
+vk::ComponentMapping componentMappingVK(const mango::ComponentMapping& _mango){
+	return vk::ComponentMapping(
+		mango::vulkan::componentSwizzleVK(_mango.R),
+		mango::vulkan::componentSwizzleVK(_mango.G),
+		mango::vulkan::componentSwizzleVK(_mango.B),
+		mango::vulkan::componentSwizzleVK(_mango.A));
 }

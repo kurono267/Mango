@@ -5,8 +5,20 @@
 #pragma once
 
 #include "default.hpp"
+#include "types.hpp"
 
 namespace mango {
+
+class RenderPass;
+class Pipeline;
+class RenderPattern;
+class Buffer;
+class Texture;
+
+typedef std::shared_ptr<RenderPass> spRenderPass;
+typedef std::shared_ptr<Pipeline> spPipeline;
+typedef std::shared_ptr<Buffer> spBuffer;
+typedef std::shared_ptr<Texture> spTexture;
 
 class Device {
 	public:
@@ -19,7 +31,8 @@ class Device {
 		virtual spPipeline createPipeline(const RenderPattern& rp) = 0;
 		virtual spBuffer createBuffer(const BufferType& type,const size_t& size,void* data = nullptr) = 0;
 
-		virtual
+		virtual spTexture createTexture(const int width,const int height,
+							const int miplevels, const Format& format,const TextureType& type, const void* data = nullptr) = 0;
 };
 
 typedef std::shared_ptr<Device> spDevice;

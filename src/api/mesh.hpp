@@ -14,6 +14,7 @@
 namespace mango {
 
 struct VertexAttrib {
+	VertexAttrib() = default;
 	VertexAttrib(const uint32_t& l,const uint32_t& b,const Format& f,const uint32_t& o) : location(l), binding(b), format(f), offset(o){}
 	uint32_t location;
 	uint32_t binding;

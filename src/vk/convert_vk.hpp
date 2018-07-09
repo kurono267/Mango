@@ -35,6 +35,9 @@ vk::PrimitiveTopology topologyVK(const PrimitiveTopology& _mango);
 
 vk::Format formatVK(const Format& _mango);
 
+vk::ComponentSwizzle componentSwizzleVK(const ComponentSwizzle& _mango);
+vk::ComponentMapping componentMappingVK(const ComponentMapping& _mango);
+
 };
 
 #endif //MANGO_CONVERT_VK_HPP

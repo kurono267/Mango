@@ -11,13 +11,6 @@
 
 namespace mango {
 
-enum BufferType {
-	Uniform,
-	Storage,
-	Index,
-	Vertex
-};
-
 class Buffer {
 	public:
 		Buffer() = default;

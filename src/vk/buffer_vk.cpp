@@ -6,7 +6,7 @@
 
 using namespace mango::vulkan;
 
-void BufferVK::create(const spDeviceVK& device,const BufferType &type,const size_t &size,void* data = nullptr) {
+void BufferVK::create(const spDeviceVK& device,const BufferType &type,const size_t &size,void* data) {
 	_device = device;
 	createBuffer(size,
 		vk::BufferUsageFlagBits::eTransferSrc,
@@ -58,7 +58,7 @@ void BufferVK::createBuffer(vk::DeviceSize size,vk::BufferUsageFlags usage, vk::
 
     vk::MemoryRequirements memRequirements = _device->getDevice().getBufferMemoryRequirements(buffer);
 
-    vk::MemoryAllocateInfo allocInfo(memRequirements.size,findMemoryType(_device->getPDevice(), memRequirements.memoryTypeBits, properties));
+    vk::MemoryAllocateInfo allocInfo(memRequirements.size,findMemoryType(_device->getPhysicalDevice(), memRequirements.memoryTypeBits, properties));
     memory = _device->getDevice().allocateMemory(allocInfo);
 
     _device->getDevice().bindBufferMemory(buffer,memory, 0);

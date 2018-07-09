@@ -3,10 +3,10 @@
 //
 
 #include <iostream>
-#include <mango.hpp>
 #include "instance_vk.hpp"
 #include "pipeline_vk.hpp"
 #include "buffer_vk.hpp"
+#include <mango.hpp>
 
 using namespace mango::vulkan;
 using namespace mango;

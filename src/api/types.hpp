@@ -426,6 +426,40 @@ enum class Format {
 	Pvrtc24BppSrgbBlockIMG
 };
 
+enum class ComponentSwizzle {
+	Identity,
+	Zero,
+	One,
+	R,
+	G,
+	B,
+	A
+};
+
+struct ComponentMapping {
+	ComponentMapping(const ComponentSwizzle& _r = ComponentSwizzle::Identity,
+					 const ComponentSwizzle& _g = ComponentSwizzle::Identity,
+					 const ComponentSwizzle& _b = ComponentSwizzle::Identity,
+					 const ComponentSwizzle& _a = ComponentSwizzle::Identity) :
+		R(_r), G(_g), B(_b), A(_a) {}
+	ComponentSwizzle R;
+	ComponentSwizzle G;
+	ComponentSwizzle B;
+	ComponentSwizzle A;
+};
+
+enum class BufferType {
+	Uniform,
+	Storage,
+	Index,
+	Vertex
+};
+
+enum class TextureType {
+	Input,
+	Output
+};
+
 };
 
 #endif //MANGO_TYPES_HPP

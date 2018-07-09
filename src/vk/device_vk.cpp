@@ -5,9 +5,11 @@
 #include <iostream>
 #include <set>
 #include <mango.hpp>
+#include <api/texture.hpp>
 #include "device_vk.hpp"
 #include "pipeline_vk.hpp"
 #include "buffer_vk.hpp"
+#include "texture_vk.hpp"
 
 using namespace mango::vulkan;
 
@@ -180,7 +182,7 @@ vk::Device DeviceVK::getDevice() {
 	return _device;
 }
 
-vk::PhysicalDevice DeviceVK::getPDevice(){
+vk::PhysicalDevice DeviceVK::getPhysicalDevice(){
 	return _pDevice;
 }
 
@@ -196,7 +198,7 @@ mango::spPipeline DeviceVK::createPipeline(const RenderPattern& rp){
 	return PipelineVK::make(rp);
 }
 
-mango::spBuffer DeviceVK::createBuffer(const BufferType& type,const size_t& size,void* data = nullptr){
+mango::spBuffer DeviceVK::createBuffer(const BufferType& type,const size_t& size,void* data){
 	auto buffer = std::make_shared<BufferVK>();
 	buffer->create(shared_from_this(),type,size,data);
 	return buffer;
@@ -204,4 +206,11 @@ mango::spBuffer DeviceVK::createBuffer(const BufferType& type,const size_t& size
 
 mango::spRenderPass DeviceVK::createRenderPass(){
 	return std::make_shared<RenderPassVK>();
+}
+
+mango::spTexture DeviceVK::createTexture(const int width, const int height, const int miplevels, const mango::Format &format,
+                                  const TextureType &type, const void *data) {
+	auto texture = std::make_shared<TextureVK>();
+	texture->create(shared_from_this(),width,height,miplevels,format,type,data);
+	return texture;
 }
