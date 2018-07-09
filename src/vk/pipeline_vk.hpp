@@ -40,6 +40,8 @@ class PipelineVK : public mango::Pipeline {
 		void create() final;
 
 		static spPipeline make(const spDevice& device,const RenderPattern & rp){ return std::make_shared<PipelineVK>(device,rp); }
+
+		vk::RenderPass getRenderPassVK();
 	private:
 		spDeviceVK _device;
 		vk::Device _vk_device;
@@ -53,6 +55,7 @@ class PipelineVK : public mango::Pipeline {
 		vk::PushConstantRange _pushConstRange;
 
 		std::shared_ptr<RenderPassVK> _renderPass;
+		vk::RenderPass _renderPassVK;
 		vk::Pipeline                _pipeline;
 		vk::PipelineLayout          _pLayout;
 

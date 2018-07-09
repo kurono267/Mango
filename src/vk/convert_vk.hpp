@@ -34,6 +34,7 @@ vk::PipelineColorBlendStateCreateInfo blendStateVK(const std::vector<BlendAttach
 vk::PrimitiveTopology topologyVK(const PrimitiveTopology& _mango);
 
 vk::Format formatVK(const Format& _mango);
+Format formatVK2Mango(const vk::Format& _vk);
 
 vk::ComponentSwizzle componentSwizzleVK(const ComponentSwizzle& _mango);
 vk::ComponentMapping componentMappingVK(const ComponentMapping& _mango);

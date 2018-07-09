@@ -14,11 +14,13 @@ class Pipeline;
 class RenderPattern;
 class Buffer;
 class Texture;
+class Framebuffer;
 
 typedef std::shared_ptr<RenderPass> spRenderPass;
 typedef std::shared_ptr<Pipeline> spPipeline;
 typedef std::shared_ptr<Buffer> spBuffer;
 typedef std::shared_ptr<Texture> spTexture;
+typedef std::shared_ptr<Framebuffer> spFramebuffer;
 
 class Device {
 	public:
@@ -33,6 +35,10 @@ class Device {
 
 		virtual spTexture createTexture(const int width,const int height,
 							const int miplevels, const Format& format,const TextureType& type, const void* data = nullptr) = 0;
+
+		virtual Format getDepthFormat() = 0;
+
+		virtual spFramebuffer createFramebuffer() = 0;
 };
 
 typedef std::shared_ptr<Device> spDevice;

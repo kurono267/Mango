@@ -143,6 +143,8 @@ void PipelineVK::create() {
 
 	auto vk_assembly = vk::PipelineInputAssemblyStateCreateInfo(vk::PipelineInputAssemblyStateCreateFlags(),topologyVK(_renderPattern.getTopology()));
 
+	_renderPassVK = _renderPass->create(_device);
+
 	vk::GraphicsPipelineCreateInfo pipelineInfo(vk::PipelineCreateFlags(),
 		_shaders.size(),_shaders.data(),
 		&vertexInputInfo,&vk_assembly,
@@ -154,9 +156,11 @@ void PipelineVK::create() {
 		&vk_blendstate,
 		dynamicStates.size()==0?nullptr:&dynamicStatesCreteInfo,
 		_pLayout,
-		_renderPass->create(_device),0);
+		_renderPassVK,0);
 
 	_pipeline = _vk_device.createGraphicsPipelines(nullptr,pipelineInfo)[0];
 }
 
-
+vk::RenderPass PipelineVK::getRenderPassVK(){
+	return _renderPassVK;
+}

@@ -5,6 +5,8 @@
 #ifndef MANGO_TYPES_HPP
 #define MANGO_TYPES_HPP
 
+#include "default.hpp"
+
 namespace mango {
 
 enum class PrimitiveTopology {

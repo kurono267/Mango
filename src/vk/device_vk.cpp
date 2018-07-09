@@ -10,6 +10,7 @@
 #include "pipeline_vk.hpp"
 #include "buffer_vk.hpp"
 #include "texture_vk.hpp"
+#include "framebuffer_vk.hpp"
 
 using namespace mango::vulkan;
 
@@ -213,4 +214,31 @@ mango::spTexture DeviceVK::createTexture(const int width, const int height, cons
 	auto texture = std::make_shared<TextureVK>();
 	texture->create(shared_from_this(),width,height,miplevels,format,type,data);
 	return texture;
+}
+
+mango::spFramebuffer DeviceVK::createFramebuffer(){
+	return std::make_shared<FramebufferVK>(shared_from_this());
+}
+
+vk::Format supportedFormat(vk::PhysicalDevice _pDevice,const std::vector<vk::Format>& candidates, vk::ImageTiling tiling, vk::FormatFeatureFlags features){
+	for (vk::Format format : candidates) {
+		vk::FormatProperties props = _pDevice.getFormatProperties(format);
+
+		if (tiling == vk::ImageTiling::eLinear && (props.linearTilingFeatures & features) == features) {
+			return format;
+		} else if (tiling == vk::ImageTiling::eOptimal && (props.optimalTilingFeatures & features) == features) {
+			return format;
+		}
+	}
+
+	throw std::runtime_error("failed to find supported format!");
+}
+
+mango::Format DeviceVK::getDepthFormat() {
+	vk::Format format = supportedFormat(_pDevice,
+        {vk::Format::eD32Sfloat, vk::Format::eD32SfloatS8Uint, vk::Format::eD24UnormS8Uint},
+        vk::ImageTiling::eOptimal,
+        vk::FormatFeatureFlagBits::eDepthStencilAttachment
+    );
+    return formatVK2Mango(format);
 }

@@ -35,12 +35,16 @@ class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
 		vk::CommandPool getCommandPool();
 		vk::Queue getGraphicsQueue();
 
-		spRenderPass createRenderPass();
-		spPipeline createPipeline(const RenderPattern& rp);
-		spBuffer createBuffer(const BufferType& type,const size_t& size,void* data = nullptr);
+		spRenderPass createRenderPass() final;
+		spPipeline createPipeline(const RenderPattern& rp) final;
+		spBuffer createBuffer(const BufferType& type,const size_t& size,void* data = nullptr) final;
 
 		spTexture createTexture(const int width, const int height, const int miplevels,
-								const Format &format, const TextureType &type, const void *data) override;
+								const Format &format, const TextureType &type, const void *data) final;
+
+		Format getDepthFormat() final;
+
+		spFramebuffer createFramebuffer() final;
 private:
 		void create(const vk::Instance& instance,const vk::SurfaceKHR& surface,const glm::ivec2& size);
 
