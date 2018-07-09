@@ -2,7 +2,10 @@
 // Created by kurono267 on 05.06.18.
 //
 
+#include <libshaderc/shaderc.hpp>
+
 #include <api/mesh.hpp>
+#include <api/utils.hpp>
 #include "pipeline_vk.hpp"
 #include "convert_vk.hpp"
 
@@ -82,7 +85,49 @@ PipelineVK::~PipelineVK() {
 }
 
 void PipelineVK::addShader(const mango::ShaderStage &type, const std::string &filename) {
+	std::string content = mango::readFile(filename);
+	shaderc::Compiler shaderCompiler;
 
+	shaderc_shader_kind shader_kind;
+	switch (type){
+		case mango::ShaderStage::Vertex: shader_kind = shaderc_vertex_shader;
+		break;
+		case mango::ShaderStage::Fragment: shader_kind = shaderc_fragment_shader;
+		break;
+		case mango::ShaderStage::Compute: shader_kind = shaderc_compute_shader;
+		break;
+		case mango::ShaderStage::Geometry: shader_kind = shaderc_geometry_shader;
+		break;
+		case mango::ShaderStage::TessellationControl: shader_kind = shaderc_tess_control_shader;
+		break;
+		case mango::ShaderStage::TessellationEvaluation: shader_kind = shaderc_tess_evaluation_shader;
+		break;
+		default:
+		throw std::logic_error("Shader Stage not supported");
+	}
+
+	auto shaderResult = shaderCompiler.CompileGlslToSpv(content,shader_kind,filename.c_str());
+	int errors = shaderResult.GetNumErrors();
+	if(errors != 0){
+		std::cout << shaderResult.GetErrorMessage() << std::endl;
+		return;
+	}
+	std::vector<uint32_t> shaderBinary;
+	for(auto b : shaderResult){
+		shaderBinary.push_back(b);
+	}
+
+	vk::ShaderModuleCreateInfo createInfo(vk::ShaderModuleCreateFlags(),shaderBinary.size(),shaderBinary.data());
+	auto shaderModule = _device->getDevice().createShaderModule(createInfo);
+
+	_shaderModules.push_back(shaderModule);
+	vk::PipelineShaderStageCreateInfo shaderStageInfo(
+		vk::PipelineShaderStageCreateFlags(),
+		shaderStageVK(type),
+		shaderModule,
+		"main"
+	);
+	_shaders.push_back(shaderStageInfo);
 }
 
 void PipelineVK::setRenderPass(const spRenderPass &rp) {

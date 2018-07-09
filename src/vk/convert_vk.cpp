@@ -799,3 +799,16 @@ vk::ComponentMapping componentMappingVK(const mango::ComponentMapping& _mango){
 		mango::vulkan::componentSwizzleVK(_mango.B),
 		mango::vulkan::componentSwizzleVK(_mango.A));
 }
+
+vk::ShaderStageFlagBits shaderStageVK(const mango::ShaderStage& _mango){
+	switch(_mango){
+		case mango::ShaderStage::Vertex: return vk::ShaderStageFlagBits::eVertex;
+		case mango::ShaderStage::TessellationControl: return vk::ShaderStageFlagBits::eTessellationControl;
+		case mango::ShaderStage::TessellationEvaluation: return vk::ShaderStageFlagBits::eTessellationEvaluation;
+		case mango::ShaderStage::Geometry: return vk::ShaderStageFlagBits::eGeometry;
+		case mango::ShaderStage::Fragment: return vk::ShaderStageFlagBits::eFragment;
+		case mango::ShaderStage::Compute: return vk::ShaderStageFlagBits::eCompute;
+		case mango::ShaderStage::AllGraphics: return vk::ShaderStageFlagBits::eAllGraphics;
+		case mango::ShaderStage::All: return vk::ShaderStageFlagBits::eAll;
+	}
+}

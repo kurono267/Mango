@@ -39,6 +39,8 @@ Format formatVK2Mango(const vk::Format& _vk);
 vk::ComponentSwizzle componentSwizzleVK(const ComponentSwizzle& _mango);
 vk::ComponentMapping componentMappingVK(const ComponentMapping& _mango);
 
+vk::ShaderStageFlagBits shaderStageVK(const ShaderStage& _mango);
+
 };
 
 #endif //MANGO_CONVERT_VK_HPP
