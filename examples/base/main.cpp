@@ -17,17 +17,19 @@ class TestApp : public BaseApp {
 			_instance = std::make_unique<vulkan::InstanceVK>();
 			_instance->init("Test",mainWnd->window(),mainWnd->wndSize());
 
-			std::cout << _instance->device()->device_name() << std::endl;
+			auto device = _instance->device();
+			std::cout << device->device_name() << std::endl;
 
 			RenderPattern rp;
 
-			spPipeline pipeline = _instance->device()->createPipeline(rp);
+			spPipeline pipeline = device->createPipeline(rp);
 			pipeline->addShader(ShaderStage::Vertex,"glsl/test.vert");
 			pipeline->addShader(ShaderStage::Fragment,"glsl/test.frag");
 
-			spRenderPass pass = _instance->device()->createRenderPass();
+			spRenderPass pass = device->createRenderPass();
 
 			pipeline->setRenderPass(pass);
+			pipeline->create();
 
 			return true;
 		}

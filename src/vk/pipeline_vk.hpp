@@ -31,17 +31,18 @@ class RenderPassVK : public RenderPass {
 
 class PipelineVK : public mango::Pipeline {
 	public:
-		PipelineVK(const RenderPattern &rp);
+		PipelineVK(const spDevice& device,const RenderPattern &rp);
 		virtual ~PipelineVK() final;
 
 		void addShader(const ShaderStage& type,const std::string& filename) final; // Bascily import glsl
 		void setRenderPass(const std::shared_ptr<RenderPass>& rp) final;
 
-		void create(const spDevice& device) final;
+		void create() final;
 
-		static spPipeline make(const RenderPattern & rp){ return std::make_shared<PipelineVK>(rp); }
+		static spPipeline make(const spDevice& device,const RenderPattern & rp){ return std::make_shared<PipelineVK>(device,rp); }
 	private:
-		vk::Device _device;
+		spDeviceVK _device;
+		vk::Device _vk_device;
 
 		std::vector<vk::PipelineShaderStageCreateInfo> _shaders;
 		vk::PipelineViewportStateCreateInfo      _viewportState;

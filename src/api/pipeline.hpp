@@ -132,7 +132,7 @@ class Pipeline {
 		virtual void addShader(const ShaderStage& type,const std::string& filename) = 0; // Bascily import glsl
 		virtual void setRenderPass(const spRenderPass& rp) = 0;
 
-		virtual void create(const spDevice& device) = 0;
+		virtual void create() = 0;
 
 		RenderPattern pattern(){return _renderPattern;}
 	protected:

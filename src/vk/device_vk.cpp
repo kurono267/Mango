@@ -195,7 +195,7 @@ vk::Queue DeviceVK::getGraphicsQueue(){
 }
 
 mango::spPipeline DeviceVK::createPipeline(const RenderPattern& rp){
-	return PipelineVK::make(rp);
+	return PipelineVK::make(shared_from_this(),rp);
 }
 
 mango::spBuffer DeviceVK::createBuffer(const BufferType& type,const size_t& size,void* data){

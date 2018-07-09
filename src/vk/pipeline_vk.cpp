@@ -73,7 +73,9 @@ vk::RenderPass RenderPassVK::create(const spDeviceVK& device){
 	return device->getDevice().createRenderPass(_renderPassInfo);
 }
 
-PipelineVK::PipelineVK(const mango::RenderPattern &rp) : Pipeline(rp) {}
+PipelineVK::PipelineVK(const spDevice& device,const mango::RenderPattern &rp) : Pipeline(rp) {
+	_device = std::dynamic_pointer_cast<DeviceVK>(device);
+}
 
 PipelineVK::~PipelineVK() {
 	std::cout << "~PipelineVK" << std::endl;
@@ -87,9 +89,8 @@ void PipelineVK::setRenderPass(const spRenderPass &rp) {
 	_renderPass = std::dynamic_pointer_cast<RenderPassVK>(rp);
 }
 
-void PipelineVK::create(const mango::spDevice &device) {
-	std::shared_ptr<DeviceVK> vk_device = std::dynamic_pointer_cast<DeviceVK>(device);
-	_device = vk_device->getDevice();
+void PipelineVK::create() {
+	_vk_device = _device->getDevice();
 
 	std::vector<vk::DynamicState> dynamicStates;
 	if(_renderPattern.isDynamicScissor()){
@@ -102,7 +103,7 @@ void PipelineVK::create(const mango::spDevice &device) {
 	dynamicStatesCreteInfo.pDynamicStates    = dynamicStates.data();
 	dynamicStatesCreteInfo.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
 
-	_pLayout = _device.createPipelineLayout(_pipelineLayoutInfo);
+	_pLayout = _vk_device.createPipelineLayout(_pipelineLayoutInfo);
 
 	// Set Vertex format
 
@@ -153,9 +154,9 @@ void PipelineVK::create(const mango::spDevice &device) {
 		&vk_blendstate,
 		dynamicStates.size()==0?nullptr:&dynamicStatesCreteInfo,
 		_pLayout,
-		_renderPass->create(vk_device),0);
+		_renderPass->create(_device),0);
 
-	_pipeline = _device.createGraphicsPipelines(nullptr,pipelineInfo)[0];
+	_pipeline = _vk_device.createGraphicsPipelines(nullptr,pipelineInfo)[0];
 }
 
 
