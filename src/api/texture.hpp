@@ -11,15 +11,23 @@
 
 namespace mango {
 
+class Texture;
+typedef std::shared_ptr<Texture> spTexture;
+
 class TextureView {
 	public:
-		TextureView() = default;
 		virtual ~TextureView() = default;
+		TextureView() = default;
+		TextureView(const spTexture& texture) : _texture(texture) {}
+
+		spTexture getTexture() const {return _texture;}
+	private:
+		spTexture _texture;
 };
 
 typedef std::shared_ptr<TextureView> spTextureView;
 
-class Texture {
+class Texture : public std::enable_shared_from_this<Texture> {
 	public:
 		Texture() = default;
 		virtual ~Texture() = default;
@@ -40,8 +48,6 @@ class Texture {
 		Format _format;
 		TextureType _type;
 };
-
-typedef std::shared_ptr<Texture> spTexture;
 
 inline bool hasDepthComponent(Format format) {
     return format == Format::D32SfloatS8Uint || format == Format::D24UnormS8Uint

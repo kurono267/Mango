@@ -19,6 +19,8 @@ class Framebuffer {
 		void attachment(const spTextureView& imageView);
 		void depth(const int width,const int height); // Create Depth Buffer
 
+		std::string info();
+
 		virtual void create(const int width,const int height,const spPipeline& pipeline) = 0;
 	protected:
 		spDevice _device;

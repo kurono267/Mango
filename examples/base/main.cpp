@@ -3,6 +3,7 @@
 #include <api/instance.hpp>
 #include <vk/instance_vk.hpp>
 #include <vk/pipeline_vk.hpp>
+#include <vk/framebuffer_vk.hpp>
 
 using namespace mango;
 
@@ -31,6 +32,11 @@ class TestApp : public BaseApp {
 			pipeline->setRenderPass(pass);
 			pipeline->create();
 
+			auto screenBuffers = device->getScreenbuffers(pipeline);
+			for(auto screen : screenBuffers){
+				std::cout << screen->info() << std::endl;
+			}
+
 			return true;
 		}
 		bool draw(){
@@ -40,10 +46,14 @@ class TestApp : public BaseApp {
 			return true;
 		}
 		
-		bool onKey(const GLFWKey& key){}
-		bool onMouse(const GLFWMouse& mouse){}
+		bool onKey(const GLFWKey& key){
+			return true;
+		}
+		bool onMouse(const GLFWMouse& mouse){
+			return true;
+		}
 		bool onExit(){
-
+			return true;
 		}
 	protected:
 		std::unique_ptr<Instance> _instance;

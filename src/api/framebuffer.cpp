@@ -2,7 +2,9 @@
 // Created by kurono267 on 09.07.18.
 //
 
+#include <sstream>
 #include "framebuffer.hpp"
+#include "utils.hpp"
 
 using namespace mango;
 
@@ -15,4 +17,14 @@ void Framebuffer::depth(const int width, const int height) {
 	_depthBuffer = _device->createTexture(width,height,1,depthFormat,TextureType::Output);
 	_depthView = _depthBuffer->createTextureView();
 	_attachments.push_back(_depthView);
+}
+
+std::string Framebuffer::info(){
+	std::stringstream stream;
+	stream << "Framebuffer Info" << std::endl;
+	stream << "Attachmenets " << _attachments.size() << std::endl;
+	for(auto a : _attachments){
+		stream << "width " << a->getTexture()->width() << " height " << a->getTexture()->height() << to_string(a->getTexture()->format()) << std::endl;
+	}
+	return stream.str();
 }

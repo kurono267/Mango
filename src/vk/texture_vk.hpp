@@ -17,6 +17,7 @@ class TextureVK : public Texture {
 		virtual ~TextureVK();
 
 		void create(const spDevice& device,const int width, const int height,const int miplevels,const Format& format, const TextureType &type, const void *data) override;
+		void create(const vk::Device& device,const int width,const int height,const int miplevels,const Format& format,const TextureType &type,const vk::Image& image);
 		spTextureView createTextureView(const ComponentSwizzle& swizzle = ComponentSwizzle(),const int minLevel = 0,const int maxLevel = -1);
 	protected:
 		vk::Device _vk_device;
@@ -28,6 +29,7 @@ class TextureViewVK : public TextureView {
 	friend class TextureVK;
 	public:
 		TextureViewVK() : _isInit(false) {}
+		TextureViewVK(const spTexture& texture) : mango::TextureView(texture) {}
 		virtual ~TextureViewVK();
 
 		vk::ImageView getView();
@@ -35,6 +37,8 @@ class TextureViewVK : public TextureView {
 		vk::ImageView _view;
 		bool _isInit;
 };
+
+typedef std::shared_ptr<TextureVK> spTextureVK;
 
 };
 

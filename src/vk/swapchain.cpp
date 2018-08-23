@@ -83,11 +83,17 @@ void Swapchain::create(const vk::PhysicalDevice& pDevice,const vk::Device& devic
 	//createInfo.setOldSwapchain(SwapchainKHR());
 
 	_swapchain = device.createSwapchainKHR(createInfo);
-	_images = device.getSwapchainImagesKHR(_swapchain);
+	auto imageVK = device.getSwapchainImagesKHR(_swapchain);
+	for(auto i : imageVK){
+		auto tex = std::make_shared<TextureVK>();
+		tex->create(device,extent.width,extent.height,0,formatVK2Mango(surfaceFormat.format),TextureType::Output,i);
+		//_images.push_back(tex);
+		_imageViews.push_back(tex->createTextureView());
+	}
 	_imageFormat = surfaceFormat.format;
 	_extent = extent;
 
-	createImageViews(device);
+	//createImageViews(device);
 }
 
 void Swapchain::createImageViews(const vk::Device& device){
@@ -95,21 +101,8 @@ void Swapchain::createImageViews(const vk::Device& device){
 	std::cout << "images size " << _images.size() << std::endl;
 
 	for (uint i = 0; i < _images.size(); i++) {
-		vk::ImageViewCreateInfo createInfo(
-			vk::ImageViewCreateFlags(),
-			_images[i],
-			vk::ImageViewType::e2D,
-			_imageFormat,
-			vk::ComponentMapping(),
-			vk::ImageSubresourceRange(
-				vk::ImageAspectFlagBits::eColor,
-				0, 1, 0, 1)
-		);
-		if(_imageFormat == vk::Format::eR8Unorm || _imageFormat == vk::Format::eR32Sfloat || _imageFormat == vk::Format::eR16Sfloat){
-			createInfo.components.g = vk::ComponentSwizzle::eR;
-			createInfo.components.b = vk::ComponentSwizzle::eR;
-		}
-		_imageViews[i] = device.createImageView(createInfo);
+		spTextureVK tex = std::dynamic_pointer_cast<TextureVK>(_images[i]);
+		_imageViews[i] = tex->createTextureView();
 	}
 }
 
@@ -122,10 +115,9 @@ void Swapchain::release(){
 }
 
 vk::SwapchainKHR Swapchain::getSwapchain() const {return _swapchain;}
-std::vector<vk::Image> Swapchain::getImages() const {return _images;}
 vk::Format    Swapchain::getFormat() const {return _imageFormat;}
 vk::Extent2D  Swapchain::getExtent() const {return _extent;}
-std::vector<vk::ImageView> Swapchain::getImageViews() const {return _imageViews;}
+std::vector<mango::spTextureView> Swapchain::getImageViews() const {return _imageViews;}
 
 SwapchainSupportDetails Swapchain::swapchainSupport(vk::PhysicalDevice device,vk::SurfaceKHR surface){
 	SwapchainSupportDetails details;

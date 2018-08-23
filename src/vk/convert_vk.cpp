@@ -6,7 +6,7 @@
 
 using namespace mango::vulkan;
 
-vk::Viewport viewportVK(const mango::Viewport& _mango){
+vk::Viewport mango::vulkan::viewportVK(const mango::Viewport& _mango){
 	vk::Viewport _vk;
 	_vk.x = _mango.start.x; _vk.y = _mango.start.y;
 	_vk.width = _mango.size.x; _vk.height = _mango.size.y;
@@ -14,11 +14,11 @@ vk::Viewport viewportVK(const mango::Viewport& _mango){
 	return _vk;
 }
 
-vk::Rect2D rect2DVK(const glm::ivec4& _mango){
+vk::Rect2D mango::vulkan::rect2DVK(const glm::ivec4& _mango){
 	return vk::Rect2D(vk::Offset2D(_mango.x,_mango.y),vk::Extent2D(_mango.z,_mango.w));
 }
 
-vk::PolygonMode polygonModeVK(const mango::PolygonMode& _mango){
+vk::PolygonMode mango::vulkan::polygonModeVK(const mango::PolygonMode& _mango){
 	switch (_mango){
 		case mango::PolygonMode::Point:
 		return vk::PolygonMode::ePoint;
@@ -29,7 +29,7 @@ vk::PolygonMode polygonModeVK(const mango::PolygonMode& _mango){
 	}
 }
 
-vk::CullModeFlags cullModeVK(const mango::CullMode& _mango){
+vk::CullModeFlags mango::vulkan::cullModeVK(const mango::CullMode& _mango){
 	switch (_mango){
 		case mango::CullMode::Back:
 		return vk::CullModeFlagBits::eBack;
@@ -42,7 +42,7 @@ vk::CullModeFlags cullModeVK(const mango::CullMode& _mango){
 	}
 }
 
-vk::FrontFace frontFaceVK(const mango::FrontFace& _mango){
+vk::FrontFace mango::vulkan::frontFaceVK(const mango::FrontFace& _mango){
 	switch(_mango){
 		case mango::FrontFace::CCW:
 		return vk::FrontFace::eCounterClockwise;
@@ -51,7 +51,7 @@ vk::FrontFace frontFaceVK(const mango::FrontFace& _mango){
 	}
 }
 
-vk::PipelineRasterizationStateCreateInfo rasterizationStateVK(const mango::RasterizationState& _mango){
+vk::PipelineRasterizationStateCreateInfo mango::vulkan::rasterizationStateVK(const mango::RasterizationState& _mango){
 	auto polyMode = mango::vulkan::polygonModeVK(_mango.polyMode);
 	auto cullMode = mango::vulkan::cullModeVK(_mango.cullMode);
 	auto frontFace = mango::vulkan::frontFaceVK(_mango.face);
@@ -66,7 +66,7 @@ vk::PipelineRasterizationStateCreateInfo rasterizationStateVK(const mango::Raste
 	return _vk;
 }
 
-vk::SampleCountFlagBits sampleCountVK(const mango::SampleCount& _mango){
+vk::SampleCountFlagBits mango::vulkan::sampleCountVK(const mango::SampleCount& _mango){
 	switch(_mango){
 		case mango::SampleCount::s1:
 		return vk::SampleCountFlagBits::e1;
@@ -85,7 +85,7 @@ vk::SampleCountFlagBits sampleCountVK(const mango::SampleCount& _mango){
 	}
 }
 
-vk::PipelineMultisampleStateCreateInfo multisampleStateVK(const mango::MultisamplingState& _mango){
+vk::PipelineMultisampleStateCreateInfo mango::vulkan::multisampleStateVK(const mango::MultisamplingState& _mango){
 	auto _vk = vk::PipelineMultisampleStateCreateInfo(
 		vk::PipelineMultisampleStateCreateFlags(),
 		mango::vulkan::sampleCountVK(_mango.samples),
@@ -97,7 +97,7 @@ vk::PipelineMultisampleStateCreateInfo multisampleStateVK(const mango::Multisamp
 	return _vk;
 }
 
-vk::CompareOp compareOpVK(const mango::CompareOp& _mango){
+vk::CompareOp mango::vulkan::compareOpVK(const mango::CompareOp& _mango){
 	switch (_mango){
 		case mango::CompareOp::Always:
 		return vk::CompareOp::eAlways;
@@ -118,7 +118,7 @@ vk::CompareOp compareOpVK(const mango::CompareOp& _mango){
 	}
 }
 
-vk::PipelineDepthStencilStateCreateInfo depthStateVK(const mango::DepthState& _mango){
+vk::PipelineDepthStencilStateCreateInfo mango::vulkan::depthStateVK(const mango::DepthState& _mango){
 	auto _vk = vk::PipelineDepthStencilStateCreateInfo(
 		vk::PipelineDepthStencilStateCreateFlags(),
 		static_cast<vk::Bool32>(_mango.enable),
@@ -128,7 +128,7 @@ vk::PipelineDepthStencilStateCreateInfo depthStateVK(const mango::DepthState& _m
 	return _vk;
 }
 
-vk::BlendFactor blendFactorVK(const mango::BlendFactor& _mango){
+vk::BlendFactor mango::vulkan::blendFactorVK(const mango::BlendFactor& _mango){
 	switch (_mango){
 		case mango::BlendFactor::Zero:
 		return vk::BlendFactor::eZero;
@@ -171,7 +171,7 @@ vk::BlendFactor blendFactorVK(const mango::BlendFactor& _mango){
 	}
 }
 
-vk::BlendOp blendOpVK(const mango::BlendOp& _mango){
+vk::BlendOp mango::vulkan::blendOpVK(const mango::BlendOp& _mango){
 	switch (_mango){
 		case mango::BlendOp::Add:return vk::BlendOp::eAdd;
 		case mango::BlendOp::Subtract:return vk::BlendOp::eSubtract;
@@ -227,7 +227,7 @@ vk::BlendOp blendOpVK(const mango::BlendOp& _mango){
 	}
 }
 
-vk::ColorComponentFlagBits colorComponenetBitVK(const mango::ColorComponent& _mango){
+vk::ColorComponentFlagBits mango::vulkan::colorComponenetBitVK(const mango::ColorComponent& _mango){
 	switch(_mango){
 		case mango::ColorComponent::eR:return vk::ColorComponentFlagBits::eR;
 		case mango::ColorComponent::eG:return vk::ColorComponentFlagBits::eG;
@@ -236,7 +236,7 @@ vk::ColorComponentFlagBits colorComponenetBitVK(const mango::ColorComponent& _ma
 	}
 }
 
-vk::ColorComponentFlags colorComponentFlagsVK(const std::vector<mango::ColorComponent>& _mango){
+vk::ColorComponentFlags mango::vulkan::colorComponentFlagsVK(const std::vector<mango::ColorComponent>& _mango){
 	vk::ColorComponentFlags flags = mango::vulkan::colorComponenetBitVK(_mango[0]);
 	for(int i = 1;i<_mango.size();++i){
 		flags |= mango::vulkan::colorComponenetBitVK(_mango[i]);
@@ -244,7 +244,7 @@ vk::ColorComponentFlags colorComponentFlagsVK(const std::vector<mango::ColorComp
 	return flags;
 }
 
-vk::PipelineColorBlendStateCreateInfo blendStateVK(const std::vector<mango::BlendAttachmentState>& _mango){
+vk::PipelineColorBlendStateCreateInfo mango::vulkan::blendStateVK(const std::vector<mango::BlendAttachmentState>& _mango){
 	std::vector<vk::PipelineColorBlendAttachmentState> blendAttachments;
 	for(int i = 0;i<_mango.size();++i){
 		blendAttachments.push_back(vk::PipelineColorBlendAttachmentState(
@@ -259,7 +259,7 @@ vk::PipelineColorBlendStateCreateInfo blendStateVK(const std::vector<mango::Blen
 	return vk::PipelineColorBlendStateCreateInfo(vk::PipelineColorBlendStateCreateFlags(),0,vk::LogicOp::eCopy,blendAttachments.size(),blendAttachments.data());
 }
 
-vk::PrimitiveTopology topologyVK(const mango::PrimitiveTopology& _mango){
+vk::PrimitiveTopology mango::vulkan::topologyVK(const mango::PrimitiveTopology& _mango){
 	switch (_mango){
 		case mango::PrimitiveTopology::PointList:return vk::PrimitiveTopology::ePointList;
 		case mango::PrimitiveTopology::LineList:return vk::PrimitiveTopology::eLineList;
@@ -275,7 +275,7 @@ vk::PrimitiveTopology topologyVK(const mango::PrimitiveTopology& _mango){
 	}
 }
 
-vk::Format formatVK(const mango::Format& _mango){
+vk::Format mango::vulkan::formatVK(const mango::Format& _mango){
 	switch (_mango){
 		case mango::Format::Undefined:return vk::Format::eUndefined;
 		case mango::Format::R4G4UnormPack8:return vk::Format::eR4G4UnormPack8;
@@ -541,7 +541,7 @@ vk::Format formatVK(const mango::Format& _mango){
 	}
 }
 
-mango::Format formatVK2Mango(const vk::Format& _vk){
+mango::Format mango::vulkan::formatVK2Mango(const vk::Format& _vk){
 	switch (_vk){
 		case vk::Format::eUndefined: return mango::Format::Undefined;
 		case vk::Format::eR4G4UnormPack8: return mango::Format::R4G4UnormPack8;
@@ -773,7 +773,7 @@ mango::Format formatVK2Mango(const vk::Format& _vk){
 	}
 }
 
-vk::ComponentSwizzle componentSwizzleVK(const mango::ComponentSwizzle& _mango){
+vk::ComponentSwizzle mango::vulkan::componentSwizzleVK(const mango::ComponentSwizzle& _mango){
 	switch( _mango ) {
 		case mango::ComponentSwizzle::Identity:
 		return vk::ComponentSwizzle::eIdentity;
@@ -792,7 +792,7 @@ vk::ComponentSwizzle componentSwizzleVK(const mango::ComponentSwizzle& _mango){
 	}
 }
 
-vk::ComponentMapping componentMappingVK(const mango::ComponentMapping& _mango){
+vk::ComponentMapping mango::vulkan::componentMappingVK(const mango::ComponentMapping& _mango){
 	return vk::ComponentMapping(
 		mango::vulkan::componentSwizzleVK(_mango.R),
 		mango::vulkan::componentSwizzleVK(_mango.G),
@@ -800,7 +800,7 @@ vk::ComponentMapping componentMappingVK(const mango::ComponentMapping& _mango){
 		mango::vulkan::componentSwizzleVK(_mango.A));
 }
 
-vk::ShaderStageFlagBits shaderStageVK(const mango::ShaderStage& _mango){
+vk::ShaderStageFlagBits mango::vulkan::shaderStageVK(const mango::ShaderStage& _mango){
 	switch(_mango){
 		case mango::ShaderStage::Vertex: return vk::ShaderStageFlagBits::eVertex;
 		case mango::ShaderStage::TessellationControl: return vk::ShaderStageFlagBits::eTessellationControl;

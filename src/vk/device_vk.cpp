@@ -15,8 +15,7 @@
 using namespace mango::vulkan;
 
 const std::vector<const char*> deviceExtensions = {
-	VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-	VK_KHR_MULTIVIEW_EXTENSION_NAME
+	VK_KHR_SWAPCHAIN_EXTENSION_NAME
 };
 
 struct QueueFamilyIndices {
@@ -110,6 +109,13 @@ bool checkDeviceExtensionSupport(vk::PhysicalDevice device) {
 
 	for (const auto& extension : availableExtensions) {
 		requiredExtensions.erase(extension.extensionName);
+	}
+
+	if(!requiredExtensions.empty()){
+		std::cout << "This extensions doesn't support:" << std::endl;
+		for(auto ext : requiredExtensions){
+			std::cout << ext << std::endl;
+		}
 	}
 
 	return requiredExtensions.empty();
@@ -241,4 +247,22 @@ mango::Format DeviceVK::getDepthFormat() {
         vk::FormatFeatureFlagBits::eDepthStencilAttachment
     );
     return formatVK2Mango(format);
+}
+
+std::vector<mango::spFramebuffer> DeviceVK::getScreenbuffers(const spPipeline& pipeline){
+	std::vector<spFramebuffer> framebuffers;
+
+	auto imageViews = _swapchain.getImageViews();
+	auto extent = _swapchain.getExtent();
+
+	for(int i = 0;i<imageViews.size();++i){
+		spFramebuffer framebuffer = createFramebuffer();
+
+		framebuffer->attachment(imageViews[i]);
+		framebuffer->depth(extent.width,extent.height);
+		framebuffer->create(extent.width,extent.height,pipeline);
+
+		framebuffers.push_back(framebuffer);
+	}
+	return framebuffers;
 }

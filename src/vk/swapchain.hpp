@@ -1,6 +1,7 @@
 #pragma once
 
 #include "default.hpp"
+#include "texture_vk.hpp"
 
 namespace mango::vulkan {
 
@@ -19,20 +20,19 @@ class Swapchain {
 		void release();
 
 		vk::SwapchainKHR getSwapchain() const ;
-		std::vector<vk::Image> getImages() const ;
 		vk::Format    getFormat() const ;
 		vk::Extent2D  getExtent() const ;
-		std::vector<vk::ImageView> getImageViews() const ;
+		std::vector<mango::spTextureView> getImageViews() const ;
 
 		static SwapchainSupportDetails swapchainSupport(vk::PhysicalDevice device,vk::SurfaceKHR surface);
 	protected:
 		vk::SwapchainKHR      _swapchain;
-		std::vector<vk::Image> _images;
+		std::vector<mango::spTexture> _images;
 		vk::Format         _imageFormat;
 		vk::Extent2D       _extent; 
 
 		void createImageViews(const vk::Device& device);
-		std::vector<vk::ImageView> _imageViews;
+		std::vector<mango::spTextureView> _imageViews;
 
 		vk::Device _device;
 

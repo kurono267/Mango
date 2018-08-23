@@ -7,6 +7,8 @@
 #include "default.hpp"
 #include "types.hpp"
 
+#include <vector>
+
 namespace mango {
 
 class RenderPass;
@@ -37,6 +39,8 @@ class Device {
 							const int miplevels, const Format& format,const TextureType& type, const void* data = nullptr) = 0;
 
 		virtual Format getDepthFormat() = 0;
+
+		virtual std::vector<spFramebuffer> getScreenbuffers(const spPipeline& pipeline) = 0;
 
 		virtual spFramebuffer createFramebuffer() = 0;
 };

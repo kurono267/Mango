@@ -9,10 +9,14 @@
 #include <string>
 #include <fstream>
 
+#include "types.hpp"
+
 namespace mango {
 
 std::vector<char> readFileBinary(const std::string& filename);
 std::string 	  readFile(const std::string& filename);
+
+std::string to_string(Format value);
 
 };
 

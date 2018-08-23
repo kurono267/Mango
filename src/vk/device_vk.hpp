@@ -44,6 +44,8 @@ class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
 
 		Format getDepthFormat() final;
 
+		std::vector<spFramebuffer> getScreenbuffers(const spPipeline& pipeline) final;
+
 		spFramebuffer createFramebuffer() final;
 private:
 		void create(const vk::Instance& instance,const vk::SurfaceKHR& surface,const glm::ivec2& size);

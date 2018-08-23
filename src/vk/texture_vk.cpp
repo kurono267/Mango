@@ -19,6 +19,16 @@ TextureVK::~TextureVK() {
 
 }
 
+void TextureVK::create(const vk::Device& device,const int width,const int height,const int miplevels,const Format& format,const mango::TextureType &type, const vk::Image& image){
+	_vk_device = device;
+	_image = image;
+	_width = width;
+	_height = height;
+	_format = format;
+	_mipLevels = miplevels;
+	_type = type;
+}
+
 void TextureVK::create(const spDevice& device,const int width, const int height,const int miplevels , const Format& format, const mango::TextureType &type, const void *data) {
 	_width = width;
 	_height = height;
@@ -79,7 +89,7 @@ mango::spTextureView TextureVK::createTextureView(const ComponentSwizzle& swizzl
 			imageAspectFlags,
 			minLevel, maxLevel!=-1?maxLevel:_mipLevels, 0, 1)
 	);
-	auto texView = std::make_shared<TextureViewVK>();
+	auto texView = std::make_shared<TextureViewVK>(shared_from_this());
 	texView->_view = _vk_device.createImageView(viewCreateInfo);
 	texView->_isInit = true;
 	return texView;
