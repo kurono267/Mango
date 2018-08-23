@@ -40,7 +40,8 @@ class Device {
 
 		virtual Format getDepthFormat() = 0;
 
-		virtual std::vector<spFramebuffer> getScreenbuffers(const spPipeline& pipeline) = 0;
+		virtual std::vector<spFramebuffer> getScreenbuffers() = 0;
+		virtual std::vector<spRenderPass> getScreenRenderPass() = 0;
 
 		virtual spFramebuffer createFramebuffer() = 0;
 };

@@ -249,14 +249,18 @@ mango::Format DeviceVK::getDepthFormat() {
     return formatVK2Mango(format);
 }
 
-std::vector<mango::spFramebuffer> DeviceVK::getScreenbuffers(const spPipeline& pipeline){
+void DeviceVK::createScreen(){
+
+}
+
+std::vector<mango::spFramebuffer> DeviceVK::getScreenbuffers(){
 	std::vector<spFramebuffer> framebuffers;
 
 	auto imageViews = _swapchain.getImageViews();
 	auto extent = _swapchain.getExtent();
 
 	for(int i = 0;i<imageViews.size();++i){
-		spFramebuffer framebuffer = createFramebuffer();
+		spFramebufferVK framebuffer = std::dynamic_pointer_cast<FramebufferVK>(createFramebuffer());
 
 		framebuffer->attachment(imageViews[i]);
 		framebuffer->depth(extent.width,extent.height);

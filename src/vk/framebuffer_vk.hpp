@@ -15,6 +15,7 @@ class FramebufferVK : public Framebuffer {
 		FramebufferVK(const spDevice &device);
 
 		void create(const int width, const int height, const spPipeline& pipeline) final;
+		void create(const int width, const int height, const vk::RenderPass& renderPass);
 	protected:
 		vk::Framebuffer _framebuffer;
 };

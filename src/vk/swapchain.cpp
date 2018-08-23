@@ -86,7 +86,7 @@ void Swapchain::create(const vk::PhysicalDevice& pDevice,const vk::Device& devic
 	auto imageVK = device.getSwapchainImagesKHR(_swapchain);
 	for(auto i : imageVK){
 		auto tex = std::make_shared<TextureVK>();
-		tex->create(device,extent.width,extent.height,0,formatVK2Mango(surfaceFormat.format),TextureType::Output,i);
+		tex->create(device,extent.width,extent.height,1,formatVK2Mango(surfaceFormat.format),TextureType::Output,i);
 		//_images.push_back(tex);
 		_imageViews.push_back(tex->createTextureView());
 	}
