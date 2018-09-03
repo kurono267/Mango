@@ -245,18 +245,18 @@ vk::ColorComponentFlags mango::vulkan::colorComponentFlagsVK(const std::vector<m
 }
 
 vk::PipelineColorBlendStateCreateInfo mango::vulkan::blendStateVK(const std::vector<mango::BlendAttachmentState>& _mango){
-	std::vector<vk::PipelineColorBlendAttachmentState> blendAttachments;
+	vk::PipelineColorBlendAttachmentState* blendAttachments = new vk::PipelineColorBlendAttachmentState[_mango.size()];
 	for(int i = 0;i<_mango.size();++i){
-		blendAttachments.push_back(vk::PipelineColorBlendAttachmentState(
-			_mango[i].enable,
+		blendAttachments[i] = vk::PipelineColorBlendAttachmentState(
+				static_cast<vk::Bool32>(_mango[i].enable),
 			mango::vulkan::blendFactorVK(_mango[i].srcColorBlendFactor),mango::vulkan::blendFactorVK(_mango[i].dstColorBlendFactor),
 			mango::vulkan::blendOpVK(_mango[i].colorBlendOp),
 			mango::vulkan::blendFactorVK(_mango[i].srcAlphaBlendFactor),mango::vulkan::blendFactorVK(_mango[i].dstAlphaBlendFactor),
 			mango::vulkan::blendOpVK(_mango[i].alphaBlendOp),
-			mango::vulkan::colorComponentFlagsVK(_mango[i].writeMask)));
+			mango::vulkan::colorComponentFlagsVK(_mango[i].writeMask));
 	}
 
-	return vk::PipelineColorBlendStateCreateInfo(vk::PipelineColorBlendStateCreateFlags(),0,vk::LogicOp::eCopy,blendAttachments.size(),blendAttachments.data());
+	return vk::PipelineColorBlendStateCreateInfo(vk::PipelineColorBlendStateCreateFlags(),0,vk::LogicOp::eCopy,_mango.size(),blendAttachments);
 }
 
 vk::PrimitiveTopology mango::vulkan::topologyVK(const mango::PrimitiveTopology& _mango){
