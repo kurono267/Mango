@@ -121,7 +121,7 @@ void PipelineVK::addShader(const mango::ShaderStage &type, const std::string &fi
 		shaderBinary.push_back(b);
 	}
 
-	vk::ShaderModuleCreateInfo createInfo(vk::ShaderModuleCreateFlags(),shaderBinary.size(),shaderBinary.data());
+	vk::ShaderModuleCreateInfo createInfo(vk::ShaderModuleCreateFlags(),shaderBinary.size()*sizeof(uint32_t),shaderBinary.data());
 	auto shaderModule = _device->getDevice().createShaderModule(createInfo);
 
 	_shaderModules.push_back(shaderModule);

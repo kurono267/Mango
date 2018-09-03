@@ -459,7 +459,8 @@ enum class BufferType {
 
 enum class TextureType {
 	Input,
-	Output
+	Output,
+	DepthStencil
 };
 
 };

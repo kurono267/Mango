@@ -74,7 +74,7 @@ BufferVK::~BufferVK() {
 
 }
 
-uint32_t findMemoryType(vk::PhysicalDevice pDevice,uint32_t typeFilter, vk::MemoryPropertyFlags properties) {
+uint32_t mango::vulkan::findMemoryType(vk::PhysicalDevice pDevice,uint32_t typeFilter, vk::MemoryPropertyFlags properties) {
 	vk::PhysicalDeviceMemoryProperties memProperties = pDevice.getMemoryProperties();
 
 	for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
@@ -86,7 +86,7 @@ uint32_t findMemoryType(vk::PhysicalDevice pDevice,uint32_t typeFilter, vk::Memo
 	throw std::runtime_error("failed to find suitable memory type!");
 }
 
-vk::CommandBuffer beginSingle(vk::Device device,vk::CommandPool pool){
+vk::CommandBuffer mango::vulkan::beginSingle(vk::Device device,vk::CommandPool pool){
 	vk::CommandBufferAllocateInfo allocInfo(pool,vk::CommandBufferLevel::ePrimary,1);
 	auto cmdBuffers = device.allocateCommandBuffers(allocInfo);
 
@@ -95,7 +95,7 @@ vk::CommandBuffer beginSingle(vk::Device device,vk::CommandPool pool){
 	return cmdBuffers[0];
 }
 
-void endSingle(vk::Device device,vk::Queue queue,vk::CommandPool pool,vk::CommandBuffer commands){
+void mango::vulkan::endSingle(vk::Device device,vk::Queue queue,vk::CommandPool pool,vk::CommandBuffer commands){
 	commands.end();
 
 	vk::SubmitInfo submitInfo;

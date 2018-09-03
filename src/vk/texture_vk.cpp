@@ -37,6 +37,7 @@ void TextureVK::create(const spDevice& device,const int width, const int height,
 	_format = format;
 
 	vk::ImageUsageFlags usage;
+	vk::ImageLayout layout = vk::ImageLayout::ePreinitialized;
 	switch(type){
 		case mango::TextureType::Input:
 		usage = vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eColorAttachment;
@@ -44,9 +45,11 @@ void TextureVK::create(const spDevice& device,const int width, const int height,
 		case mango::TextureType::Output:
 		usage = vk::ImageUsageFlagBits::eColorAttachment;
 		break;
+		case mango::TextureType::DepthStencil:
+		usage = vk::ImageUsageFlagBits::eDepthStencilAttachment;
+		layout = vk::ImageLayout::eUndefined;
+		break;
 	}
-
-	vk::ImageLayout layout = vk::ImageLayout::ePreinitialized;
 
 	vk::ImageCreateInfo imageInfo(
 		vk::ImageCreateFlags(), // Basic
