@@ -11,6 +11,8 @@
 
 namespace mango::vulkan {
 
+class RenderPassVK;
+
 #ifdef NDEBUG
 const bool enableValidationLayers = true;
 #else
@@ -45,7 +47,7 @@ class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
 		Format getDepthFormat() final;
 
 		std::vector<spFramebuffer> getScreenbuffers() final;
-		std::vector<spRenderPass> getScreenRenderPass() final;
+		spRenderPass getScreenRenderPass() final;
 
 		spFramebuffer createFramebuffer() final;
 private:
@@ -66,7 +68,7 @@ private:
 		vk::Queue          _computeQueue;
 		vk::SurfaceKHR     _surface;
 
-		spRenderPass _screenRenderPass;
+		std::shared_ptr<RenderPassVK> _screenRenderPass;
 		std::vector<spFramebuffer> _screenbuffers;
 
 		vk::CommandPool    _pool;

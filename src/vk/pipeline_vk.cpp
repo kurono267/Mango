@@ -11,7 +11,7 @@
 
 using namespace mango::vulkan;
 
-vk::RenderPass RenderPassVK::create(const spDeviceVK& device){
+void RenderPassVK::create(const spDeviceVK& device){
 	_attachmentsDesc.clear();
 	_attachmentsRef.clear();
 	for(auto a : _attachments){
@@ -73,7 +73,11 @@ vk::RenderPass RenderPassVK::create(const spDeviceVK& device){
 	_renderPassInfo.setDependencyCount(2);
 	_renderPassInfo.setPDependencies(_subPassDep);
 
-	return device->getDevice().createRenderPass(_renderPassInfo);
+	_renderPass = device->getDevice().createRenderPass(_renderPassInfo);
+}
+
+vk::RenderPass RenderPassVK::getVK(){
+	return _renderPass;
 }
 
 PipelineVK::PipelineVK(const spDevice& device,const mango::RenderPattern &rp) : Pipeline(rp) {
@@ -188,8 +192,6 @@ void PipelineVK::create() {
 
 	auto vk_assembly = vk::PipelineInputAssemblyStateCreateInfo(vk::PipelineInputAssemblyStateCreateFlags(),topologyVK(_renderPattern.getTopology()));
 
-	_renderPassVK = _renderPass->create(_device);
-
 	vk::GraphicsPipelineCreateInfo pipelineInfo(vk::PipelineCreateFlags(),
 		_shaders.size(),_shaders.data(),
 		&vertexInputInfo,&vk_assembly,
@@ -201,11 +203,7 @@ void PipelineVK::create() {
 		&vk_blendstate,
 		dynamicStates.size()==0?nullptr:&dynamicStatesCreteInfo,
 		_pLayout,
-		_renderPassVK,0);
+		_renderPass->getVK(),0);
 
 	_pipeline = _vk_device.createGraphicsPipelines(nullptr,pipelineInfo)[0];
-}
-
-vk::RenderPass PipelineVK::getRenderPassVK(){
-	return _renderPassVK;
 }

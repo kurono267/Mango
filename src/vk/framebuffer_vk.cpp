@@ -9,9 +9,9 @@
 
 using namespace mango::vulkan;
 
-void FramebufferVK::create(const int width, const int height, const mango::spPipeline& pipeline) {
-	auto pipeline_vk = std::dynamic_pointer_cast<PipelineVK>(pipeline);
-	create(width,height,pipeline_vk->getRenderPassVK());
+void FramebufferVK::create(const int width, const int height, const mango::spRenderPass& renderPass) {
+	auto renderPass_vk = std::dynamic_pointer_cast<RenderPassVK>(renderPass);
+	create(width,height,renderPass_vk->getVK());
 }
 
 void FramebufferVK::create(const int width, const int height, const vk::RenderPass& renderPass){

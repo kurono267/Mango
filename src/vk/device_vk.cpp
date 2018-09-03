@@ -79,6 +79,8 @@ void DeviceVK::create(const vk::Instance& instance,const vk::SurfaceKHR& surface
 	_pool = _device.createCommandPool(poolInfo);
 	vk::CommandPoolCreateInfo poolComputeInfo(vk::CommandPoolCreateFlags(),queueFamily.computeFamily);
 	//_poolCompute = _device.createCommandPool(poolComputeInfo);
+
+	createScreen();
 }
 
 void DeviceVK::pickPhysicalDevice(){
@@ -250,11 +252,10 @@ mango::Format DeviceVK::getDepthFormat() {
 }
 
 void DeviceVK::createScreen(){
-
-}
-
-std::vector<mango::spFramebuffer> DeviceVK::getScreenbuffers(){
-	std::vector<spFramebuffer> framebuffers;
+	_screenRenderPass = std::make_shared<RenderPassVK>();
+	_screenRenderPass->addAttachment(Attachment(formatVK2Mango(_swapchain.getFormat()),false,0));
+	_screenRenderPass->addAttachment(Attachment(getDepthFormat(),true,1));
+	_screenRenderPass->create(shared_from_this());
 
 	auto imageViews = _swapchain.getImageViews();
 	auto extent = _swapchain.getExtent();
@@ -264,9 +265,16 @@ std::vector<mango::spFramebuffer> DeviceVK::getScreenbuffers(){
 
 		framebuffer->attachment(imageViews[i]);
 		framebuffer->depth(extent.width,extent.height);
-		framebuffer->create(extent.width,extent.height,pipeline);
+		framebuffer->create(extent.width,extent.height,_screenRenderPass->getVK());
 
-		framebuffers.push_back(framebuffer);
+		_screenbuffers.push_back(framebuffer);
 	}
-	return framebuffers;
+}
+
+mango::spRenderPass DeviceVK::getScreenRenderPass(){
+	return std::dynamic_pointer_cast<mango::RenderPass>(_screenRenderPass);
+}
+
+std::vector<mango::spFramebuffer> DeviceVK::getScreenbuffers(){
+	return _screenbuffers;
 }

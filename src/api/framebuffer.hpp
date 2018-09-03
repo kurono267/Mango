@@ -21,7 +21,7 @@ class Framebuffer {
 
 		std::string info();
 
-		virtual void create(const int width,const int height,const spPipeline& pipeline) = 0;
+		virtual void create(const int width,const int height,const spRenderPass& renderPass) = 0;
 	protected:
 		spDevice _device;
 

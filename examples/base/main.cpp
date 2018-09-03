@@ -27,12 +27,12 @@ class TestApp : public BaseApp {
 			pipeline->addShader(ShaderStage::Vertex,"glsl/test.vert");
 			pipeline->addShader(ShaderStage::Fragment,"glsl/test.frag");
 
-			spRenderPass pass = device->createRenderPass();
+			spRenderPass renderPass = device->getScreenRenderPass();
 
-			pipeline->setRenderPass(pass);
+			pipeline->setRenderPass(renderPass);
 			pipeline->create();
 
-			auto screenBuffers = device->getScreenbuffers(pipeline);
+			auto screenBuffers = device->getScreenbuffers();
 			for(auto screen : screenBuffers){
 				std::cout << screen->info() << std::endl;
 			}

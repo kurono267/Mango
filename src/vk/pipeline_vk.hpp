@@ -17,7 +17,9 @@ class RenderPassVK : public RenderPass {
 		RenderPassVK() = default;
 		virtual ~RenderPassVK() = default;
 
-		vk::RenderPass create(const spDeviceVK& device);
+		void create(const spDeviceVK& device);
+
+		vk::RenderPass getVK();
 	protected:
 		std::vector<vk::AttachmentDescription>   _attachmentsDesc;
 		std::vector<vk::AttachmentReference>     _attachmentsRef;
@@ -27,7 +29,11 @@ class RenderPassVK : public RenderPass {
 		vk::SubpassDescription    _subPass;
 		vk::SubpassDependency     _subPassDep[2];
 		vk::RenderPassCreateInfo  _renderPassInfo;
+
+		vk::RenderPass _renderPass;
 };
+
+typedef std::shared_ptr<RenderPassVK> spRenderPassVK;
 
 class PipelineVK : public mango::Pipeline {
 	public:
@@ -40,8 +46,6 @@ class PipelineVK : public mango::Pipeline {
 		void create() final;
 
 		static spPipeline make(const spDevice& device,const RenderPattern & rp){ return std::make_shared<PipelineVK>(device,rp); }
-
-		vk::RenderPass getRenderPassVK();
 	private:
 		spDeviceVK _device;
 		vk::Device _vk_device;
@@ -55,7 +59,6 @@ class PipelineVK : public mango::Pipeline {
 		vk::PushConstantRange _pushConstRange;
 
 		std::shared_ptr<RenderPassVK> _renderPass;
-		vk::RenderPass _renderPassVK;
 		vk::Pipeline                _pipeline;
 		vk::PipelineLayout          _pLayout;
 
