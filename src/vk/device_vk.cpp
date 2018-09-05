@@ -291,6 +291,45 @@ mango::spSemaphore DeviceVK::createSemaphore(){
 	return semaphore;
 }
 
+void DeviceVK::submit(const mango::spCommandBuffer cmd, const mango::spSemaphore waitForIt, const mango::spSemaphore result){
+	auto cmd_vk = std::dynamic_pointer_cast<CommandBufferVK>(cmd)->getVK();
+
+	auto waitVK = std::dynamic_pointer_cast<SemaphoreVK>(waitForIt);
+	auto signalVK = std::dynamic_pointer_cast<SemaphoreVK>(result);
+
+	vk::Semaphore waitSemaphores[] = {waitVK->getVK()};
+	vk::Semaphore signalSemaphores[] = {signalVK->getVK()};
+	vk::PipelineStageFlags waitStages[] = {vk::PipelineStageFlagBits::eColorAttachmentOutput};
+
+	vk::SubmitInfo submitInfo(
+		1, waitSemaphores,
+		waitStages,
+		1, &cmd_vk,
+		1, signalSemaphores
+	);
+
+	_graphicsQueue.submit(submitInfo, nullptr);
+}
+
+void DeviceVK::present(const uint32_t screen, const mango::spSemaphore signal){
+	vk::SwapchainKHR swapChains[] = {_swapchain.getSwapchain()};
+
+	vk::Semaphore signalSemaphores[] = {std::dynamic_pointer_cast<SemaphoreVK>(signal)->getVK()};
+
+	vk::PresentInfoKHR presentInfo(
+		1, signalSemaphores,
+		1, swapChains,
+		&screen
+	);
+
+	_presentQueue.presentKHR(presentInfo);
+}
+
+uint32_t DeviceVK::nextScreen(const mango::spSemaphore signal){
+	vk::Semaphore signalSemaphores = std::dynamic_pointer_cast<SemaphoreVK>(signal)->getVK();
+
+	return _device.acquireNextImageKHR(_swapchain.getSwapchain(),std::numeric_limits<uint64_t>::max(),signalSemaphores,nullptr).value;
+}
 
 void SemaphoreVK::create(const spDeviceVK& device){
 	_semaphore = device->getDevice().createSemaphore(vk::SemaphoreCreateInfo());

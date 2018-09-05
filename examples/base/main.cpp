@@ -57,6 +57,12 @@ class TestApp : public BaseApp {
 			return true;
 		}
 		bool draw(){
+			auto device = _instance->device();
+			auto imageIndex = device->nextScreen(_screenAvailable);
+
+			device->submit(_cmdScreen[imageIndex],_screenAvailable,_renderFinish);
+			device->present(imageIndex,_renderFinish);
+
 			return true;
 		}
 		bool update(){

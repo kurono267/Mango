@@ -53,6 +53,11 @@ class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
 		spFramebuffer createFramebuffer() final;
 		spCommandBuffer createCommandBuffer() final;
 		spSemaphore createSemaphore() final;
+
+		void submit(const spCommandBuffer cmd, const spSemaphore waitForIt, const spSemaphore result);
+		void present(const uint32_t screen, const spSemaphore signal);
+
+		uint32_t nextScreen(const spSemaphore signal);
 private:
 		void create(const vk::Instance& instance,const vk::SurfaceKHR& surface,const glm::ivec2& size);
 
@@ -83,7 +88,7 @@ private:
 
 typedef std::shared_ptr<DeviceVK> spDeviceVK;
 
-class SemaphoreVK : public Semaphore {
+class SemaphoreVK : public mango::Semaphore {
 	public:
 		void create(const spDeviceVK& device);
 

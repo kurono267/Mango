@@ -70,4 +70,8 @@ void CommandBufferVK::create(const spDeviceVK device){
 	_cmd = cmds[0];
 }
 
+vk::CommandBuffer CommandBufferVK::getVK(){
+	return _cmd;
+}
+
 }

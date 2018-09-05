@@ -20,7 +20,11 @@ class Framebuffer;
 class CommandBuffer;
 
 // Semaphore empty class
-class Semaphore {};
+class Semaphore {
+	public:
+		Semaphore() = default;
+		virtual ~Semaphore() = default;
+};
 
 typedef std::shared_ptr<RenderPass> spRenderPass;
 typedef std::shared_ptr<Pipeline> spPipeline;
@@ -52,6 +56,11 @@ class Device {
 		virtual spFramebuffer createFramebuffer() = 0;
 		virtual spCommandBuffer createCommandBuffer() = 0;
 		virtual spSemaphore createSemaphore() = 0;
+
+		virtual void submit(const spCommandBuffer cmd, const spSemaphore waitForIt, const spSemaphore result) = 0;
+		virtual void present(const uint32_t screen, const spSemaphore signal) = 0;
+
+		virtual uint32_t nextScreen(const spSemaphore signal) = 0;
 };
 
 typedef std::shared_ptr<Device> spDevice;

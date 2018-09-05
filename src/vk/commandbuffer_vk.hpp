@@ -26,6 +26,8 @@ class CommandBufferVK : public CommandBuffer {
 		void end() final;
 
 		void create(const spDeviceVK device);
+
+		vk::CommandBuffer getVK();
 	protected:
 		vk::CommandBuffer _cmd;
 		std::unordered_map<int,glm::vec4> _clearColors;
