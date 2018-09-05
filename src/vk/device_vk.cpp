@@ -284,3 +284,18 @@ mango::spRenderPass DeviceVK::getScreenRenderPass(){
 std::vector<mango::spFramebuffer> DeviceVK::getScreenbuffers(){
 	return _screenbuffers;
 }
+
+mango::spSemaphore DeviceVK::createSemaphore(){
+	auto semaphore = std::make_shared<SemaphoreVK>();
+	semaphore->create(shared_from_this());
+	return semaphore;
+}
+
+
+void SemaphoreVK::create(const spDeviceVK& device){
+	_semaphore = device->getDevice().createSemaphore(vk::SemaphoreCreateInfo());
+}
+
+vk::Semaphore SemaphoreVK::getVK(){
+	return _semaphore;
+}

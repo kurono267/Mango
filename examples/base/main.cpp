@@ -51,6 +51,8 @@ class TestApp : public BaseApp {
 				_cmdScreen[i]->end();
 			}
 
+			_screenAvailable = device->createSemaphore();
+			_renderFinish = device->createSemaphore();
 
 			return true;
 		}
@@ -75,6 +77,9 @@ class TestApp : public BaseApp {
 
 		spPipeline _main;
 		std::vector<spCommandBuffer> _cmdScreen;
+
+		spSemaphore _screenAvailable;
+		spSemaphore _renderFinish;
 };
 
 int main(){

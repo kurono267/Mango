@@ -52,6 +52,7 @@ class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
 
 		spFramebuffer createFramebuffer() final;
 		spCommandBuffer createCommandBuffer() final;
+		spSemaphore createSemaphore() final;
 private:
 		void create(const vk::Instance& instance,const vk::SurfaceKHR& surface,const glm::ivec2& size);
 
@@ -81,5 +82,14 @@ private:
 };
 
 typedef std::shared_ptr<DeviceVK> spDeviceVK;
+
+class SemaphoreVK : public Semaphore {
+	public:
+		void create(const spDeviceVK& device);
+
+		vk::Semaphore getVK();
+	protected:
+		vk::Semaphore _semaphore;
+};
 
 };

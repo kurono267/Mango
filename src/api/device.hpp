@@ -19,12 +19,16 @@ class Texture;
 class Framebuffer;
 class CommandBuffer;
 
+// Semaphore empty class
+class Semaphore {};
+
 typedef std::shared_ptr<RenderPass> spRenderPass;
 typedef std::shared_ptr<Pipeline> spPipeline;
 typedef std::shared_ptr<Buffer> spBuffer;
 typedef std::shared_ptr<Texture> spTexture;
 typedef std::shared_ptr<Framebuffer> spFramebuffer;
 typedef std::shared_ptr<CommandBuffer> spCommandBuffer;
+typedef std::shared_ptr<Semaphore> spSemaphore;
 
 class Device {
 	public:
@@ -47,6 +51,7 @@ class Device {
 
 		virtual spFramebuffer createFramebuffer() = 0;
 		virtual spCommandBuffer createCommandBuffer() = 0;
+		virtual spSemaphore createSemaphore() = 0;
 };
 
 typedef std::shared_ptr<Device> spDevice;
