@@ -16,6 +16,8 @@ class FramebufferVK : public Framebuffer {
 
 		void create(const int width, const int height, const spRenderPass& renderPass) final;
 		void create(const int width, const int height, const vk::RenderPass& renderPass);
+
+		vk::Framebuffer getVK();
 	protected:
 		vk::Framebuffer _framebuffer;
 };

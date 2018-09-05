@@ -8,6 +8,7 @@
 #include <api/device.hpp>
 #include <api/texture.hpp>
 #include "swapchain.hpp"
+#include "commandbuffer_vk.hpp"
 
 namespace mango::vulkan {
 
@@ -50,6 +51,7 @@ class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
 		spRenderPass getScreenRenderPass() final;
 
 		spFramebuffer createFramebuffer() final;
+		spCommandBuffer createCommandBuffer() final;
 private:
 		void create(const vk::Instance& instance,const vk::SurfaceKHR& surface,const glm::ivec2& size);
 

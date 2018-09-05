@@ -32,6 +32,10 @@ void FramebufferVK::create(const int width, const int height, const vk::RenderPa
 	_framebuffer = device_vk->getDevice().createFramebuffer(framebufferInfo);
 }
 
+vk::Framebuffer FramebufferVK::getVK(){
+	return _framebuffer;
+}
+
 FramebufferVK::FramebufferVK(const mango::spDevice &device) : Framebuffer(device) {
 
 }

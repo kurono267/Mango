@@ -207,3 +207,7 @@ void PipelineVK::create() {
 
 	_pipeline = _vk_device.createGraphicsPipelines(nullptr,pipelineInfo)[0];
 }
+
+vk::Pipeline PipelineVK::getVK(){
+	return _pipeline;
+}

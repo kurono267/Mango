@@ -46,6 +46,8 @@ class PipelineVK : public mango::Pipeline {
 		void create() final;
 
 		static spPipeline make(const spDevice& device,const RenderPattern & rp){ return std::make_shared<PipelineVK>(device,rp); }
+
+		vk::Pipeline getVK();
 	private:
 		spDeviceVK _device;
 		vk::Device _vk_device;

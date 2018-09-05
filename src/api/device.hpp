@@ -17,12 +17,14 @@ class RenderPattern;
 class Buffer;
 class Texture;
 class Framebuffer;
+class CommandBuffer;
 
 typedef std::shared_ptr<RenderPass> spRenderPass;
 typedef std::shared_ptr<Pipeline> spPipeline;
 typedef std::shared_ptr<Buffer> spBuffer;
 typedef std::shared_ptr<Texture> spTexture;
 typedef std::shared_ptr<Framebuffer> spFramebuffer;
+typedef std::shared_ptr<CommandBuffer> spCommandBuffer;
 
 class Device {
 	public:
@@ -44,6 +46,7 @@ class Device {
 		virtual spRenderPass getScreenRenderPass() = 0;
 
 		virtual spFramebuffer createFramebuffer() = 0;
+		virtual spCommandBuffer createCommandBuffer() = 0;
 };
 
 typedef std::shared_ptr<Device> spDevice;

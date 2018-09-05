@@ -23,19 +23,34 @@ class TestApp : public BaseApp {
 
 			RenderPattern rp;
 
-			spPipeline pipeline = device->createPipeline(rp);
-			pipeline->addShader(ShaderStage::Vertex,"glsl/test.vert");
-			pipeline->addShader(ShaderStage::Fragment,"glsl/test.frag");
+			_main = device->createPipeline(rp);
+			_main->addShader(ShaderStage::Vertex,"glsl/test.vert");
+			_main->addShader(ShaderStage::Fragment,"glsl/test.frag");
 
 			spRenderPass renderPass = device->getScreenRenderPass();
 
-			pipeline->setRenderPass(renderPass);
-			pipeline->create();
+			_main->setRenderPass(renderPass);
+			_main->create();
 
 			auto screenBuffers = device->getScreenbuffers();
 			for(auto screen : screenBuffers){
 				std::cout << screen->info() << std::endl;
 			}
+			_cmdScreen.resize(screenBuffers.size());
+			for(int i = 0;i<_cmdScreen.size();++i){
+				_cmdScreen[i] = device->createCommandBuffer();
+				_cmdScreen[i]->begin();
+
+				_cmdScreen[i]->setClearColor(0,glm::vec4(0.0f,1.0f,0.0f,1.0f));
+				_cmdScreen[i]->setClearDepthStencil(1,1.0f,0.0f);
+
+				_cmdScreen[i]->beginRenderPass(renderPass,screenBuffers[i],RenderArea(screenBuffers[i]->getSize(),glm::ivec2(0)));
+				_cmdScreen[i]->bindPipeline(_main);
+				_cmdScreen[i]->endRenderPass();
+
+				_cmdScreen[i]->end();
+			}
+
 
 			return true;
 		}
@@ -57,6 +72,9 @@ class TestApp : public BaseApp {
 		}
 	protected:
 		std::unique_ptr<Instance> _instance;
+
+		spPipeline _main;
+		std::vector<spCommandBuffer> _cmdScreen;
 };
 
 int main(){

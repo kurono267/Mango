@@ -228,6 +228,12 @@ mango::spFramebuffer DeviceVK::createFramebuffer(){
 	return std::make_shared<FramebufferVK>(shared_from_this());
 }
 
+mango::spCommandBuffer DeviceVK::createCommandBuffer(){
+	auto cmd = std::make_shared<CommandBufferVK>();
+	cmd->create(shared_from_this());
+	return cmd;
+}
+
 vk::Format supportedFormat(vk::PhysicalDevice _pDevice,const std::vector<vk::Format>& candidates, vk::ImageTiling tiling, vk::FormatFeatureFlags features){
 	for (vk::Format format : candidates) {
 		vk::FormatProperties props = _pDevice.getFormatProperties(format);
