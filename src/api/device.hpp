@@ -43,7 +43,7 @@ class Device {
 
 		virtual spRenderPass createRenderPass() = 0;
 		virtual spPipeline createPipeline(const RenderPattern& rp) = 0;
-		virtual spBuffer createBuffer(const BufferType& type,const size_t& size,void* data = nullptr) = 0;
+		virtual spBuffer createBuffer(const BufferType& type,const MemoryType& memory,const size_t& size,void* data = nullptr) = 0;
 
 		virtual spTexture createTexture(int width,int height,
 					int miplevels, const Format& format,const TextureType& type, const void* data = nullptr) = 0;

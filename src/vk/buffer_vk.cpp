@@ -6,68 +6,77 @@
 
 using namespace mango::vulkan;
 
-void BufferVK::create(const spDeviceVK& device,const BufferType &type,const size_t &size,void* data) {
+void BufferVK::create(const spDevice& device,const BufferType &type,const MemoryType& memory,const size_t &size,void* data) {
 	_device = device;
-	createBuffer(size,
-		vk::BufferUsageFlagBits::eTransferSrc,
-		vk::MemoryPropertyFlagBits::eHostVisible |
-		vk::MemoryPropertyFlagBits::eHostCoherent,
-		_cpuBuffer,_cpuMemory);
-	if(data)set(data,size,_cpuMemory);
+	_size = size;
+	if(memory == MemoryType::HOST){
+		createBuffer(size,
+					 vk::BufferUsageFlagBits::eTransferSrc,
+					 vk::MemoryPropertyFlagBits::eHostVisible |
+					 vk::MemoryPropertyFlagBits::eHostCoherent,
+					 _buffer,_memory);
+		if(data)set(data,size,_memory);
+	} else if(memory == MemoryType::DEVICE){
+		vk::BufferUsageFlagBits gpuUsage;
+		switch (type){
+			case BufferType::Vertex:
+				gpuUsage = vk::BufferUsageFlagBits::eVertexBuffer;
+				break;
+			case BufferType::Index:
+				gpuUsage = vk::BufferUsageFlagBits::eIndexBuffer;
+				break;
+			case BufferType::Uniform:
+				gpuUsage = vk::BufferUsageFlagBits::eUniformBuffer;
+				break;
+			case BufferType::Storage:
+				gpuUsage = vk::BufferUsageFlagBits::eStorageBuffer;
+				break;
+		}
 
-	vk::BufferUsageFlagBits gpuUsage;
-	switch (type){
-		case BufferType::Vertex:
-		gpuUsage = vk::BufferUsageFlagBits::eVertexBuffer;
-		break;
-		case BufferType::Index:
-		gpuUsage = vk::BufferUsageFlagBits::eIndexBuffer;
-		break;
-		case BufferType::Uniform:
-		gpuUsage = vk::BufferUsageFlagBits::eUniformBuffer;
-		break;
-		case BufferType::Storage:
-		gpuUsage = vk::BufferUsageFlagBits::eStorageBuffer;
-		break;
+		createBuffer(size,
+					 vk::BufferUsageFlagBits::eTransferDst | gpuUsage,
+					 vk::MemoryPropertyFlagBits::eDeviceLocal,
+					 _buffer,_memory);
 	}
+}
 
-	createBuffer(size,
-		vk::BufferUsageFlagBits::eTransferDst | gpuUsage,
-		vk::MemoryPropertyFlagBits::eDeviceLocal,
-		_gpuBuffer,_gpuMemory);
-
-	if(data)copy(_cpuBuffer,_gpuBuffer,size);
+void BufferVK::copy(const spBuffer& dst){
+	auto vkBuffer = std::dynamic_pointer_cast<BufferVK>(dst);
+	copy(_buffer,vkBuffer->_buffer,_size);
 }
 
 void BufferVK::set(const void* src,const size_t& size,const vk::DeviceMemory& dst){
-	void* map_data = _device->getDevice().mapMemory(dst,0,(vk::DeviceSize)size);
+	auto vkDeivce = std::dynamic_pointer_cast<DeviceVK>(_device)->getDevice();
+	void* map_data = vkDeivce.mapMemory(dst,0,(vk::DeviceSize)size);
 		memcpy(map_data,src,size);
-	_device->getDevice().unmapMemory(dst);
+	vkDeivce.unmapMemory(dst);
 }
 
 void BufferVK::set(const size_t &size, const void *data) {
-	set(data,size,_cpuMemory);
-	copy(_cpuBuffer,_gpuBuffer,size);
+	set(data,size,_memory);
 }
 
 void BufferVK::createBuffer(vk::DeviceSize size,vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties,
 							vk::Buffer& buffer,vk::DeviceMemory& memory){
 	vk::BufferCreateInfo bufferInfo(vk::BufferCreateFlags(),size,usage);
+	auto impDevice = std::dynamic_pointer_cast<DeviceVK>(_device);
+	auto vkDeivce = impDevice->getDevice();
 
-    buffer = _device->getDevice().createBuffer(bufferInfo);
+    buffer = vkDeivce.createBuffer(bufferInfo);
 
-    vk::MemoryRequirements memRequirements = _device->getDevice().getBufferMemoryRequirements(buffer);
+    vk::MemoryRequirements memRequirements = vkDeivce.getBufferMemoryRequirements(buffer);
 
-    vk::MemoryAllocateInfo allocInfo(memRequirements.size,findMemoryType(_device->getPhysicalDevice(), memRequirements.memoryTypeBits, properties));
-    memory = _device->getDevice().allocateMemory(allocInfo);
+    vk::MemoryAllocateInfo allocInfo(memRequirements.size,findMemoryType(impDevice->getPhysicalDevice(), memRequirements.memoryTypeBits, properties));
+    memory = vkDeivce.allocateMemory(allocInfo);
 
-    _device->getDevice().bindBufferMemory(buffer,memory, 0);
+	vkDeivce.bindBufferMemory(buffer,memory, 0);
 }
 
 void BufferVK::copy(const vk::Buffer& src,const vk::Buffer& dst,const size_t& size){
-	auto commands = beginSingle(_device->getDevice(),_device->getCommandPool());
+	auto impDevice = std::dynamic_pointer_cast<DeviceVK>(_device);
+	auto commands = beginSingle(impDevice->getDevice(),impDevice->getCommandPool());
 		commands.copyBuffer(src,dst,vk::BufferCopy(0,0,size));
-	endSingle(_device->getDevice(),_device->getGraphicsQueue(),_device->getCommandPool(),commands);
+	endSingle(impDevice->getDevice(),impDevice->getGraphicsQueue(),impDevice->getCommandPool(),commands);
 }
 
 BufferVK::~BufferVK() {
@@ -75,7 +84,7 @@ BufferVK::~BufferVK() {
 }
 
 vk::Buffer BufferVK::getVKBuffer() {
-	return _gpuBuffer;
+	return _buffer;
 }
 
 uint32_t mango::vulkan::findMemoryType(vk::PhysicalDevice pDevice,uint32_t typeFilter, vk::MemoryPropertyFlags properties) {

@@ -9,8 +9,13 @@ using namespace mango;
 
 void Mesh::create(const mango::spDevice &device, const std::vector<mango::sVertex> &vertices,
                          const std::vector<uint32_t> &indices) {
-	_vb = device->createBuffer(BufferType::Vertex,vertices.size()*sizeof(sVertex), (void*)vertices.data());
-	_ib = device->createBuffer(BufferType::Index,indices.size()*sizeof(uint32_t),(void*)indices.data());
+    _vbHost = device->createBuffer(BufferType::Vertex,MemoryType::HOST,vertices.size()*sizeof(sVertex),(void*)vertices.data());
+    _vbDevice = device->createBuffer(BufferType::Vertex,MemoryType::DEVICE,vertices.size()*sizeof(sVertex));
+    _vbHost->copy(_vbDevice);
+
+	_ibHost = device->createBuffer(BufferType::Index,MemoryType::HOST,indices.size()*sizeof(uint32_t),(void*)indices.data());
+    _ibDevice = device->createBuffer(BufferType::Index,MemoryType::DEVICE,indices.size()*sizeof(uint32_t));
+    _ibHost->copy(_ibDevice);
 	_indexCount = static_cast<uint32_t>(indices.size());
 }
 
@@ -22,8 +27,8 @@ sVertex::sVertex(const float& px,const float& py,const float& pz,const float& u,
 {}
 
 void Mesh::draw(const spCommandBuffer& cmd){
-	cmd->bindVertexBuffer(_vb);
-	cmd->bindIndexBuffer(_ib);
+	cmd->bindVertexBuffer(_vbDevice);
+	cmd->bindIndexBuffer(_ibDevice);
 	cmd->drawIndexed(_indexCount);
 }
 

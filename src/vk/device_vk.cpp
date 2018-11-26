@@ -211,9 +211,9 @@ mango::spPipeline DeviceVK::createPipeline(const RenderPattern& rp){
 	return PipelineVK::make(shared_from_this(),rp);
 }
 
-mango::spBuffer DeviceVK::createBuffer(const BufferType& type,const size_t& size,void* data){
+mango::spBuffer DeviceVK::createBuffer(const BufferType& type,const MemoryType& memory,const size_t& size,void* data){
 	auto buffer = std::make_shared<BufferVK>();
-	buffer->create(shared_from_this(),type,size,data);
+	buffer->create(shared_from_this(),type,memory,size,data);
 	return buffer;
 }
 

@@ -61,8 +61,10 @@ class Mesh {
 		void create(const spDevice& device, const std::vector<sVertex>& vertices,const std::vector<uint32_t>& indices);
 		void draw(const spCommandBuffer& cmd);
 	protected:
-		spBuffer _vb;
-		spBuffer _ib;
+		spBuffer _vbHost;
+		spBuffer _vbDevice;
+		spBuffer _ibHost;
+		spBuffer _ibDevice;
 		uint32_t _indexCount;
 };
 

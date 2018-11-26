@@ -16,8 +16,10 @@ class BufferVK : public Buffer {
 		BufferVK() = default;
 		~BufferVK() final;
 
-		void create(const spDeviceVK& device,const BufferType &type,const size_t &size,void* data = nullptr);
+		void create(const spDevice& device,const BufferType &type,const MemoryType& memory,const size_t &size,void* data = nullptr);
 		void set(const size_t &size, const void *data) override;
+
+		void copy(const spBuffer& dst) final;
 
 		vk::Buffer getVKBuffer();
 	protected:
@@ -27,12 +29,12 @@ class BufferVK : public Buffer {
 		void copy(const vk::Buffer& src,const vk::Buffer& dst,const size_t& size);
 		void set(const void* data,const size_t& size,const vk::DeviceMemory& dst);
 
-		vk::DeviceMemory _cpuMemory;
-		vk::Buffer _cpuBuffer;
-		vk::DeviceMemory _gpuMemory;
-		vk::Buffer _gpuBuffer;
+		vk::DeviceMemory _memory;
+		vk::Buffer _buffer;
 
-		spDeviceVK _device;
+		spDevice _device;
+
+		size_t _size;
 };
 
 uint32_t findMemoryType(vk::PhysicalDevice pDevice,uint32_t typeFilter, vk::MemoryPropertyFlags properties);
