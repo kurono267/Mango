@@ -32,9 +32,9 @@ class Texture : public std::enable_shared_from_this<Texture> {
 		Texture() = default;
 		virtual ~Texture() = default;
 
-		virtual void create(const spDevice& device,const int width,const int height,
-							const int miplevels, const Format& format,const TextureType& type, const void* data = nullptr) = 0;
-		virtual spTextureView createTextureView(const ComponentSwizzle& swizzle = ComponentSwizzle(),const int minLevel = 0,const int maxLevel = -1) = 0;
+		virtual void create(const spDevice& device,int width,int height,
+							int miplevels, const Format& format,const TextureType& type, const void* data = nullptr) = 0;
+		virtual spTextureView createTextureView(const ComponentSwizzle& swizzle = ComponentSwizzle(),int minLevel = 0,int maxLevel = -1) = 0;
 
 		inline int width() { return _width; }
 		inline int height() { return _height; }

@@ -28,7 +28,7 @@ const std::vector<const char*> validationLayers = {
 class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
 	friend class InstanceVK;
 	public:
-		DeviceVK();
+		DeviceVK() = default;
 		~DeviceVK() final;
 
 		std::string device_name() final;
@@ -40,9 +40,9 @@ class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
 
 		spRenderPass createRenderPass() final;
 		spPipeline createPipeline(const RenderPattern& rp) final;
-		spBuffer createBuffer(const BufferType& type,const size_t& size,void* data = nullptr) final;
+		spBuffer createBuffer(const BufferType& type,const size_t& size,void* data) final;
 
-		spTexture createTexture(const int width, const int height, const int miplevels,
+		spTexture createTexture(int width, int height, int miplevels,
 								const Format &format, const TextureType &type, const void *data) final;
 
 		Format getDepthFormat() final;
@@ -54,10 +54,10 @@ class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
 		spCommandBuffer createCommandBuffer() final;
 		spSemaphore createSemaphore() final;
 
-		void submit(const spCommandBuffer cmd, const spSemaphore waitForIt, const spSemaphore result);
-		void present(const uint32_t screen, const spSemaphore signal);
+		void submit(const spCommandBuffer& cmd, const spSemaphore& waitForIt, const spSemaphore& result) final;
+		void present(uint32_t screen, const spSemaphore& signal) final;
 
-		uint32_t nextScreen(const spSemaphore signal);
+		uint32_t nextScreen(const spSemaphore& signal);
 private:
 		void create(const vk::Instance& instance,const vk::SurfaceKHR& surface,const glm::ivec2& size);
 

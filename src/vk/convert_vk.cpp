@@ -245,7 +245,7 @@ vk::ColorComponentFlags mango::vulkan::colorComponentFlagsVK(const std::vector<m
 }
 
 vk::PipelineColorBlendStateCreateInfo mango::vulkan::blendStateVK(const std::vector<mango::BlendAttachmentState>& _mango){
-	vk::PipelineColorBlendAttachmentState* blendAttachments = new vk::PipelineColorBlendAttachmentState[_mango.size()];
+	auto blendAttachments = new vk::PipelineColorBlendAttachmentState[_mango.size()];
 	for(int i = 0;i<_mango.size();++i){
 		blendAttachments[i] = vk::PipelineColorBlendAttachmentState(
 				static_cast<vk::Bool32>(_mango[i].enable),

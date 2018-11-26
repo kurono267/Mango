@@ -14,7 +14,7 @@ namespace mango::vulkan {
 class BufferVK : public Buffer {
 	public:
 		BufferVK() = default;
-		virtual ~BufferVK();
+		~BufferVK() final;
 
 		void create(const spDeviceVK& device,const BufferType &type,const size_t &size,void* data = nullptr);
 		void set(const size_t &size, const void *data) override;

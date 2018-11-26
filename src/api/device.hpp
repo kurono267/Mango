@@ -45,8 +45,8 @@ class Device {
 		virtual spPipeline createPipeline(const RenderPattern& rp) = 0;
 		virtual spBuffer createBuffer(const BufferType& type,const size_t& size,void* data = nullptr) = 0;
 
-		virtual spTexture createTexture(const int width,const int height,
-							const int miplevels, const Format& format,const TextureType& type, const void* data = nullptr) = 0;
+		virtual spTexture createTexture(int width,int height,
+					int miplevels, const Format& format,const TextureType& type, const void* data = nullptr) = 0;
 
 		virtual Format getDepthFormat() = 0;
 
@@ -57,10 +57,10 @@ class Device {
 		virtual spCommandBuffer createCommandBuffer() = 0;
 		virtual spSemaphore createSemaphore() = 0;
 
-		virtual void submit(const spCommandBuffer cmd, const spSemaphore waitForIt, const spSemaphore result) = 0;
-		virtual void present(const uint32_t screen, const spSemaphore signal) = 0;
+		virtual void submit(const spCommandBuffer& cmd, const spSemaphore& waitForIt, const spSemaphore& result) = 0;
+		virtual void present(uint32_t screen, const spSemaphore& signal) = 0;
 
-		virtual uint32_t nextScreen(const spSemaphore signal) = 0;
+		virtual uint32_t nextScreen(const spSemaphore& signal) = 0;
 };
 
 typedef std::shared_ptr<Device> spDevice;

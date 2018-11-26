@@ -28,7 +28,7 @@ std::string Framebuffer::info(){
 	std::stringstream stream;
 	stream << "Framebuffer Info" << std::endl;
 	stream << "Attachmenets " << _attachments.size() << std::endl;
-	for(auto a : _attachments){
+	for(const auto& a : _attachments){
 		stream << "width " << a->getTexture()->width() << " height " << a->getTexture()->height() << to_string(a->getTexture()->format()) << std::endl;
 	}
 	return stream.str();

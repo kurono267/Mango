@@ -12,6 +12,8 @@
 
 namespace mango {
 
+typedef unsigned int uint;
+
 struct MultisamplingState {
 	SampleCount samples;
 	bool sampleShading;
@@ -126,7 +128,7 @@ typedef std::shared_ptr<RenderPass> spRenderPass;
 
 class Pipeline {
 	public:
-		Pipeline(const RenderPattern& rp){_renderPattern = rp;}
+		explicit Pipeline(const RenderPattern& rp){_renderPattern = rp;}
 		virtual ~Pipeline() = default;
 
 		virtual void addShader(const ShaderStage& type,const std::string& filename) = 0; // Bascily import glsl

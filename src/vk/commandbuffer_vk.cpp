@@ -64,7 +64,7 @@ void CommandBufferVK::end() {
 	_cmd.end();
 }
 
-void CommandBufferVK::create(const spDeviceVK device){
+void CommandBufferVK::create(const spDeviceVK& device){
 	vk::CommandBufferAllocateInfo allocInfo(device->getCommandPool(),vk::CommandBufferLevel::ePrimary, 1);
 	auto cmds = device->getDevice().allocateCommandBuffers(allocInfo);
 	_cmd = cmds[0];

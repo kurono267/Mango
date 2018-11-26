@@ -12,8 +12,8 @@ typedef std::shared_ptr<MainApp> spMainApp;
 
 class BaseApp {
 	public:
-		BaseApp(spMainApp app) : mainApp(app){}
-		virtual ~BaseApp(){}
+		explicit BaseApp(const spMainApp& app) : mainApp(app){}
+		virtual ~BaseApp() = default;
 
 		virtual bool init() = 0;
 		virtual bool draw() = 0;

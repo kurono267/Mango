@@ -59,7 +59,6 @@ QueueFamilyIndices queueFamilies(const vk::PhysicalDevice& device,const vk::Surf
 	return indices;
 }
 
-DeviceVK::DeviceVK(){}
 DeviceVK::~DeviceVK(){
 	_swapchain.release();
 	std::cout << "Device Destructor" << std::endl;
@@ -71,13 +70,13 @@ void DeviceVK::create(const vk::Instance& instance,const vk::SurfaceKHR& surface
 	createLogicalDevice();
 
 	auto queueFamily = queueFamilies(_pDevice,_surface);
-	uint32_t familyIndices[2] = {queueFamily.graphicsFamily,queueFamily.presentFamily};
+	uint32_t familyIndices[2] = {(uint32_t)queueFamily.graphicsFamily,(uint32_t)queueFamily.presentFamily};
 
 	_swapchain.create(_pDevice,_device,_surface,size,familyIndices);
 
 	vk::CommandPoolCreateInfo poolInfo(vk::CommandPoolCreateFlagBits::eResetCommandBuffer,queueFamily.graphicsFamily);
 	_pool = _device.createCommandPool(poolInfo);
-	vk::CommandPoolCreateInfo poolComputeInfo(vk::CommandPoolCreateFlags(),queueFamily.computeFamily);
+	//vk::CommandPoolCreateInfo poolComputeInfo(vk::CommandPoolCreateFlags(),queueFamily.computeFamily);
 	//_poolCompute = _device.createCommandPool(poolComputeInfo);
 
 	createScreen();
@@ -86,7 +85,7 @@ void DeviceVK::create(const vk::Instance& instance,const vk::SurfaceKHR& surface
 void DeviceVK::pickPhysicalDevice(){
 	auto devices = _instance.enumeratePhysicalDevices();
 
-	if (devices.size() == 0) {
+	if (devices.empty()) {
 		throw std::runtime_error("failed to find GPUs with Vulkan support!");
 	}
 
@@ -115,7 +114,7 @@ bool checkDeviceExtensionSupport(vk::PhysicalDevice device) {
 
 	if(!requiredExtensions.empty()){
 		std::cout << "This extensions doesn't support:" << std::endl;
-		for(auto ext : requiredExtensions){
+		for(const auto& ext : requiredExtensions){
 			std::cout << ext << std::endl;
 		}
 	}
@@ -217,7 +216,7 @@ mango::spRenderPass DeviceVK::createRenderPass(){
 	return std::make_shared<RenderPassVK>();
 }
 
-mango::spTexture DeviceVK::createTexture(const int width, const int height, const int miplevels, const mango::Format &format,
+mango::spTexture DeviceVK::createTexture(int width, int height, int miplevels, const mango::Format &format,
                                   const TextureType &type, const void *data) {
 	auto texture = std::make_shared<TextureVK>();
 	texture->create(shared_from_this(),width,height,miplevels,format,type,data);
@@ -234,7 +233,7 @@ mango::spCommandBuffer DeviceVK::createCommandBuffer(){
 	return cmd;
 }
 
-vk::Format supportedFormat(vk::PhysicalDevice _pDevice,const std::vector<vk::Format>& candidates, vk::ImageTiling tiling, vk::FormatFeatureFlags features){
+vk::Format supportedFormat(vk::PhysicalDevice _pDevice,const std::vector<vk::Format>& candidates, vk::ImageTiling tiling,const vk::FormatFeatureFlags& features){
 	for (vk::Format format : candidates) {
 		vk::FormatProperties props = _pDevice.getFormatProperties(format);
 
@@ -266,10 +265,10 @@ void DeviceVK::createScreen(){
 	auto imageViews = _swapchain.getImageViews();
 	auto extent = _swapchain.getExtent();
 
-	for(int i = 0;i<imageViews.size();++i){
+	for(const auto& view : imageViews){
 		spFramebufferVK framebuffer = std::dynamic_pointer_cast<FramebufferVK>(createFramebuffer());
 
-		framebuffer->attachment(imageViews[i]);
+		framebuffer->attachment(view);
 		framebuffer->depth(extent.width,extent.height);
 		framebuffer->create(extent.width,extent.height,_screenRenderPass->getVK());
 
@@ -291,7 +290,7 @@ mango::spSemaphore DeviceVK::createSemaphore(){
 	return semaphore;
 }
 
-void DeviceVK::submit(const mango::spCommandBuffer cmd, const mango::spSemaphore waitForIt, const mango::spSemaphore result){
+void DeviceVK::submit(const mango::spCommandBuffer& cmd, const mango::spSemaphore& waitForIt, const mango::spSemaphore& result){
 	auto cmd_vk = std::dynamic_pointer_cast<CommandBufferVK>(cmd)->getVK();
 
 	auto waitVK = std::dynamic_pointer_cast<SemaphoreVK>(waitForIt);
@@ -311,7 +310,7 @@ void DeviceVK::submit(const mango::spCommandBuffer cmd, const mango::spSemaphore
 	_graphicsQueue.submit(submitInfo, nullptr);
 }
 
-void DeviceVK::present(const uint32_t screen, const mango::spSemaphore signal){
+void DeviceVK::present(uint32_t screen, const mango::spSemaphore& signal){
 	vk::SwapchainKHR swapChains[] = {_swapchain.getSwapchain()};
 
 	vk::Semaphore signalSemaphores[] = {std::dynamic_pointer_cast<SemaphoreVK>(signal)->getVK()};
@@ -325,7 +324,7 @@ void DeviceVK::present(const uint32_t screen, const mango::spSemaphore signal){
 	_presentQueue.presentKHR(presentInfo);
 }
 
-uint32_t DeviceVK::nextScreen(const mango::spSemaphore signal){
+uint32_t DeviceVK::nextScreen(const mango::spSemaphore& signal){
 	vk::Semaphore signalSemaphores = std::dynamic_pointer_cast<SemaphoreVK>(signal)->getVK();
 
 	return _device.acquireNextImageKHR(_swapchain.getSwapchain(),std::numeric_limits<uint64_t>::max(),signalSemaphores,nullptr).value;

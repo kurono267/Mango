@@ -7,6 +7,7 @@
 
 #include "../api/commandbuffer.hpp"
 #include "default.hpp"
+#include <unordered_map>
 
 namespace mango::vulkan {
 
@@ -15,8 +16,8 @@ typedef std::shared_ptr<DeviceVK> spDeviceVK;
 
 class CommandBufferVK : public CommandBuffer {
 	public:
-		void setClearColor(const int attachment, const glm::vec4 &color) final;
-		void setClearDepthStencil(const int attachment, const float depth, const float stencil) final;
+		void setClearColor(int attachment, const glm::vec4 &color) final;
+		void setClearDepthStencil(int attachment, float depth, float stencil) final;
 
 		void begin() final;
 		void beginRenderPass(const spRenderPass &renderPass, const spFramebuffer &framebuffer, const RenderArea &area) final;
@@ -25,7 +26,7 @@ class CommandBufferVK : public CommandBuffer {
 		void endRenderPass() final;
 		void end() final;
 
-		void create(const spDeviceVK device);
+		void create(const spDeviceVK& device);
 
 		vk::CommandBuffer getVK();
 	protected:

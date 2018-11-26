@@ -9,10 +9,10 @@ using namespace mango;
 
 class TestApp : public BaseApp {
 	public:
-		TestApp(spMainApp app) : BaseApp(app) {}
-		~TestApp() final {}
+		explicit TestApp(const spMainApp& app) : BaseApp(app) {}
+		~TestApp() final = default;
 
-		bool init(){
+		bool init() final {
 			auto mainWnd = mainApp.lock();
 
 			_instance = std::make_unique<vulkan::InstanceVK>();
@@ -24,8 +24,8 @@ class TestApp : public BaseApp {
 			RenderPattern rp;
 
 			_main = device->createPipeline(rp);
-			_main->addShader(ShaderStage::Vertex,"glsl/test.vert");
-			_main->addShader(ShaderStage::Fragment,"glsl/test.frag");
+			_main->addShader(ShaderStage::Vertex,"../glsl/test.vert");
+			_main->addShader(ShaderStage::Fragment,"../glsl/test.frag");
 
 			spRenderPass renderPass = device->getScreenRenderPass();
 
@@ -33,7 +33,7 @@ class TestApp : public BaseApp {
 			_main->create();
 
 			auto screenBuffers = device->getScreenbuffers();
-			for(auto screen : screenBuffers){
+			for(const auto& screen : screenBuffers){
 				std::cout << screen->info() << std::endl;
 			}
 			_cmdScreen.resize(screenBuffers.size());
@@ -56,7 +56,7 @@ class TestApp : public BaseApp {
 
 			return true;
 		}
-		bool draw(){
+		bool draw() final {
 			auto device = _instance->device();
 			auto imageIndex = device->nextScreen(_screenAvailable);
 
@@ -65,17 +65,17 @@ class TestApp : public BaseApp {
 
 			return true;
 		}
-		bool update(){
+		bool update() final {
 			return true;
 		}
 		
-		bool onKey(const GLFWKey& key){
+		bool onKey(const GLFWKey& key) final {
 			return true;
 		}
-		bool onMouse(const GLFWMouse& mouse){
+		bool onMouse(const GLFWMouse& mouse) final {
 			return true;
 		}
-		bool onExit(){
+		bool onExit() final {
 			return true;
 		}
 	protected:

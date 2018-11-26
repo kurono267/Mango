@@ -18,7 +18,6 @@ class InstanceVK : public Instance {
 		void init(const std::string& title, GLFWwindow* window,const glm::ivec2& size) final;
 		spDevice device() final;
 	protected:
-		void initVulkan();
 		void createInstance();
 
 		// Validation layers

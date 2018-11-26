@@ -22,8 +22,8 @@ class CommandBuffer {
 		CommandBuffer() = default;
 		virtual ~CommandBuffer() = default;
 
-		virtual void setClearColor(const int attachment, const glm::vec4& color) = 0;
-		virtual void setClearDepthStencil(const int attachment, const float depth = 1.0f,const float stencil = 0.0f) = 0;
+		virtual void setClearColor(int attachment, const glm::vec4& color) = 0;
+		virtual void setClearDepthStencil(int attachment, float depth = 1.0f,float stencil = 0.0f) = 0;
 
 		virtual void begin() = 0;
 		virtual void beginRenderPass(const spRenderPass& renderPass, const spFramebuffer& framebuffer, const RenderArea& area) = 0;

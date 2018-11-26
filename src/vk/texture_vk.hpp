@@ -14,11 +14,11 @@ namespace mango::vulkan {
 class TextureVK : public Texture {
 	public:
 		TextureVK() = default;
-		virtual ~TextureVK();
+		~TextureVK() final;
 
-		void create(const spDevice& device,const int width, const int height,const int miplevels,const Format& format, const TextureType &type, const void *data) override;
-		void create(const vk::Device& device,const int width,const int height,const int miplevels,const Format& format,const TextureType &type,const vk::Image& image);
-		spTextureView createTextureView(const ComponentSwizzle& swizzle = ComponentSwizzle(),const int minLevel = 0,const int maxLevel = -1);
+		void create(const spDevice& device,int width, int height,int miplevels,const Format& format, const TextureType &type, const void *data) override;
+		void create(const vk::Device& device,int width,int height,int miplevels,const Format& format,const TextureType &type,const vk::Image& image);
+		spTextureView createTextureView(const ComponentSwizzle& swizzle = ComponentSwizzle(),int minLevel = 0,int maxLevel = -1) override;
 	protected:
 		vk::Device _vk_device;
 		vk::Image _image;
@@ -28,14 +28,14 @@ class TextureVK : public Texture {
 class TextureViewVK : public TextureView {
 	friend class TextureVK;
 	public:
-		TextureViewVK() : _isInit(false) {}
+		TextureViewVK() = default;
 		TextureViewVK(const spTexture& texture) : mango::TextureView(texture) {}
-		virtual ~TextureViewVK();
+		~TextureViewVK() final;
 
 		vk::ImageView getView();
 	private:
 		vk::ImageView _view;
-		bool _isInit;
+		bool _isInit = false;
 };
 
 typedef std::shared_ptr<TextureVK> spTextureVK;
