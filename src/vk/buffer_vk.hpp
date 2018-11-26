@@ -18,6 +18,8 @@ class BufferVK : public Buffer {
 
 		void create(const spDeviceVK& device,const BufferType &type,const size_t &size,void* data = nullptr);
 		void set(const size_t &size, const void *data) override;
+
+		vk::Buffer getVKBuffer();
 	protected:
 		void createBuffer(vk::DeviceSize size,vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties,
 							vk::Buffer& buffer,vk::DeviceMemory& memory);

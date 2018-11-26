@@ -59,10 +59,16 @@ class Mesh {
 		virtual ~Mesh() = default;
 
 		void create(const spDevice& device, const std::vector<sVertex>& vertices,const std::vector<uint32_t>& indices);
+		void draw(const spCommandBuffer& cmd);
 	protected:
 		spBuffer _vb;
 		spBuffer _ib;
+		uint32_t _indexCount;
 };
+
+typedef std::shared_ptr<Mesh> spMesh;
+
+spMesh createQuad(const mango::spDevice &device);
 
 };
 

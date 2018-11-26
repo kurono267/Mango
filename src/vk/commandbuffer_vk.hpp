@@ -13,6 +13,8 @@ namespace mango::vulkan {
 
 class DeviceVK;
 typedef std::shared_ptr<DeviceVK> spDeviceVK;
+class BufferVK;
+typedef std::shared_ptr<BufferVK> spBufferVK;
 
 class CommandBufferVK : public CommandBuffer {
 	public:
@@ -23,8 +25,13 @@ class CommandBufferVK : public CommandBuffer {
 		void beginRenderPass(const spRenderPass &renderPass, const spFramebuffer &framebuffer, const RenderArea &area) final;
 		void bindPipeline(const spPipeline &pipeline) final;
 		void bindDescriptorSet(const spPipeline &pipeline) final;
+		void bindVertexBuffer(const spBuffer& buffer, uint32_t offset = 0) final;
+		void bindIndexBuffer(const spBuffer& buffer,uint32_t offset = 0) final;
+		void drawIndexed(uint32_t indexCount, uint32_t instanceCount = 1, uint32_t firstIndex = 0, int32_t vertexOffset = 0, uint32_t firstInstance = 0) final;
 		void endRenderPass() final;
 		void end() final;
+
+		void setViewport(const glm::ivec2& size, const glm::ivec2& offset = glm::ivec2(0)) final;
 
 		void create(const spDeviceVK& device);
 

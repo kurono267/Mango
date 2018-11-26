@@ -159,7 +159,7 @@ void PipelineVK::create() {
 	auto sVertexBindDesc = sVertex::bindingDesc();
 	auto sVertexAttrDesc = sVertex::attributes();
 
-	auto bindingDescription = vk::VertexInputBindingDescription(sVertexBindDesc.binding,sVertexBindDesc.binding);
+	auto bindingDescription = vk::VertexInputBindingDescription(sVertexBindDesc.binding,sVertexBindDesc.stride);
     std::vector<vk::VertexInputAttributeDescription> attributeDescriptions;
     for(auto attr : sVertexAttrDesc){
         attributeDescriptions.push_back(vk::VertexInputAttributeDescription(

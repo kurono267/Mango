@@ -4,6 +4,7 @@
 #include <vk/instance_vk.hpp>
 #include <vk/pipeline_vk.hpp>
 #include <vk/framebuffer_vk.hpp>
+#include <api/mesh.hpp>
 
 using namespace mango;
 
@@ -22,10 +23,14 @@ class TestApp : public BaseApp {
 			std::cout << device->device_name() << std::endl;
 
 			RenderPattern rp;
+			rp.viewport(Viewport(glm::vec2(0),mainWnd->wndSize()));
+			rp.scissor(glm::ivec2(0),mainWnd->wndSize());
 
 			_main = device->createPipeline(rp);
 			_main->addShader(ShaderStage::Vertex,"../glsl/test.vert");
 			_main->addShader(ShaderStage::Fragment,"../glsl/test.frag");
+
+			_quad = createQuad(device);
 
 			spRenderPass renderPass = device->getScreenRenderPass();
 
@@ -46,6 +51,7 @@ class TestApp : public BaseApp {
 
 				_cmdScreen[i]->beginRenderPass(renderPass,screenBuffers[i],RenderArea(screenBuffers[i]->getSize(),glm::ivec2(0)));
 				_cmdScreen[i]->bindPipeline(_main);
+				_quad->draw(_cmdScreen[i]);
 				_cmdScreen[i]->endRenderPass();
 
 				_cmdScreen[i]->end();
@@ -83,6 +89,7 @@ class TestApp : public BaseApp {
 
 		spPipeline _main;
 		std::vector<spCommandBuffer> _cmdScreen;
+		spMesh _quad;
 
 		spSemaphore _screenAvailable;
 		spSemaphore _renderFinish;

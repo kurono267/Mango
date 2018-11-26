@@ -74,6 +74,10 @@ BufferVK::~BufferVK() {
 
 }
 
+vk::Buffer BufferVK::getVKBuffer() {
+	return _gpuBuffer;
+}
+
 uint32_t mango::vulkan::findMemoryType(vk::PhysicalDevice pDevice,uint32_t typeFilter, vk::MemoryPropertyFlags properties) {
 	vk::PhysicalDeviceMemoryProperties memProperties = pDevice.getMemoryProperties();
 

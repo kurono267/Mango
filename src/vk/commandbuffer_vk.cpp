@@ -5,6 +5,7 @@
 #include "commandbuffer_vk.hpp"
 #include "framebuffer_vk.hpp"
 #include "pipeline_vk.hpp"
+#include "buffer_vk.hpp"
 
 namespace mango::vulkan {
 
@@ -56,12 +57,37 @@ void CommandBufferVK::bindDescriptorSet(const mango::spPipeline &pipeline) {
 
 }
 
+void CommandBufferVK::bindVertexBuffer(const spBuffer &buffer, uint32_t offset) {
+	auto bufferVK = std::dynamic_pointer_cast<BufferVK>(buffer);
+	vk::Buffer internal = bufferVK->getVKBuffer();
+
+	vk::DeviceSize vkOffset = offset;
+	_cmd.bindVertexBuffers(0,1,&internal,&vkOffset);
+}
+
+void CommandBufferVK::bindIndexBuffer(const spBuffer &buffer,uint32_t offset) {
+	auto bufferVK = std::dynamic_pointer_cast<BufferVK>(buffer);
+
+	_cmd.bindIndexBuffer(bufferVK->getVKBuffer(),offset,vk::IndexType::eUint32);
+}
+
+
+void CommandBufferVK::drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset,
+							 uint32_t firstInstance) {
+	_cmd.drawIndexed(indexCount,instanceCount,firstIndex,vertexOffset,firstInstance);
+}
+
 void CommandBufferVK::endRenderPass() {
 	_cmd.endRenderPass();
 }
 
 void CommandBufferVK::end() {
 	_cmd.end();
+}
+
+void CommandBufferVK::setViewport(const glm::ivec2& size, const glm::ivec2& offset){
+	vk::Viewport viewport(offset.x,offset.y,size.x,size.y);
+	_cmd.setViewport(0,1,&viewport);
 }
 
 void CommandBufferVK::create(const spDeviceVK& device){

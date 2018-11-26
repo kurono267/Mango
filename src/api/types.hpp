@@ -457,6 +457,11 @@ enum class BufferType {
 	Vertex
 };
 
+enum class MemoryType {
+	HOST,
+	DEVICE
+};
+
 enum class TextureType {
 	Input,
 	Output,
