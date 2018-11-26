@@ -61,6 +61,8 @@ class Device {
 		virtual void present(uint32_t screen, const spSemaphore& signal) = 0;
 
 		virtual uint32_t nextScreen(const spSemaphore& signal) = 0;
+
+		virtual void release() = 0;
 };
 
 typedef std::shared_ptr<Device> spDevice;

@@ -58,6 +58,8 @@ class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
 		void present(uint32_t screen, const spSemaphore& signal) final;
 
 		uint32_t nextScreen(const spSemaphore& signal);
+
+		void release();
 private:
 		void create(const vk::Instance& instance,const vk::SurfaceKHR& surface,const glm::ivec2& size);
 

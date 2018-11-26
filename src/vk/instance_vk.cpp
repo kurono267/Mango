@@ -16,6 +16,7 @@ InstanceVK::InstanceVK(){
 }
 
 InstanceVK::~InstanceVK(){
+	_device->release();
 	std::cout << "Instance Destructor" << std::endl;
 }
 

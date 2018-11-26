@@ -108,7 +108,8 @@ void Swapchain::createImageViews(const vk::Device& device){
 void Swapchain::release(){
 	std::cout << "Swapchain release" << std::endl;
 	/*for (uint i = 0; i < _imageViews.size(); ++i) {
-		_device.destroyImageView(_imageViews[i]);
+		auto view = std::dynamic_pointer_cast<TextureViewVK>(_imageViews[i]);
+		_device.destroyImageView(view->getView());
 	}
 	_device.destroySwapchainKHR(_swapchain);*/
 }
