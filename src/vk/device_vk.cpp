@@ -78,12 +78,12 @@ void DeviceVK::create(const vk::Instance& instance,const vk::SurfaceKHR& surface
 	auto queueFamily = queueFamilies(_pDevice,_surface);
 	uint32_t familyIndices[2] = {(uint32_t)queueFamily.graphicsFamily,(uint32_t)queueFamily.presentFamily};
 
-	_swapchain.create(_pDevice,_device,_surface,size,familyIndices);
-
 	vk::CommandPoolCreateInfo poolInfo(vk::CommandPoolCreateFlagBits::eResetCommandBuffer,queueFamily.graphicsFamily);
 	_pool = _device.createCommandPool(poolInfo);
 	//vk::CommandPoolCreateInfo poolComputeInfo(vk::CommandPoolCreateFlags(),queueFamily.computeFamily);
 	//_poolCompute = _device.createCommandPool(poolComputeInfo);
+
+	_swapchain.create(shared_from_this(),_surface,size,familyIndices);
 
 	createScreen();
 }
@@ -223,9 +223,9 @@ mango::spRenderPass DeviceVK::createRenderPass(){
 }
 
 mango::spTexture DeviceVK::createTexture(int width, int height, int miplevels, const mango::Format &format,
-                                  const TextureType &type, const void *data) {
+                                  const TextureType &type) {
 	auto texture = std::make_shared<TextureVK>();
-	texture->create(shared_from_this(),width,height,miplevels,format,type,data);
+	texture->create(shared_from_this(),width,height,miplevels,format,type);
 	return texture;
 }
 
@@ -276,6 +276,10 @@ void DeviceVK::createScreen(){
 
 		framebuffer->attachment(view);
 		framebuffer->depth(extent.width,extent.height);
+
+		auto depthTexture = std::dynamic_pointer_cast<TextureVK>(framebuffer->getDepthView()->getTexture());
+		depthTexture->transition(vk::ImageLayout::eDepthStencilAttachmentOptimal);
+
 		framebuffer->create(extent.width,extent.height,_screenRenderPass->getVK());
 
 		_screenbuffers.push_back(framebuffer);
@@ -337,7 +341,7 @@ uint32_t DeviceVK::nextScreen(const mango::spSemaphore& signal){
 }
 
 mango::spDescSet DeviceVK::createDescSet() {
-    spDescSet descSet = std::make_shared<DescSetVK>();
+    spDescSet descSet = std::make_shared<DescSetVK>(shared_from_this());
     return descSet;
 }
 

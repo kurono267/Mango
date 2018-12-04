@@ -20,7 +20,7 @@ public:
     DescSet() = default;
     virtual ~DescSet() = default;
 
-    virtual void create(const spDevice& device) = 0;
+    virtual void create() = 0;
 
     virtual void setUniformBuffer(const Uniform& buffer,size_t binding,const ShaderStage& stage) = 0;
     virtual void setTexture(const spTextureView& texture,const Sampler& sampler, size_t binding, const ShaderStage& stage) = 0;

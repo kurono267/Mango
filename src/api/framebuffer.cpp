@@ -19,6 +19,10 @@ void Framebuffer::depth(const int width, const int height) {
 	_attachments.push_back(_depthView);
 }
 
+spTextureView Framebuffer::getDepthView(){
+	return _depthView;
+}
+
 glm::ivec2 Framebuffer::getSize(const int attachment){
 	auto texture = _attachments[attachment]->getTexture();
 	return glm::ivec2(texture->width(),texture->height());

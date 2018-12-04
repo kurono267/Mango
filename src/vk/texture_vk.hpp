@@ -16,13 +16,22 @@ class TextureVK : public Texture {
 		TextureVK() = default;
 		~TextureVK() final;
 
-		void create(const spDevice& device,int width, int height,int miplevels,const Format& format, const TextureType &type, const void *data) override;
-		void create(const vk::Device& device,int width,int height,int miplevels,const Format& format,const TextureType &type,const vk::Image& image);
+		void create(const spDevice& device,int width, int height,int miplevels,const Format& format, const TextureType &type) override;
+	    void create(const spDevice& device,int width,int height,int miplevels,const Format& format,const TextureType &type,const vk::Image& image);
 		spTextureView createTextureView(const ComponentSwizzle& swizzle = ComponentSwizzle(),int minLevel = 0,int maxLevel = -1) override;
-	protected:
+
+	    void set(const spBuffer &buffer) override;
+
+	    void transition(const vk::ImageLayout& newLayout);
+
+        void setBuffer(const spBuffer& buffer, const glm::ivec2& size, const uint& mipLevel, const uint& layer, const uint& offsetBuffer);
+protected:
 		vk::Device _vk_device;
 		vk::Image _image;
 		vk::DeviceMemory _memory;
+		vk::CommandPool _pool;
+		vk::Queue _queue;
+		vk::ImageLayout _layout;
 };
 
 class TextureViewVK : public TextureView {

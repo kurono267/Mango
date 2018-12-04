@@ -45,7 +45,7 @@ class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
 	    spBuffer createBuffer(const BufferType& type,const MemoryType& memory,const size_t& size,void* data) final;
 
 		spTexture createTexture(int width, int height, int miplevels,
-								const Format &format, const TextureType &type, const void *data) final;
+								const Format &format, const TextureType &type) final;
 
 		Format getDepthFormat() final;
 

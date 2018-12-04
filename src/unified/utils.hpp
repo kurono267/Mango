@@ -2,8 +2,8 @@
 // Created by kurono267 on 2018-12-04.
 //
 
-#ifndef MANGO_UTILS_HPP
-#define MANGO_UTILS_HPP
+#ifndef MANGO_UNIFIED_UTILS_HPP
+#define MANGO_UNIFIED_UTILS_HPP
 
 #include "api/texture.hpp"
 

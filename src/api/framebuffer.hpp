@@ -21,6 +21,8 @@ class Framebuffer {
 
 		glm::ivec2 getSize(const int attachment = 0);
 
+		spTextureView getDepthView();
+
 		std::string info();
 
 		virtual void create(const int width,const int height,const spRenderPass& renderPass) = 0;

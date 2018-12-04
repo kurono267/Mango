@@ -25,9 +25,13 @@ class TestApp : public BaseApp {
 			glm::vec4 colorValue(0.5f,0.5f,1.0f,1.0f);
 			_color.create(device,sizeof(glm::vec4),&colorValue);
 
+            _texture = checkboardTexture(device,1280,720,100);
+            auto texView = _texture->createTextureView();
+
 			_descSet = device->createDescSet();
 			_descSet->setUniformBuffer(_color,0,ShaderStage::Fragment);
-            _descSet->create(device);
+			_descSet->setTexture(texView,Sampler(),1,ShaderStage::Fragment);
+            _descSet->create();
 
 			_main = device->createPipeline(rp);
 			_main->addShader(ShaderStage::Vertex,"../glsl/test.vert");

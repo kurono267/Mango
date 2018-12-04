@@ -454,7 +454,8 @@ enum class BufferType {
 	Uniform,
 	Storage,
 	Index,
-	Vertex
+	Vertex,
+	CPU
 };
 
 enum class MemoryType {

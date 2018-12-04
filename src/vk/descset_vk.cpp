@@ -4,16 +4,17 @@
 
 #include "descset_vk.hpp"
 #include "buffer_vk.hpp"
+#include "texture_vk.hpp"
 #include <set>
 
 namespace mango::vulkan {
 
-void DescSetVK::create(const spDevice &device){
+DescSetVK::DescSetVK(const spDevice &device) : _device(device) {}
+
+void DescSetVK::create(){
     // Create Decription Set Layout
     std::vector<vk::DescriptorSetLayoutBinding> layoutBinds;
     std::vector<vk::DescriptorPoolSize>         poolSizes;
-
-    _device = device;
 
     auto vk_device = std::dynamic_pointer_cast<DeviceVK>(_device)->getDevice();
 
@@ -77,7 +78,7 @@ void DescSetVK::setUniformBuffer(const Uniform &buffer, size_t binding, const Sh
 void DescSetVK::setTexture(const spTextureView &texture, const Sampler &sampler, size_t binding,
                            const ShaderStage &stage){
     auto internalTexture = std::dynamic_pointer_cast<TextureViewVK>(texture);
-    _samplerBinds.emplace_back(internalTexture->getView(),createSampler(_device,sampler),binding,shaderStageVK(stage),vk::DescriptorType::eInputAttachment,vk::ImageLayout::eShaderReadOnlyOptimal);
+    _samplerBinds.emplace_back(internalTexture->getView(),createSampler(_device,sampler),binding,shaderStageVK(stage),vk::DescriptorType::eCombinedImageSampler,vk::ImageLayout::eShaderReadOnlyOptimal);
 }
 
 void DescSetVK::release(spDevice device){
@@ -96,7 +97,7 @@ void DescSetVK::release(spDevice device){
     vk_device.destroyDescriptorPool(_descPool);
 }
 
-DescSetVK::UBOBinding::UBOBinding(const Uniform &_buffer, size_t _binding, const vk::ShaderStageFlags &_stage,
+    DescSetVK::UBOBinding::UBOBinding(const Uniform &_buffer, size_t _binding, const vk::ShaderStageFlags &_stage,
                                   const vk::DescriptorType &_descType)
   : buffer(_buffer),binding(_binding),stage(_stage),descType(_descType)
   {}

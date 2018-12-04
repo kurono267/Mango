@@ -13,10 +13,10 @@ namespace mango::vulkan {
 
 class DescSetVK : public mango::DescSet {
 public:
-    DescSetVK() = default;
+    DescSetVK(const spDevice& device);
     ~DescSetVK() override = default;
 
-    void create(const spDevice &device) override;
+    void create() override;
 
     void setUniformBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage) override;
 

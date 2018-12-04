@@ -21,7 +21,11 @@ spTexture checkboardTexture(spDevice device, uint32_t width, uint32_t height, ui
         }
     }
 
-    return device->createTexture(width,height,1,Format::R8G8B8A8Snorm,TextureType::Input,pixels);
+    spBuffer buffer = device->createBuffer(BufferType::CPU,MemoryType::HOST,width*height*sizeof(glm::vec4),pixels);
+
+    spTexture texture = device->createTexture(width,height,1,Format::R32G32B32A32Sfloat,TextureType::Input);
+    texture->set(buffer);
+    return texture;
 }
 
 }

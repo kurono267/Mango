@@ -49,7 +49,7 @@ class Device {
 		virtual spDescSet createDescSet() = 0;
 
 		virtual spTexture createTexture(int width,int height,
-					int miplevels, const Format& format,const TextureType& type, const void* data = nullptr) = 0;
+					int miplevels, const Format& format,const TextureType& type) = 0;
 
 		virtual Format getDepthFormat() = 0;
 

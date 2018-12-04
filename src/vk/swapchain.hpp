@@ -1,7 +1,12 @@
 #pragma once
 
 #include "default.hpp"
-#include "texture_vk.hpp"
+#include "api/texture.hpp"
+
+namespace mango {
+    class Device;
+    typedef std::shared_ptr<Device> spDevice;
+}
 
 namespace mango::vulkan {
 
@@ -16,7 +21,7 @@ class Swapchain {
 		Swapchain() = default;
 		~Swapchain() = default;
 
-		void create(const vk::PhysicalDevice& pDevice,const vk::Device& device,const vk::SurfaceKHR& surface,const glm::ivec2& size,const uint32_t queueFamilyIndices[2]);
+		void create(const spDevice& device,const vk::SurfaceKHR& surface,const glm::ivec2& size,const uint32_t queueFamilyIndices[2]);
 		void release();
 
 		vk::SwapchainKHR getSwapchain() const ;

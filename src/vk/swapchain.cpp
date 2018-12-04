@@ -1,5 +1,7 @@
 #include <iostream>
 #include "swapchain.hpp"
+#include "texture_vk.hpp"
+#include "device_vk.hpp"
 
 using namespace mango::vulkan;
 
@@ -40,11 +42,13 @@ vk::Extent2D chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities,con
 	}
 }
 
-void Swapchain::create(const vk::PhysicalDevice& pDevice,const vk::Device& device,
+void Swapchain::create(const spDevice& device,
 						const vk::SurfaceKHR& surface,const glm::ivec2& size,
 						const uint32_t queueFamilyIndices[2]){
-	_device = device;
-	SwapchainSupportDetails swapChainSupport = swapchainSupport(pDevice,surface);
+	auto vkDevice = std::dynamic_pointer_cast<DeviceVK>(device);
+
+	_device = vkDevice->getDevice();
+	SwapchainSupportDetails swapChainSupport = swapchainSupport(vkDevice->getPhysicalDevice(),surface);
 
 	vk::SurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
 	vk::PresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
@@ -82,11 +86,12 @@ void Swapchain::create(const vk::PhysicalDevice& pDevice,const vk::Device& devic
 
 	//createInfo.setOldSwapchain(SwapchainKHR());
 
-	_swapchain = device.createSwapchainKHR(createInfo);
-	auto imageVK = device.getSwapchainImagesKHR(_swapchain);
+	_swapchain = _device.createSwapchainKHR(createInfo);
+	auto imageVK = _device.getSwapchainImagesKHR(_swapchain);
 	for(auto i : imageVK){
 		auto tex = std::make_shared<TextureVK>();
 		tex->create(device,extent.width,extent.height,1,formatVK2Mango(surfaceFormat.format),TextureType::Output,i);
+		tex->transition(vk::ImageLayout::ePresentSrcKHR);
 		_imageViews.push_back(tex->createTextureView());
 	}
 	_imageFormat = surfaceFormat.format;

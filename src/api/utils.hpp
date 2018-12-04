@@ -18,6 +18,10 @@ std::string 	  readFile(const std::string& filename);
 
 std::string to_string(Format value);
 
+inline bool hasStencilComponent(Format format) {
+    return format == Format::D32SfloatS8Uint || format == Format::D24UnormS8Uint;
+}
+
 };
 
 #endif //MANGO_UTILS_HPP
