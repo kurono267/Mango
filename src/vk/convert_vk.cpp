@@ -854,3 +854,10 @@ vk::BorderColor mango::vulkan::borderColorVK(const mango::BorderColor &_mango) {
 			return vk::BorderColor::eIntOpaqueWhite;
 	}
 }
+
+vk::PipelineBindPoint mango::vulkan::pipelineBindPointVK(const mango::PipelineBindPoint &_mango) {
+	switch(_mango){
+		case PipelineBindPoint::Graphics:return vk::PipelineBindPoint::eGraphics;
+		case PipelineBindPoint::Compute:return vk::PipelineBindPoint::eCompute;
+	}
+}

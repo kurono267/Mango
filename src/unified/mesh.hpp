@@ -6,10 +6,10 @@
 #define MANGO_MESH_HPP
 
 #include <vector>
-#include "buffer.hpp"
-#include "default.hpp"
-#include "types.hpp"
-#include "device.hpp"
+#include "api/buffer.hpp"
+#include "api/default.hpp"
+#include "api/types.hpp"
+#include "api/device.hpp"
 
 namespace mango {
 

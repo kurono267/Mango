@@ -43,11 +43,15 @@ class PipelineVK : public mango::Pipeline {
 		void addShader(const ShaderStage& type,const std::string& filename) final; // Bascily import glsl
 		void setRenderPass(const std::shared_ptr<RenderPass>& rp) final;
 
-		void create() final;
+	    void setDescSet(const std::vector<spDescSet> &descSets) final;
+	    void setDescSet(const spDescSet &descSet) final;
+
+	    void create() final;
 
 		static spPipeline make(const spDevice& device,const RenderPattern & rp){ return std::make_shared<PipelineVK>(device,rp); }
 
 		vk::Pipeline getVK();
+		vk::PipelineLayout getLayout();
 	private:
 		spDeviceVK _device;
 		vk::Device _vk_device;

@@ -8,7 +8,7 @@
 #include <memory>
 #include "types.hpp"
 #include "texture.hpp"
-#include "uniform.hpp"
+#include "unified/uniform.hpp"
 
 namespace mango {
 
@@ -27,6 +27,8 @@ public:
 
     virtual void release(spDevice device) = 0;
 };
+
+typedef std::shared_ptr<DescSet> spDescSet;
 
 }
 

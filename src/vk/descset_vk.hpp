@@ -24,6 +24,9 @@ public:
                     const ShaderStage &stage) override;
 
     void release(spDevice device) override;
+
+    vk::DescriptorSet getSet(){return _descSet;}
+    vk::DescriptorSetLayout getLayout(){return _descLayout;}
 private:
     spDevice _device;
 

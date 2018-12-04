@@ -6,6 +6,7 @@
 #include "framebuffer_vk.hpp"
 #include "pipeline_vk.hpp"
 #include "buffer_vk.hpp"
+#include "descset_vk.hpp"
 
 namespace mango::vulkan {
 
@@ -53,10 +54,6 @@ void CommandBufferVK::bindPipeline(const mango::spPipeline &pipeline) {
 	_cmd.bindPipeline(vk::PipelineBindPoint::eGraphics,std::dynamic_pointer_cast<PipelineVK>(pipeline)->getVK());
 }
 
-void CommandBufferVK::bindDescriptorSet(const mango::spPipeline &pipeline) {
-
-}
-
 void CommandBufferVK::bindVertexBuffer(const spBuffer &buffer, uint32_t offset) {
 	auto bufferVK = std::dynamic_pointer_cast<BufferVK>(buffer);
 	vk::Buffer internal = bufferVK->getVKBuffer();
@@ -98,6 +95,25 @@ void CommandBufferVK::create(const spDeviceVK& device){
 
 vk::CommandBuffer CommandBufferVK::getVK(){
 	return _cmd;
+}
+
+void CommandBufferVK::bindDescriptorSet(const spPipeline &pipeline, const std::vector<spDescSet> &descSets) {
+	// TODO made check of pipeline type in future
+	auto internalPipeline = std::dynamic_pointer_cast<PipelineVK>(pipeline);
+	_descSets.clear();
+	for(auto d : descSets){
+		_descSets.push_back(std::dynamic_pointer_cast<DescSetVK>(d)->getSet());
+	}
+	_cmd.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, internalPipeline->getLayout(), 0,
+							static_cast<uint32_t>(_descSets.size()), _descSets.data(), 0, nullptr);
+}
+
+void CommandBufferVK::bindDescriptorSet(const spPipeline &pipeline, const spDescSet &descSet) {
+	auto internalPipeline = std::dynamic_pointer_cast<PipelineVK>(pipeline);
+	_descSets.resize(1);
+	_descSets[0] = std::dynamic_pointer_cast<DescSetVK>(descSet)->getSet();
+	_cmd.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, internalPipeline->getLayout(), 0,
+							static_cast<uint32_t>(_descSets.size()), _descSets.data(), 0, nullptr);
 }
 
 }

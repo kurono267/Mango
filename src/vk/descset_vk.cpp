@@ -13,7 +13,9 @@ void DescSetVK::create(const spDevice &device){
     std::vector<vk::DescriptorSetLayoutBinding> layoutBinds;
     std::vector<vk::DescriptorPoolSize>         poolSizes;
 
-    auto vk_device = std::dynamic_pointer_cast<DeviceVK>(device)->getDevice();
+    _device = device;
+
+    auto vk_device = std::dynamic_pointer_cast<DeviceVK>(_device)->getDevice();
 
     std::unordered_map<int,int> typesDesc;
     // Add Layout binding for UBO

@@ -496,6 +496,11 @@ enum class BorderColor {
 	IntOpaqueWhite
 };
 
+enum class PipelineBindPoint {
+	Graphics,
+	Compute
+};
+
 };
 
 #endif //MANGO_TYPES_HPP

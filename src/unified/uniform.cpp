@@ -13,7 +13,7 @@ Uniform::~Uniform(){}
 void Uniform::create(spDevice device,const size_t& size,const void* data){
     _size = size;
 
-    _cpu = device->createBuffer(BufferType::Uniform,MemoryType::DEVICE,size);
+    _cpu = device->createBuffer(BufferType::Uniform,MemoryType::HOST,size);
     _gpu = device->createBuffer(BufferType::Uniform,MemoryType::DEVICE,size);
 
     _is = true;

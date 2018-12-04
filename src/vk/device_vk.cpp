@@ -11,6 +11,7 @@
 #include "buffer_vk.hpp"
 #include "texture_vk.hpp"
 #include "framebuffer_vk.hpp"
+#include "descset_vk.hpp"
 
 using namespace mango::vulkan;
 
@@ -333,6 +334,11 @@ uint32_t DeviceVK::nextScreen(const mango::spSemaphore& signal){
 	vk::Semaphore signalSemaphores = std::dynamic_pointer_cast<SemaphoreVK>(signal)->getVK();
 
 	return _device.acquireNextImageKHR(_swapchain.getSwapchain(),std::numeric_limits<uint64_t>::max(),signalSemaphores,nullptr).value;
+}
+
+mango::spDescSet DeviceVK::createDescSet() {
+    spDescSet descSet = std::make_shared<DescSetVK>();
+    return descSet;
 }
 
 void SemaphoreVK::create(const spDeviceVK& device){

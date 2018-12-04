@@ -4,10 +4,11 @@
 
 #include <libshaderc/shaderc.hpp>
 
-#include <api/mesh.hpp>
+#include <unified/mesh.hpp>
 #include <api/utils.hpp>
 #include "pipeline_vk.hpp"
 #include "convert_vk.hpp"
+#include "descset_vk.hpp"
 
 using namespace mango::vulkan;
 
@@ -210,4 +211,26 @@ void PipelineVK::create() {
 
 vk::Pipeline PipelineVK::getVK(){
 	return _pipeline;
+}
+
+void PipelineVK::setDescSet(const std::vector<mango::spDescSet> &descSets) {
+	_descLayouts.clear();
+	for(auto d : descSets){
+		_descLayouts.push_back(std::dynamic_pointer_cast<DescSetVK>(d)->getLayout());
+	}
+	_pipelineLayoutInfo = vk::PipelineLayoutCreateInfo(
+			vk::PipelineLayoutCreateFlags(),
+			static_cast<uint32_t>(_descLayouts.size()), _descLayouts.data());
+}
+
+void PipelineVK::setDescSet(const mango::spDescSet &descSet) {
+	_descLayouts.resize(1);
+	_descLayouts[0] = std::dynamic_pointer_cast<DescSetVK>(descSet)->getLayout();
+	_pipelineLayoutInfo = vk::PipelineLayoutCreateInfo(
+			vk::PipelineLayoutCreateFlags(),
+			static_cast<uint32_t>(_descLayouts.size()), _descLayouts.data());
+}
+
+vk::PipelineLayout PipelineVK::getLayout() {
+	return _pLayout;
 }

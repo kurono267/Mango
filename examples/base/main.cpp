@@ -1,10 +1,6 @@
+#define MANGO_VULKAN
 #include <mango.hpp>
 #include <chrono>
-#include <api/instance.hpp>
-#include <vk/instance_vk.hpp>
-#include <vk/pipeline_vk.hpp>
-#include <vk/framebuffer_vk.hpp>
-#include <api/mesh.hpp>
 
 using namespace mango;
 
@@ -26,9 +22,17 @@ class TestApp : public BaseApp {
 			rp.viewport(Viewport(glm::vec2(0),mainWnd->wndSize()));
 			rp.scissor(glm::ivec2(0),mainWnd->wndSize());
 
+			glm::vec4 colorValue(0.5f,0.5f,1.0f,1.0f);
+			_color.create(device,sizeof(glm::vec4),&colorValue);
+
+			_descSet = device->createDescSet();
+			_descSet->setUniformBuffer(_color,0,ShaderStage::Fragment);
+            _descSet->create(device);
+
 			_main = device->createPipeline(rp);
 			_main->addShader(ShaderStage::Vertex,"../glsl/test.vert");
 			_main->addShader(ShaderStage::Fragment,"../glsl/test.frag");
+			_main->setDescSet(_descSet);
 
 			_quad = createQuad(device);
 
@@ -51,6 +55,7 @@ class TestApp : public BaseApp {
 
 				_cmdScreen[i]->beginRenderPass(renderPass,screenBuffers[i],RenderArea(screenBuffers[i]->getSize(),glm::ivec2(0)));
 				_cmdScreen[i]->bindPipeline(_main);
+				_cmdScreen[i]->bindDescriptorSet(_main,_descSet);
 				_quad->draw(_cmdScreen[i]);
 				_cmdScreen[i]->endRenderPass();
 
@@ -90,6 +95,10 @@ class TestApp : public BaseApp {
 		spPipeline _main;
 		std::vector<spCommandBuffer> _cmdScreen;
 		spMesh _quad;
+		spTexture _texture;
+
+		Uniform _color;
+		spDescSet _descSet;
 
 		spSemaphore _screenAvailable;
 		spSemaphore _renderFinish;

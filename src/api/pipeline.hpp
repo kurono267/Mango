@@ -7,6 +7,7 @@
 #include "default.hpp"
 #include "types.hpp"
 #include "device.hpp"
+#include "descset.hpp"
 
 #include <vector>
 
@@ -133,6 +134,9 @@ class Pipeline {
 
 		virtual void addShader(const ShaderStage& type,const std::string& filename) = 0; // Bascily import glsl
 		virtual void setRenderPass(const spRenderPass& rp) = 0;
+
+		virtual void setDescSet(const std::vector<spDescSet>& descSets) = 0;
+		virtual void setDescSet(const spDescSet& descSet) = 0;
 
 		virtual void create() = 0;
 

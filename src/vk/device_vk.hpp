@@ -40,7 +40,9 @@ class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
 
 		spRenderPass createRenderPass() final;
 		spPipeline createPipeline(const RenderPattern& rp) final;
-		spBuffer createBuffer(const BufferType& type,const MemoryType& memory,const size_t& size,void* data) final;
+
+	    spDescSet createDescSet() override;
+	    spBuffer createBuffer(const BufferType& type,const MemoryType& memory,const size_t& size,void* data) final;
 
 		spTexture createTexture(int width, int height, int miplevels,
 								const Format &format, const TextureType &type, const void *data) final;

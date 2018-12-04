@@ -5,8 +5,8 @@
 #ifndef MANGO_UNIFORM_HPP
 #define MANGO_UNIFORM_HPP
 
-#include "buffer.hpp"
-#include "device.hpp"
+#include "api/buffer.hpp"
+#include "api/device.hpp"
 
 namespace mango {
 
