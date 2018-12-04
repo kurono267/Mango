@@ -468,6 +468,34 @@ enum class TextureType {
 	DepthStencil
 };
 
+enum class Filter {
+	Nearest,
+	Linear,
+	Cubic
+};
+
+enum class SamplerMipmapMode {
+	Nearest,
+	Linear
+};
+
+enum class SamplerAddressMode {
+	Repeat,
+	MirroredRepeat,
+	ClampToEdge,
+	ClampToBorder,
+	MirrorClampToEdge
+};
+
+enum class BorderColor {
+	FloatTransparentBlack,
+	IntTransparentBlack,
+	FloatOpaqueBlack,
+	IntOpaqueBlack,
+	FloatOpaqueWhite,
+	IntOpaqueWhite
+};
+
 };
 
 #endif //MANGO_TYPES_HPP

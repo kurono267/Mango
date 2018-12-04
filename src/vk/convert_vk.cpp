@@ -812,3 +812,45 @@ vk::ShaderStageFlagBits mango::vulkan::shaderStageVK(const mango::ShaderStage& _
 		case mango::ShaderStage::All: return vk::ShaderStageFlagBits::eAll;
 	}
 }
+
+vk::SamplerAddressMode mango::vulkan::samplerAddressModeVK(const mango::SamplerAddressMode &_mango) {
+	switch(_mango){
+		case mango::SamplerAddressMode::Repeat:return vk::SamplerAddressMode::eRepeat;
+		case mango::SamplerAddressMode::MirroredRepeat:return vk::SamplerAddressMode::eMirroredRepeat;
+		case mango::SamplerAddressMode::ClampToEdge:return vk::SamplerAddressMode::eClampToEdge;
+		case mango::SamplerAddressMode::ClampToBorder:return vk::SamplerAddressMode::eClampToBorder;
+		case mango::SamplerAddressMode::MirrorClampToEdge:return vk::SamplerAddressMode::eMirrorClampToEdge;
+	}
+}
+
+vk::SamplerMipmapMode mango::vulkan::samplerMipmapModeVK(const mango::SamplerMipmapMode &_mango) {
+	switch(_mango){
+		case mango::SamplerMipmapMode::Nearest:return vk::SamplerMipmapMode::eNearest;
+		case mango::SamplerMipmapMode::Linear:return vk::SamplerMipmapMode::eLinear;
+	}
+}
+
+vk::Filter mango::vulkan::filterVK(const mango::Filter &_mango) {
+	switch(_mango){
+		case mango::Filter::Nearest:return vk::Filter::eNearest;
+		case mango::Filter::Linear:return vk::Filter::eLinear;
+		case mango::Filter::Cubic:return vk::Filter::eCubicIMG;
+	}
+}
+
+vk::BorderColor mango::vulkan::borderColorVK(const mango::BorderColor &_mango) {
+	switch(_mango){
+		case mango::BorderColor::FloatTransparentBlack:
+			return vk::BorderColor::eFloatTransparentBlack;
+		case mango::BorderColor::IntTransparentBlack:
+			return vk::BorderColor::eIntTransparentBlack;
+		case mango::BorderColor::FloatOpaqueBlack:
+			return vk::BorderColor::eFloatOpaqueBlack;
+		case mango::BorderColor::IntOpaqueBlack:
+			return vk::BorderColor::eIntOpaqueBlack;
+		case mango::BorderColor::FloatOpaqueWhite:
+			return vk::BorderColor::eFloatOpaqueWhite;
+		case mango::BorderColor::IntOpaqueWhite:
+			return vk::BorderColor::eIntOpaqueWhite;
+	}
+}

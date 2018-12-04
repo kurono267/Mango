@@ -40,6 +40,8 @@ class TextureViewVK : public TextureView {
 
 typedef std::shared_ptr<TextureVK> spTextureVK;
 
+vk::Sampler createSampler(const spDevice& device, const Sampler& sampler);
+
 };
 
 #endif //MANGO_IMAGE_VK_HPP

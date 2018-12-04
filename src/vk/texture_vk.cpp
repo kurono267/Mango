@@ -97,3 +97,22 @@ mango::spTextureView TextureVK::createTextureView(const ComponentSwizzle& swizzl
 	texView->_isInit = true;
 	return texView;
 }
+
+vk::Sampler mango::vulkan::createSampler(const mango::spDevice &device, const mango::Sampler &sampler) {
+	vk::SamplerCreateInfo createInfo;
+	createInfo.addressModeU = samplerAddressModeVK(sampler.addressModeU);
+	createInfo.addressModeV = samplerAddressModeVK(sampler.addressModeV);
+	createInfo.addressModeW = samplerAddressModeVK(sampler.addressModeW);
+	createInfo.anisotropyEnable = (VkBool32)sampler.anisotropyEnable;
+	createInfo.borderColor = borderColorVK(sampler.borderColor);
+	createInfo.compareEnable = (VkBool32)sampler.compareEnable;
+	createInfo.compareOp = compareOpVK(sampler.compareOp);
+	createInfo.magFilter = filterVK(sampler.magFilter);
+	createInfo.minFilter = filterVK(sampler.minFilter);
+	createInfo.maxAnisotropy = sampler.maxAnisotropy;
+	createInfo.maxLod = sampler.maxLod;
+	createInfo.minLod = sampler.minLod;
+	createInfo.mipLodBias = sampler.mipLodBias;
+	createInfo.mipmapMode = samplerMipmapModeVK(sampler.mipmapMode);
+	return std::dynamic_pointer_cast<DeviceVK>(device)->getDevice().createSampler(createInfo);
+}

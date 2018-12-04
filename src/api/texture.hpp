@@ -25,6 +25,55 @@ class TextureView {
 		spTexture _texture;
 };
 
+struct Sampler {
+	Sampler(Filter magFilter_ = Filter::Linear,
+			Filter minFilter_ = Filter::Linear,
+			SamplerMipmapMode mipmapMode_ = SamplerMipmapMode::Nearest,
+			SamplerAddressMode addressModeU_ = SamplerAddressMode::Repeat,
+			SamplerAddressMode addressModeV_ = SamplerAddressMode::Repeat,
+			SamplerAddressMode addressModeW_ = SamplerAddressMode::Repeat,
+			float mipLodBias_ = 0,
+			bool anisotropyEnable_ = false,
+			float maxAnisotropy_ = 0,
+			bool compareEnable_ = false,
+			CompareOp compareOp_ = CompareOp::Never,
+			float minLod_ = 0,
+			float maxLod_ = 0,
+			BorderColor borderColor_ = BorderColor::FloatTransparentBlack,
+			bool unnormalizedCoordinates_ = 0)
+			: magFilter( magFilter_ )
+			, minFilter( minFilter_ )
+			, mipmapMode( mipmapMode_ )
+			, addressModeU( addressModeU_ )
+			, addressModeV( addressModeV_ )
+			, addressModeW( addressModeW_ )
+			, mipLodBias( mipLodBias_ )
+			, anisotropyEnable( anisotropyEnable_ )
+			, maxAnisotropy( maxAnisotropy_ )
+			, compareEnable( compareEnable_ )
+			, compareOp( compareOp_ )
+			, minLod( minLod_ )
+			, maxLod( maxLod_ )
+			, borderColor( borderColor_ )
+			, unnormalizedCoordinates( unnormalizedCoordinates_ ) {}
+
+	Filter magFilter;
+	Filter minFilter;
+	SamplerMipmapMode mipmapMode;
+	SamplerAddressMode addressModeU;
+	SamplerAddressMode addressModeV;
+	SamplerAddressMode addressModeW;
+	float mipLodBias;
+	bool anisotropyEnable;
+	float maxAnisotropy;
+	bool compareEnable;
+	CompareOp compareOp;
+	float minLod;
+	float maxLod;
+	BorderColor borderColor;
+	bool unnormalizedCoordinates;
+};
+
 typedef std::shared_ptr<TextureView> spTextureView;
 
 class Texture : public std::enable_shared_from_this<Texture> {

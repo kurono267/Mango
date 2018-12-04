@@ -41,6 +41,11 @@ vk::ComponentMapping componentMappingVK(const ComponentMapping& _mango);
 
 vk::ShaderStageFlagBits shaderStageVK(const ShaderStage& _mango);
 
+vk::SamplerAddressMode samplerAddressModeVK(const SamplerAddressMode& _mango);
+vk::SamplerMipmapMode samplerMipmapModeVK(const SamplerMipmapMode& _mango);
+vk::Filter filterVK(const Filter& _mango);
+vk::BorderColor borderColorVK(const BorderColor& _mango);
+
 };
 
 #endif //MANGO_CONVERT_VK_HPP
