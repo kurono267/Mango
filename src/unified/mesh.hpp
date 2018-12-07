@@ -71,6 +71,7 @@ class Mesh {
 typedef std::shared_ptr<Mesh> spMesh;
 
 spMesh createQuad(const mango::spDevice &device);
+spMesh createCube(const mango::spDevice& device);
 
 };
 

@@ -49,3 +49,58 @@ spMesh mango::createQuad(const mango::spDevice &device){
 	mesh->create(device,vdata,idata);
 	return mesh;
 }
+
+spMesh mango::createCube(const mango::spDevice& device){
+	std::vector<sVertex> vdata(24);
+
+	// front
+	vdata[0] = sVertex(glm::vec3(-1.0, -1.0,  1.0),glm::vec2(0.0f, 1.0f));
+	vdata[1] = sVertex(glm::vec3(1.0, -1.0,  1.0),glm::vec2(1.0f, 1.0f));
+	vdata[2] = sVertex(glm::vec3(1.0,  1.0,  1.0),glm::vec2(1.0f, 0.0f));
+	vdata[3] = sVertex(glm::vec3(-1.0,  1.0,  1.0),glm::vec2(0.0f, 0.0f));
+	// top
+	vdata[4] = sVertex(glm::vec3(-1.0,  1.0,  1.0),glm::vec2(0.0f, 1.0f));
+	vdata[5] = sVertex(glm::vec3(1.0,  1.0,  1.0),glm::vec2(1.0f, 1.0f));
+	vdata[6] = sVertex(glm::vec3(1.0,  1.0, -1.0),glm::vec2(1.0f, 0.0f));
+	vdata[7] = sVertex(glm::vec3(-1.0,  1.0, -1.0),glm::vec2(0.0f, 0.0f));
+	// back
+	vdata[8] = sVertex(glm::vec3(1.0, -1.0, -1.0),glm::vec2(0.0f, 1.0f));
+	vdata[9] = sVertex(glm::vec3(-1.0, -1.0, -1.0),glm::vec2(1.0f, 1.0f));
+	vdata[10] = sVertex(glm::vec3(-1.0,  1.0, -1.0),glm::vec2(1.0f, 0.0f));
+	vdata[11] = sVertex(glm::vec3(1.0,  1.0, -1.0),glm::vec2(0.0f, 0.0f));
+	// bottom
+	vdata[12] = sVertex(glm::vec3(-1.0, -1.0, -1.0),glm::vec2(0.0f, 1.0f));
+	vdata[13] = sVertex(glm::vec3( 1.0, -1.0, -1.0),glm::vec2(1.0f, 1.0f));
+	vdata[14] = sVertex(glm::vec3( 1.0, -1.0,  1.0),glm::vec2(1.0f, 0.0f));
+	vdata[15] = sVertex(glm::vec3(-1.0, -1.0,  1.0),glm::vec2(0.0f, 0.0f));
+	// left
+	vdata[16] = sVertex(glm::vec3(-1.0, -1.0, -1.0),glm::vec2(0.0f, 1.0f));
+	vdata[17] = sVertex(glm::vec3(-1.0, -1.0,  1.0),glm::vec2(1.0f, 1.0f));
+	vdata[18] = sVertex(glm::vec3(-1.0,  1.0,  1.0),glm::vec2(1.0f, 0.0f));
+	vdata[19] = sVertex(glm::vec3(-1.0,  1.0, -1.0),glm::vec2(0.0f, 0.0f));
+	// right
+	vdata[20] = sVertex(glm::vec3( 1.0, -1.0,  1.0),glm::vec2(0.0f, 1.0f));
+	vdata[21] = sVertex(glm::vec3( 1.0, -1.0, -1.0),glm::vec2(1.0f, 1.0f));
+	vdata[22] = sVertex(glm::vec3( 1.0,  1.0, -1.0),glm::vec2(1.0f, 0.0f));
+	vdata[23] = sVertex(glm::vec3( 1.0,  1.0,  1.0),glm::vec2(0.0f, 0.0f));
+
+	std::vector<uint32_t> idata = {
+			0,  1,  2,
+			2,  3,  0,
+			4,  5,  6,
+			6,  7,  4,
+			8,  9, 10,
+			10, 11,  8,
+			12, 13, 14,
+			14, 15, 12,
+			16, 17, 18,
+			18, 19, 16,
+			20, 21, 22,
+			22, 23, 20
+	};
+
+	auto mesh = std::make_shared<Mesh>();
+	mesh->create(device,vdata,idata);
+	return mesh;
+}
+
