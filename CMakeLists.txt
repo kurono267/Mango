@@ -13,11 +13,11 @@ find_package(glfw3 REQUIRED)
 find_package(Vulkan REQUIRED)
 find_package(glm REQUIRED)
 include_directories(${GLFW_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${VULKAN_INCLUDE_DIRS})
-link_directories(${PROJECT_SOURCE_DIR}/bin)
+link_directories(${CMAKE_SOURCE_DIR}/bin)
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
-include_directories(${CMAKE_SOURCE_DIR}/src ${Vulkan_INCLUDE_DIR})
+include_directories(src ${Vulkan_INCLUDE_DIR})
 link_directories($ENV{VULKAN_SDK}/lib/)
 
 add_subdirectory(src)
