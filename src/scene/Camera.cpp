@@ -7,24 +7,12 @@
 namespace mango::scene {
 
 CameraAtPoint::CameraAtPoint(const spDevice &device, const glm::vec3 &point) : Camera(device),_point(point),_pos(0.0,0.0,-5.0f),_up(0.f,-1.f,0.f)
-{
-    _data.view = lookAt(_pos,_point,_up);
-    _data.viewProj = _data.proj*_data.view;
-}
+{}
 
-void CameraAtPoint::onMouse(const glm::vec2 &coord, float dt) {
-    if(_isFirst){
-        _prevCoord = coord;
-        _isFirst = false;
-        return;
-    }
-
-    auto dCoord = coord-_prevCoord;
-    _prevCoord = coord;
-
+void CameraAtPoint::rotate(const glm::vec2 &deltaCoord, float dt) {
     float angularSpeed = 0.1f*dt;
-    float theta = dCoord.x * angularSpeed;
-    float phi = dCoord.y * angularSpeed;
+    float theta = deltaCoord.x * angularSpeed;
+    float phi = deltaCoord.y * angularSpeed;
 
     auto viewVec = normalize(_point - _pos);
     float dist = length(_point - _pos);

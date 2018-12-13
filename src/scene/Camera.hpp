@@ -22,13 +22,14 @@ public:
 
     inline void initProj(float angle,float aspect,float near,float far){
         _data.proj = glm::perspective(angle,aspect,near,far);
+        rotate(glm::vec2(0.f),0.f);
     }
 
     inline void updateUniform(){
         _uniform.set(sizeof(Data),&_data);
     }
 
-    virtual void onMouse(const glm::vec2& coord, float dt) = 0;
+    virtual void rotate(const glm::vec2& deltaCoord, float dt) = 0;
     virtual void onKeyboard(uint8_t key) = 0;
 protected:
     Uniform _uniform;
@@ -44,7 +45,7 @@ public:
     CameraAtPoint(const spDevice& device,const glm::vec3& point);
     ~CameraAtPoint() final = default;
 
-    void onMouse(const glm::vec2 &coord, float dt) final;
+    void rotate(const glm::vec2 &deltaCoord, float dt) final;
     void onKeyboard(uint8_t key) final;
 protected:
     glm::vec3 _pos;
