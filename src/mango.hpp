@@ -19,6 +19,9 @@
 #include <unified/mesh.hpp>
 #include <unified/uniform.hpp>
 #include <unified/utils.hpp>
+#include <unified/Image.hpp>
+
+#include <scene/Camera.hpp>
 
 #ifdef MANGO_VULKAN
 #include <vk/instance_vk.hpp>

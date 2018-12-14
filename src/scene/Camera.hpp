@@ -30,7 +30,21 @@ public:
     }
 
     virtual void rotate(const glm::vec2& deltaCoord, float dt) = 0;
+    virtual void scale(const float& dvalue,const float& dt) = 0;
     virtual void onKeyboard(uint8_t key) = 0;
+
+    inline glm::mat4 getView() {
+        return _data.view;
+    }
+
+    inline glm::mat4 getProj() {
+        return _data.proj;
+    }
+
+    virtual glm::vec3 getForward() = 0;
+    virtual glm::vec3 getUp() = 0;
+    virtual glm::vec3 getRight() = 0;
+    virtual glm::vec3 getPos() = 0;
 protected:
     Uniform _uniform;
     struct Data {
@@ -47,14 +61,23 @@ public:
 
     void rotate(const glm::vec2 &deltaCoord, float dt) final;
     void onKeyboard(uint8_t key) final;
+    void scale(const float& dvalue,const float& dt) final;
+
+    glm::vec3 getForward() override;
+    glm::vec3 getUp() override;
+    glm::vec3 getRight() override;
+    glm::vec3 getPos() override;
 protected:
     glm::vec3 _pos;
     glm::vec3 _point;
     glm::vec3 _up;
+    glm::vec3 _right;
 
     glm::vec2 _prevCoord;
     bool _isFirst = true;
 };
+
+typedef std::shared_ptr<Camera> spCamera;
 
 }
 

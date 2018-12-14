@@ -39,4 +39,31 @@ void CameraAtPoint::onKeyboard(uint8_t key) {
     // Do nothing
 }
 
+glm::vec3 CameraAtPoint::getForward() {
+    return normalize(_point - _pos);
+}
+
+glm::vec3 CameraAtPoint::getUp() {
+    return _up;
+}
+
+glm::vec3 CameraAtPoint::getRight() {
+    return normalize(glm::cross(getForward(),_up));
+}
+
+glm::vec3 CameraAtPoint::getPos() {
+    return _pos;
+}
+
+void CameraAtPoint::scale(const float& dvalue,const float& dt) {
+    const float scaleSpeed = 3.0f;
+
+    const glm::vec3 viewVec = normalize(_point - _pos);
+    float dist = length(_point - _pos);
+
+    _pos += (dist*dvalue*dt*scaleSpeed)*viewVec;
+    _data.view = lookAt(_pos,_point,_up);
+    _data.viewProj = _data.proj*_data.view;
+}
+
 }
