@@ -6,7 +6,7 @@
 
 namespace mango::scene {
 
-CameraAtPoint::CameraAtPoint(const spDevice &device, const glm::vec3 &point) : Camera(device),_point(point),_pos(0.0,0.0,-5.0f),_up(0.f,-1.f,0.f)
+CameraAtPoint::CameraAtPoint(const spDevice &device,const glm::vec3& pos, const glm::vec3 &point) : Camera(device),_point(point),_pos(pos),_up(0.f,-1.f,0.f)
 {}
 
 void CameraAtPoint::rotate(const glm::vec2 &deltaCoord, float dt) {

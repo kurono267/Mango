@@ -56,7 +56,7 @@ protected:
 
 class CameraAtPoint : public Camera {
 public:
-    CameraAtPoint(const spDevice& device,const glm::vec3& point);
+    CameraAtPoint(const spDevice& device,const glm::vec3& pos = glm::vec3(0.0,0.0,-5.0f),const glm::vec3& point = glm::vec3(0.0f));
     ~CameraAtPoint() final = default;
 
     void rotate(const glm::vec2 &deltaCoord, float dt) final;
