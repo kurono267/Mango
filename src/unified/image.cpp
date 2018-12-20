@@ -4,9 +4,10 @@
 
 #include "image.hpp"
 #include <iostream>
+#define STB_IMAGE_IMPLEMENTATION
 #include <stbi/stb_image.h>
 
-inline spImage4b loadImage(const std::string& filename){
+spImage4b loadImage(const std::string& filename){
     int width,height,channels;
     uint8_t *data = stbi_load(filename.c_str(), &width, &height, &channels, 4); // we want RGBA always
     if (!data) {
