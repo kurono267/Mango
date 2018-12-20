@@ -156,11 +156,13 @@ typedef ImageBase<glm::vec3> Image;
 typedef ImageBase<glm::vec4> Image4f;
 typedef ImageBase<float> Image1f;
 typedef ImageBase<glm::u8vec3> Image3b;
+typedef ImageBase<glm::u8vec4> Image4b;
 
 typedef std::shared_ptr<Image> spImage;
 typedef std::shared_ptr<Image4f> spImage4f;
 typedef std::shared_ptr<Image1f> spImage1f;
 typedef std::shared_ptr<Image3b> spImage3b;
+typedef std::shared_ptr<Image4b> spImage4b;
 
 template<typename T>
 ImageBase<T> downsampling(const ImageBase<T>& in,std::function<bool(const T&)> check){
@@ -207,5 +209,7 @@ inline bool isLinePoint(const glm::ivec2& start,const glm::ivec2& end,const int 
 	dist /= glm::length(glm::vec2(end)-glm::vec2(start));
 	return dist < 0.5f;
 }
+
+spImage4b loadImage(const std::string& filename);
 
 #endif //SCANPIPE_ImageBase_HPP
