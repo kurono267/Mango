@@ -29,11 +29,12 @@ size_t computeImageSizeWithMips(const glm::ivec2 &size, size_t mipLevels, std::v
     glm::ivec2 currSize = size;
     size_t currOffset = 0;
     size_t currSizeElements = 0;
+    lodOffsets.resize(mipLevels);
     for(int mip = 0;mip<mipLevels;++mip){
         ImageLOD lod;
         lod.offset = currOffset;
         lod.size = currSize;
-        lodOffsets.push_back(lod);
+        lodOffsets[mip] = lod;
         currSizeElements += currSize.x*currSize.y;
 
         currSize /= 2;
@@ -43,12 +44,5 @@ size_t computeImageSizeWithMips(const glm::ivec2 &size, size_t mipLevels, std::v
 }
 
 size_t computeMaxMipLevels(const glm::ivec2 &size) {
-    /*glm::ivec2 currSize = size;
-    size_t maxLods = 0;
-    while(currSize.x != 1 || currSize.y != 1){
-        std::cout << "Lod " << maxLods << " size " << glm::to_string(currSize) << std::endl;
-        maxLods++;
-        currSize /= 2;
-    }*/
     return (size_t) std::min(log2((float)size.x), log2((float)size.y));
 }
