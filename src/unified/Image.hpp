@@ -5,53 +5,77 @@
 #ifndef UTILS_IMAGE_HPP
 #define UTILS_IMAGE_HPP
 
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>
 #include <vector>
 
 #include <functional>
 #include <memory>
 
 #include <string>
+#include <iostream>
+
+struct ImageLOD {
+    size_t offset;
+    glm::ivec2 size;
+};
+
+size_t computeImageSizeWithMips(const glm::ivec2& size, size_t mipLevels, std::vector<ImageLOD>& lodOffsets);
+size_t computeMaxMipLevels(const glm::ivec2& size);
 
 template<typename T>
 class ImageBase {
 	public:
 		ImageBase(){}
-		ImageBase(const std::vector<T>& data,const glm::ivec2& size) : _size(size), _data(data){}
-		ImageBase(const glm::ivec2& size,const T fill = T()) : _size(size),_data(size.x*size.y){
+		ImageBase(const std::vector<T>& data,const glm::ivec2& size) : _size(size), _data(data){
+		    _lods.resize(1);
+		    _lods[0].offset = 0;
+		    _lods[0].size = size;
+		}
+		ImageBase(const glm::ivec2& size,uint32_t mipLevels = 1,const T fill = T()) : _size(size) {
+		    size_t dataSize = computeImageSizeWithMips(size,mipLevels,_lods);
+		    _data.resize(dataSize);
 			for(auto& v : _data)v = fill;
 		}
 		ImageBase(const ImageBase& image){
 			_size = image._size;
 			_data = image._data;
+			_lods = image._lods;
 		}
 		virtual ~ImageBase() = default;
 
-		T& operator()(const int x,const int y) {
-			return get(x,y);
+		T& operator()(const int x,const int y, int lod = 0) {
+			return get(x,y,lod);
 		}
-		const T& operator()(const int x,const int y) const {
-			return get(x,y);
-		}
-
-		T& operator()(const glm::vec2& uv)  {
-			glm::ivec2 co(uv.x*(float)(_size.x-1),uv.y*(float)(_size.y-1));
-			return get(co.x,co.y);
-		}
-		const T& operator()(const glm::vec2& uv) const {
-			glm::ivec2 co(uv.x*(float)(_size.x-1),uv.y*(float)(_size.y-1));
-			return get(co.x,co.y);
+		const T& operator()(const int x,const int y, int lod = 0) const {
+			return get(x,y,lod);
 		}
 
-		const T& get(const int x,const int y) const {
-			int cx = std::max(std::min(x,_size.x-1),0);
-			int cy = std::max(std::min(y,_size.y-1),0);
-			return _data[cy*_size.x+cx];
+		T& operator()(const glm::vec2& uv, int lod = 0)  {
+			const auto& currLod = _lods[lod];
+			glm::ivec2 co(uv.x*(float)(currLod.size.x-1),uv.y*(float)(currLod.size.y-1));
+			return get(co.x,co.y,lod);
 		}
-		T& get(const int x,const int y) {
-			int cx = std::max(std::min(x,_size.x-1),0);
-			int cy = std::max(std::min(y,_size.y-1),0);
-			return _data[cy*_size.x+cx];
+		const T& operator()(const glm::vec2& uv, int lod = 0) const {
+			const auto& currLod = _lods[lod];
+			glm::ivec2 co(uv.x*(float)(currLod.size.x-1),uv.y*(float)(currLod.size.y-1));
+			return get(co.x,co.y,lod);
+		}
+
+		const T& get(const int x,const int y, int lod = 0) const {
+		    const auto& currLod = _lods[lod];
+
+			int cx = std::max(std::min(x,currLod.size.x-1),0);
+			int cy = std::max(std::min(y,currLod.size.y-1),0);
+			return _data[currLod.offset+(cy*currLod.size.x+cx)];
+		}
+		T& get(const int x,const int y, int lod = 0) {
+            const auto& currLod = _lods[lod];
+
+            int cx = std::max(std::min(x,currLod.size.x-1),0);
+            int cy = std::max(std::min(y,currLod.size.y-1),0);
+            return _data[currLod.offset+(cy*currLod.size.x+cx)];
 		}
 
 		const T& get(const int id) const {
@@ -62,17 +86,17 @@ class ImageBase {
 			return _data[id];
 		}
 
-		inline glm::vec2 fsize() const {return glm::vec2(_size.x,_size.y);}
+		inline glm::vec2 fsize(size_t lod = 0) const {return glm::vec2(_lods[lod].size.x,_lods[lod].size.y);}
 
-		glm::ivec2 size() const {
-			return _size;
+		glm::ivec2 size(size_t lod = 0) const {
+			return _lods[lod].size;
 		}
 
-		int width() const {
-			return _size.x;
+		int width(size_t lod = 0) const {
+			return _lods[lod].size.x;
 		}
-		int height() const {
-			return _size.y;
+		int height(size_t lod = 0) const {
+            return _lods[lod].size.y;
 		}
 
 		const std::vector<T>& data() const { return _data; }
@@ -128,6 +152,10 @@ class ImageBase {
 			_size = img._size;
 		}
 
+		size_t mipLevels(){
+		    return _lods.size();
+		}
+
 		operator bool(){
 			return !_data.empty();
 		}
@@ -135,9 +163,47 @@ class ImageBase {
 		typedef std::shared_ptr<ImageBase<T>> Ptr;
 		static Ptr make() { return std::make_shared<ImageBase<T>>();}
 		static Ptr make(const ImageBase<T>& i) { return std::make_shared<ImageBase<T>>(i); }
+
+		friend void generateMipMaps(ImageBase<T>& inout){
+            std::cout << "generateMipMaps()" << std::endl;
+            std::cout << "image size " << inout.width() << " , " << inout.height();
+
+            auto maxLods = computeMaxMipLevels(inout.size());
+            std::cout << "Max Lods " << maxLods << std::endl;
+            inout._data.resize(computeImageSizeWithMips(inout.size(),maxLods,inout._lods));
+            for(auto lod : inout._lods){
+                std::cout << "Lod offset " << lod.offset << " size " << glm::to_string(lod.size) << std::endl;
+            }
+            for(size_t i = 1;i<maxLods;++i){
+                for(int y = 0;y<inout.height(i);++y){
+                    for(int x = 0;x<inout.width(i);++x){
+                        glm::vec2 uv((float)x,(float)y);
+                        uv /= inout.fsize(i)-1.f;
+                        glm::vec2 baseCoord = uv*(inout.fsize(i-1)-1.f);
+
+                        float n = 0.0f;
+                        glm::vec4 c(0.0f);
+                        for(int sy = -1;sy<=1;++sy){
+                            int ny = (int)baseCoord.y+sy;
+                            if(ny >= inout.height(i-1) || ny < 0)continue;
+                            for(int sx = -1;sx<=1;++sx){
+                                int nx = (int)baseCoord.x+sx;
+                                if(nx >= inout.width(i-1) || nx < 0)continue;
+                                float g = 1.0f;
+                                n += g;
+                                c += glm::vec4(inout(nx,ny,i-1))*g;
+                            }
+                        }
+                        if(n != 0.0f)c /= n;
+                        inout(x,y,i) = c;
+                    }
+                }
+            }
+        }
 	protected:
 		std::vector<T> _data;
 		glm::ivec2             _size;
+        std::vector<ImageLOD> _lods;
 };
 
 template<typename T>
