@@ -152,7 +152,7 @@ class ImageBase {
 			_size = img._size;
 		}
 
-		size_t mipLevels(){
+		size_t mipLevels() const {
 		    return _lods.size();
 		}
 
@@ -274,6 +274,42 @@ inline bool isLinePoint(const glm::ivec2& start,const glm::ivec2& end,const int 
 	float dist = std::abs((float)(end.y-start.y)*x-(float)(end.x-start.x)*y+(float)end.x*start.y-(float)end.y*start.x);
 	dist /= glm::length(glm::vec2(end)-glm::vec2(start));
 	return dist < 0.5f;
+}
+
+template<typename T>
+glm::vec4 filterLinear(const ImageBase<T>& image, const glm::vec2& uv, size_t lod){
+    glm::vec2 coord(uv*(image.fsize(lod)-1.f));
+    glm::ivec2 startCoord = glm::floor(coord);
+    glm::ivec2 endCoord = startCoord+1;
+    endCoord.x = std::min(endCoord.x,image.size(lod).x-1);
+    endCoord.y = std::min(endCoord.y,image.size(lod).y-1);
+    glm::vec2 delta(glm::fract(coord));
+
+    glm::vec4 p00 = image(startCoord.x,startCoord.y,lod);
+    glm::vec4 p01 = image(startCoord.x,endCoord.y,lod);
+    glm::vec4 p10 = image(endCoord.x,startCoord.y,lod);
+    glm::vec4 p11 = image(endCoord.x,endCoord.y,lod);
+
+    auto cX0 = glm::mix(p00,p10,delta.x);
+    auto cX1 = glm::mix(p01,p11,delta.x);
+
+    return glm::mix(cX0,cX1,delta.y);
+}
+
+template<typename T>
+glm::vec4 filterTrilinear(const ImageBase<T>& image,const glm::vec2& uv, const glm::vec2& dUVx, const glm::vec2& dUVy){
+	float deltaMaxSqr = std::max(glm::dot(dUVx, dUVx), glm::dot(dUVy, dUVy));
+	float lod = 0.5f * log2(deltaMaxSqr);
+
+	int currLod = std::min(std::max((int)std::floor(lod),0),(int)image.mipLevels()-1);
+	int nextLod = std::min(currLod+1,(int)image.mipLevels()-1);
+
+	if(currLod == nextLod)return filterLinear(image,uv,currLod);
+
+	auto currLodColor = filterLinear(image,uv,currLod);
+	auto nextLodColor = filterLinear(image,uv,nextLod);
+
+	return glm::mix(currLodColor,nextLodColor,glm::fract(lod));
 }
 
 spImage4b loadImage(const std::string& filename);
