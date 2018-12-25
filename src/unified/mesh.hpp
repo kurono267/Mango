@@ -35,8 +35,8 @@ struct sVertex {
 	/*alignas(16)*/ glm::vec3 pos;
 	/*alignas(16)*/ glm::vec3 normal;
 	/*alignas(16)*/ glm::vec2 uv;
-	glm::vec3 tangent;
-	glm::vec3 binormal;
+	glm::vec3 tangent = glm::vec3(0.0f);
+	glm::vec3 binormal = glm::vec3(0.0f);
 
 	static VertexBinding bindingDesc(){
 		return VertexBinding(0,sizeof(sVertex));
