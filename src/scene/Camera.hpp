@@ -45,6 +45,9 @@ public:
     virtual glm::vec3 getUp() = 0;
     virtual glm::vec3 getRight() = 0;
     virtual glm::vec3 getPos() = 0;
+
+    bool isUpdated() { return _updated; }
+    void updateFinish() { _updated = false; }
 protected:
     Uniform _uniform;
     struct Data {
@@ -52,6 +55,7 @@ protected:
         glm::mat4 proj;
         glm::mat4 viewProj;
     } _data;
+    bool _updated;
 };
 
 class CameraAtPoint : public Camera {

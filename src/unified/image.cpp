@@ -46,3 +46,21 @@ size_t computeImageSizeWithMips(const glm::ivec2 &size, size_t mipLevels, std::v
 size_t computeMaxMipLevels(const glm::ivec2 &size) {
     return (size_t) std::min(log2((float)size.x), log2((float)size.y));
 }
+
+spImage4f loadImageHDRI(const std::string &filename) {
+	int width,height,channels;
+	stbi_loadf(filename.c_str(),&width, &height, &channels, 4);
+	float *data = stbi_loadf(filename.c_str(),&width, &height, &channels, 4); // we want RGBA always
+	if (!data) {
+		std::cout << "Can't load resource image " << filename << std::endl;
+		return nullptr;
+	}
+
+	spImage4f image = std::make_shared<Image4f>(glm::ivec2(width,height));
+	memcpy((void*)image->data().data(), (void*)data, static_cast<size_t>(width * height * 4 * sizeof(float)));
+
+	stbi_image_free((void *) data);
+
+	generateMipMaps(*image);
+	return image;
+}

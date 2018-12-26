@@ -10,6 +10,7 @@ CameraAtPoint::CameraAtPoint(const spDevice &device,const glm::vec3& pos, const 
 {}
 
 void CameraAtPoint::rotate(const glm::vec2 &deltaCoord, float dt) {
+    _updated = true;
     float angularSpeed = 0.1f*dt;
     float theta = deltaCoord.x * angularSpeed;
     float phi = deltaCoord.y * angularSpeed;
@@ -56,6 +57,7 @@ glm::vec3 CameraAtPoint::getPos() {
 }
 
 void CameraAtPoint::scale(const float& dvalue,const float& dt) {
+    _updated = true;
     const float scaleSpeed = 3.0f;
 
     const glm::vec3 viewVec = normalize(_point - _pos);
