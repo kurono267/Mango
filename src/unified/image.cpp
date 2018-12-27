@@ -21,6 +21,16 @@ spImage4b loadImage(const std::string& filename){
 
     stbi_image_free((void *) data);
 
+    for(int y = 0;y<image->height();++y){
+    	for(int x = 0;x<image->width();++x){
+    		glm::vec4 color = (*image)(x,y);
+    		color /= 255.0f;
+			color = glm::pow(color,glm::vec4(2.4f));
+			color *= 255.0f;
+			(*image)(x,y) = color;
+    	}
+    }
+
     generateMipMaps(*image);
     return image;
 }
