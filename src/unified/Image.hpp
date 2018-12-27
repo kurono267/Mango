@@ -313,6 +313,6 @@ glm::vec4 filterTrilinear(const ImageBase<T>& image,const glm::vec2& uv, const g
 }
 
 spImage4b loadImage(const std::string& filename);
-spImage4f loadImageHDRI(const std::string& filename);
+spImage4f loadImageHDRI(const std::string& filename, bool clamp = false);
 
 #endif //SCANPIPE_ImageBase_HPP

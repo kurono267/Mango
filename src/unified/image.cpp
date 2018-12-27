@@ -47,7 +47,7 @@ size_t computeMaxMipLevels(const glm::ivec2 &size) {
     return (size_t) std::min(log2((float)size.x), log2((float)size.y));
 }
 
-spImage4f loadImageHDRI(const std::string &filename) {
+spImage4f loadImageHDRI(const std::string &filename, bool clamp) {
 	int width,height,channels;
 	stbi_loadf(filename.c_str(),&width, &height, &channels, 4);
 	float *data = stbi_loadf(filename.c_str(),&width, &height, &channels, 4); // we want RGBA always
@@ -60,6 +60,14 @@ spImage4f loadImageHDRI(const std::string &filename) {
 	memcpy((void*)image->data().data(), (void*)data, static_cast<size_t>(width * height * 4 * sizeof(float)));
 
 	stbi_image_free((void *) data);
+
+	if(clamp){
+		for(int y = 0;y<image->height();++y){
+			for(int x = 0;x<image->width();++x){
+				(*image)(x,y) = glm::clamp((*image)(x,y),glm::vec4(0.0f),glm::vec4(1.0f));
+			}
+		}
+	}
 
 	generateMipMaps(*image);
 	return image;
