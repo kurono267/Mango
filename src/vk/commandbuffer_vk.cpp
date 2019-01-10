@@ -34,7 +34,7 @@ void CommandBufferVK::beginRenderPass(const mango::spRenderPass &renderPass,
 	if(maxID != 0){
 		clearValues.resize(maxID+1);
 		for(auto c : _clearColors){
-			clearValues[c.first].color = vk::ClearColorValue(std::array<float,4>{c.second.r,c.second.g,c.second.b,c.second.a});
+			clearValues[c.first].color = vk::ClearColorValue(std::array<float,4>{c.second.x,c.second.y,c.second.z,c.second.w});
 		}
 		for(auto d : _clearDepthStencil){
 			clearValues[d.first].depthStencil = vk::ClearDepthStencilValue(d.second.x, static_cast<uint32_t>(d.second.y));
