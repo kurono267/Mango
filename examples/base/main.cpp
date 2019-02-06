@@ -18,7 +18,7 @@ class TestApp : public BaseApp {
 			auto device = _instance->device();
 			std::cout << device->device_name() << std::endl;
 
-			RenderPattern rp;
+			PipelineInfo rp;
 			rp.viewport(Viewport(glm::vec2(0),mainWnd->wndSize()));
 			rp.scissor(glm::ivec2(0),mainWnd->wndSize());
 

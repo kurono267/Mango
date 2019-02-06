@@ -10,6 +10,7 @@
 #include "descset.hpp"
 
 #include <vector>
+#include <unordered_map>
 
 namespace mango {
 
@@ -53,12 +54,24 @@ struct Attachment {
 	int index;
 };
 
-class RenderPattern {
+class RenderPass {
+	public:
+		RenderPass() = default;
+		virtual ~RenderPass() = default;
+
+		void addAttachment(const Attachment& a);
+	protected:
+		std::vector<Attachment> _attachments;
+};
+
+typedef std::shared_ptr<RenderPass> spRenderPass;
+
+class PipelineInfo {
 	friend class Pipeline;
 	public:
-		RenderPattern();
-		RenderPattern(const RenderPattern& r) = default;
-		~RenderPattern() = default;
+		PipelineInfo();
+		PipelineInfo(const PipelineInfo& r) = default;
+		~PipelineInfo() = default;
 
 		void inputAssembly(PrimitiveTopology topology);
 		void viewport(const float& x,const float& y,const float& width,const float& height,const float& minDepth = 0.0f,const float& maxDepth = 1.0f);
@@ -99,8 +112,19 @@ class RenderPattern {
 		const std::vector<BlendAttachmentState>& getBlendAttachments()const;
 		const DepthState& getDepthState() const;
 
+		const std::unordered_map<ShaderStage,std::string>& getShaders() const;
+		const spRenderPass& getRenderPass() const;
+
+		const std::vector<spDescSet>& getDescSets() const;
+
 		bool isDynamicScissor() const;
 		bool isDynamicViewport() const;
+
+	 	void addShader(const ShaderStage& type,const std::string& filename); // Bascily import glsl
+	 	void setRenderPass(const spRenderPass& rp);
+
+	 	void setDescSet(const std::vector<spDescSet>& descSets);
+	 	void setDescSet(const spDescSet& descSet);
 	private:
 		PrimitiveTopology _topology;
 		Viewport          _viewport;
@@ -113,36 +137,20 @@ class RenderPattern {
 
 		bool _dynamicScissor;
 		bool _dynamicViewport;
+
+		std::unordered_map<ShaderStage,std::string> _shaders;
+		spRenderPass _renderPass;
+		std::vector<spDescSet> _descSets;
 };
-
-class RenderPass {
-	public:
-		RenderPass() = default;
-		virtual ~RenderPass() = default;
-
-		void addAttachment(const Attachment& a);
-	protected:
-		std::vector<Attachment> _attachments;
-};
-
-typedef std::shared_ptr<RenderPass> spRenderPass;
 
 class Pipeline {
 	public:
-		explicit Pipeline(const RenderPattern& rp){_renderPattern = rp;}
+		explicit Pipeline(const PipelineInfo& rp){_renderPattern = rp;}
 		virtual ~Pipeline() = default;
 
-		virtual void addShader(const ShaderStage& type,const std::string& filename) = 0; // Bascily import glsl
-		virtual void setRenderPass(const spRenderPass& rp) = 0;
-
-		virtual void setDescSet(const std::vector<spDescSet>& descSets) = 0;
-		virtual void setDescSet(const spDescSet& descSet) = 0;
-
-		virtual void create() = 0;
-
-		RenderPattern pattern(){return _renderPattern;}
+		PipelineInfo info(){return _renderPattern;}
 	protected:
-		RenderPattern _renderPattern;
+		PipelineInfo _renderPattern;
 };
 
 typedef std::shared_ptr<Pipeline> spPipeline;

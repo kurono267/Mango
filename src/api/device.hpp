@@ -13,7 +13,7 @@ namespace mango {
 
 class RenderPass;
 class Pipeline;
-class RenderPattern;
+class PipelineInfo;
 class Buffer;
 class Texture;
 class Framebuffer;
@@ -44,7 +44,7 @@ class Device {
 		virtual std::string device_name() = 0;
 
 		virtual spRenderPass createRenderPass() = 0;
-		virtual spPipeline createPipeline(const RenderPattern& rp) = 0;
+		virtual spPipeline createPipeline(const PipelineInfo& rp) = 0;
 		virtual spBuffer createBuffer(const BufferType& type,const MemoryType& memory,const size_t& size,void* data = nullptr) = 0;
 		virtual spDescSet createDescSet() = 0;
 

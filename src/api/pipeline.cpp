@@ -3,10 +3,11 @@
 //
 
 #include "pipeline.hpp"
+#include "utils.hpp"
 
 using namespace mango;
 
-RenderPattern::RenderPattern(){
+PipelineInfo::PipelineInfo(){
 	inputAssembly(PrimitiveTopology::TriangleList);
 	dynamicScissor();
 	dynamicViewport();
@@ -16,33 +17,33 @@ RenderPattern::RenderPattern(){
 	depth();
 }
 
-void RenderPattern::inputAssembly(PrimitiveTopology topology){
+void PipelineInfo::inputAssembly(PrimitiveTopology topology){
 	_topology = topology;
 }
 
-void RenderPattern::viewport(const float& x,const float& y,const float& width,const float& height,const float& minDepth,const float& maxDepth){
+void PipelineInfo::viewport(const float& x,const float& y,const float& width,const float& height,const float& minDepth,const float& maxDepth){
 	_viewport = Viewport(glm::vec2(x,y),glm::vec2(width,height),minDepth,maxDepth);
 	_dynamicViewport = false;
 }
 
-void RenderPattern::viewport(const Viewport& view){
+void PipelineInfo::viewport(const Viewport& view){
 	_viewport = view;
 	_dynamicViewport = false;
 }
 
-void RenderPattern::scissor(const glm::ivec2& offset,const glm::ivec2& size){
+void PipelineInfo::scissor(const glm::ivec2& offset,const glm::ivec2& size){
 	_scissor = glm::ivec4(offset.x,offset.y,size.x,size.y);
 	_dynamicScissor = false;
 }
 
-void RenderPattern::dynamicScissor(){
+void PipelineInfo::dynamicScissor(){
 	_dynamicScissor = true;
 }
-void RenderPattern::dynamicViewport(){
+void PipelineInfo::dynamicViewport(){
 	_dynamicViewport = true;
 }
 
-void RenderPattern::rasterizer(const PolygonMode& pmode,
+void PipelineInfo::rasterizer(const PolygonMode& pmode,
 				const CullMode& cmode,
 				const FrontFace& face,
 				const float& lineWidth,
@@ -59,7 +60,7 @@ void RenderPattern::rasterizer(const PolygonMode& pmode,
 	_rasterizer.depthBiasFactor = depthBiasFactor;
 }
 
-void RenderPattern::multisampling(const SampleCount& count,
+void PipelineInfo::multisampling(const SampleCount& count,
 				   const bool& sampleShading,
 				   const float& minSampleShading,
 				   const bool& alphaToCoverageEnable,
@@ -70,7 +71,7 @@ void RenderPattern::multisampling(const SampleCount& count,
 	_multisampling.alphaToOneEnable = alphaToOneEnable;
 }
 
-void RenderPattern::blend(const uint& attachments,const bool& enable,const std::vector<ColorComponent>& writeMask,
+void PipelineInfo::blend(const uint& attachments,const bool& enable,const std::vector<ColorComponent>& writeMask,
 			const BlendFactor& srcColorBlendFactor,const BlendFactor& dstColorBlendFactor,
 			const BlendOp& colorBlendOp,
 			const BlendFactor& srcAlphaBlendFactor,const BlendFactor& dstAlphaBlendFactor,
@@ -90,46 +91,75 @@ void RenderPattern::blend(const uint& attachments,const bool& enable,const std::
 	}
 }
 
-void RenderPattern::depth(const bool& enable, const bool& write,const CompareOp& comp){
+void PipelineInfo::depth(const bool& enable, const bool& write,const CompareOp& comp){
 	_depthStencil.enable = enable;
 	_depthStencil.write = write;
 	_depthStencil.comp = comp;
 }
 
-const PrimitiveTopology& RenderPattern::getTopology() const {
+const PrimitiveTopology& PipelineInfo::getTopology() const {
 	return _topology;
 }
 
-const Viewport& RenderPattern::getViewport() const {
+const Viewport& PipelineInfo::getViewport() const {
 	return _viewport;
 }
 
-const glm::ivec4& RenderPattern::getScissor() const {
+const glm::ivec4& PipelineInfo::getScissor() const {
 	return _scissor;
 }
 
-const RasterizationState& RenderPattern::getRasterizationState() const {
+const RasterizationState& PipelineInfo::getRasterizationState() const {
 	return _rasterizer;
 }
 
-const MultisamplingState& RenderPattern::getMultisamplingState() const {
+const MultisamplingState& PipelineInfo::getMultisamplingState() const {
 	return _multisampling;
 }
 
-const std::vector<BlendAttachmentState>& RenderPattern::getBlendAttachments() const {
+const std::vector<BlendAttachmentState>& PipelineInfo::getBlendAttachments() const {
 	return _blendAttachments;
 }
 
-const DepthState& RenderPattern::getDepthState() const {
+const DepthState& PipelineInfo::getDepthState() const {
 	return _depthStencil;
 }
 
-bool RenderPattern::isDynamicScissor() const {
+bool PipelineInfo::isDynamicScissor() const {
 	return _dynamicScissor;
 }
 
-bool RenderPattern::isDynamicViewport() const {
+bool PipelineInfo::isDynamicViewport() const {
 	return _dynamicViewport;
+}
+
+const std::unordered_map<ShaderStage, std::string> &PipelineInfo::getShaders() const {
+	return _shaders;
+}
+
+const spRenderPass &PipelineInfo::getRenderPass() const {
+	return _renderPass;
+}
+
+const std::vector<spDescSet>& PipelineInfo::getDescSets() const {
+	return _descSets;
+}
+
+void PipelineInfo::addShader(const ShaderStage &type, const std::string &filename) {
+	_shaders[type] = filename;
+}
+
+void PipelineInfo::setRenderPass(const spRenderPass &rp) {
+	_renderPass = rp;
+}
+
+void PipelineInfo::setDescSet(const std::vector<spDescSet> &descSets) {
+	_descSets = descSets;
+}
+
+void PipelineInfo::setDescSet(const spDescSet &descSet) {
+	_descSets.resize(1);
+	_descSets[0] = descSet;
 }
 
 void RenderPass::addAttachment(const Attachment& a){

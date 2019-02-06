@@ -81,8 +81,15 @@ vk::RenderPass RenderPassVK::getVK(){
 	return _renderPass;
 }
 
-PipelineVK::PipelineVK(const spDevice& device,const mango::RenderPattern &rp) : Pipeline(rp) {
+PipelineVK::PipelineVK(const spDevice& device,const mango::PipelineInfo &rp) : Pipeline(rp) {
 	_device = std::dynamic_pointer_cast<DeviceVK>(device);
+
+	setRenderPass(_renderPattern.getRenderPass());
+	for(const auto& shaderPair : _renderPattern.getShaders()){
+		addShader(shaderPair.first,shaderPair.second);
+	}
+	setDescSet(_renderPattern.getDescSets());
+	create();
 }
 
 PipelineVK::~PipelineVK() {

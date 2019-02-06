@@ -208,7 +208,7 @@ vk::Queue DeviceVK::getGraphicsQueue(){
 	return _graphicsQueue;
 }
 
-mango::spPipeline DeviceVK::createPipeline(const RenderPattern& rp){
+mango::spPipeline DeviceVK::createPipeline(const PipelineInfo& rp){
 	return PipelineVK::make(shared_from_this(),rp);
 }
 

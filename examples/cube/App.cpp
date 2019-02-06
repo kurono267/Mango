@@ -13,32 +13,28 @@ bool App::init() {
     auto device = _instance->device();
     std::cout << device->device_name() << std::endl;
 
-    RenderPattern rp;
+	_camera = std::make_shared<CameraAtPoint>(device,glm::vec3(0.f,0.f,-5.f));
+	_camera->initProj(glm::radians(45.0f),(float)(1280)/(float)(720),0.1f,1000.0f);
+
+	_texture = checkboardTexture(device, 1280, 720, 100);
+	auto texView = _texture->createTextureView();
+
+	_descSet = device->createDescSet();
+	_descSet->setUniformBuffer(_camera->getCameraUniform(), 0, ShaderStage::Vertex);
+	_descSet->setTexture(texView, Sampler(), 1, ShaderStage::Fragment);
+	_descSet->create();
+
+    PipelineInfo rp;
     rp.viewport(Viewport(glm::vec2(0), mainWnd->wndSize()));
     rp.scissor(glm::ivec2(0), mainWnd->wndSize());
-
-    _camera = std::make_shared<CameraAtPoint>(device,glm::vec3(0.f,0.f,-5.f));
-    _camera->initProj(glm::radians(45.0f),(float)(1280)/(float)(720),0.1f,1000.0f);
-
-    _texture = checkboardTexture(device, 1280, 720, 100);
-    auto texView = _texture->createTextureView();
-
-    _descSet = device->createDescSet();
-    _descSet->setUniformBuffer(_camera->getCameraUniform(), 0, ShaderStage::Vertex);
-    _descSet->setTexture(texView, Sampler(), 1, ShaderStage::Fragment);
-    _descSet->create();
+    rp.addShader(ShaderStage::Vertex, "../glsl/cube.vert");
+    rp.addShader(ShaderStage::Fragment, "../glsl/cube.frag");
+    rp.setDescSet(_descSet);
+    rp.setRenderPass(device->getScreenRenderPass());
 
     _main = device->createPipeline(rp);
-    _main->addShader(ShaderStage::Vertex, "../glsl/cube.vert");
-    _main->addShader(ShaderStage::Fragment, "../glsl/cube.frag");
-    _main->setDescSet(_descSet);
 
     _cube = createCube(device);
-
-    spRenderPass renderPass = device->getScreenRenderPass();
-
-    _main->setRenderPass(renderPass);
-    _main->create();
 
     auto screenBuffers = device->getScreenbuffers();
     for (const auto &screen : screenBuffers) {
@@ -52,7 +48,7 @@ bool App::init() {
         _cmdScreen[i]->setClearColor(0, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
         _cmdScreen[i]->setClearDepthStencil(1, 1.0f, 0.0f);
 
-        _cmdScreen[i]->beginRenderPass(renderPass, screenBuffers[i],
+        _cmdScreen[i]->beginRenderPass(rp.getRenderPass(), screenBuffers[i],
                                        RenderArea(screenBuffers[i]->getSize(), glm::ivec2(0)));
         _cmdScreen[i]->bindPipeline(_main);
         _cmdScreen[i]->bindDescriptorSet(_main, _descSet);

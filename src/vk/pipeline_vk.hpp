@@ -37,21 +37,21 @@ typedef std::shared_ptr<RenderPassVK> spRenderPassVK;
 
 class PipelineVK : public mango::Pipeline {
 	public:
-		PipelineVK(const spDevice& device,const RenderPattern &rp);
+		PipelineVK(const spDevice& device,const PipelineInfo &rp);
 		virtual ~PipelineVK() final;
 
-		void addShader(const ShaderStage& type,const std::string& filename) final; // Bascily import glsl
-		void setRenderPass(const std::shared_ptr<RenderPass>& rp) final;
-
-	    void setDescSet(const std::vector<spDescSet> &descSets) final;
-	    void setDescSet(const spDescSet &descSet) final;
-
-	    void create() final;
-
-		static spPipeline make(const spDevice& device,const RenderPattern & rp){ return std::make_shared<PipelineVK>(device,rp); }
+		static spPipeline make(const spDevice& device,const PipelineInfo & rp){ return std::make_shared<PipelineVK>(device,rp); }
 
 		vk::Pipeline getVK();
 		vk::PipelineLayout getLayout();
+	private:
+		void addShader(const ShaderStage& type,const std::string& filename); // Bascily import glsl
+		void setRenderPass(const std::shared_ptr<RenderPass>& rp);
+
+		void setDescSet(const std::vector<spDescSet> &descSets);
+		void setDescSet(const spDescSet &descSet);
+
+		void create();
 	private:
 		spDeviceVK _device;
 		vk::Device _vk_device;
