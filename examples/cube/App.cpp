@@ -17,7 +17,7 @@ bool App::init() {
     rp.viewport(Viewport(glm::vec2(0), mainWnd->wndSize()));
     rp.scissor(glm::ivec2(0), mainWnd->wndSize());
 
-    _camera = std::make_shared<CameraAtPoint>(device,glm::vec3(0.0f));
+    _camera = std::make_shared<CameraAtPoint>(device,glm::vec3(0.f,0.f,-5.f));
     _camera->initProj(glm::radians(45.0f),(float)(1280)/(float)(720),0.1f,1000.0f);
 
     _texture = checkboardTexture(device, 1280, 720, 100);
