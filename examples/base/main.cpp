@@ -18,10 +18,6 @@ class TestApp : public BaseApp {
 			auto device = _instance->device();
 			std::cout << device->device_name() << std::endl;
 
-			PipelineInfo rp;
-			rp.viewport(Viewport(glm::vec2(0),mainWnd->wndSize()));
-			rp.scissor(glm::ivec2(0),mainWnd->wndSize());
-
 			glm::vec4 colorValue(0.5f,0.5f,1.0f,1.0f);
 			_color.create(device,sizeof(glm::vec4),&colorValue);
 
@@ -33,17 +29,18 @@ class TestApp : public BaseApp {
 			_descSet->setTexture(texView,Sampler(),1,ShaderStage::Fragment);
             _descSet->create();
 
+			PipelineInfo rp;
+			rp.viewport(Viewport(glm::vec2(0),mainWnd->wndSize()));
+			rp.scissor(glm::ivec2(0),mainWnd->wndSize());
+			rp.addShader(ShaderStage::Vertex,"../glsl/test.vert");
+			rp.addShader(ShaderStage::Fragment,"../glsl/test.frag");
+			rp.setDescSet(_descSet);
+			spRenderPass renderPass = device->getScreenRenderPass();
+			rp.setRenderPass(renderPass);
+
 			_main = device->createPipeline(rp);
-			_main->addShader(ShaderStage::Vertex,"../glsl/test.vert");
-			_main->addShader(ShaderStage::Fragment,"../glsl/test.frag");
-			_main->setDescSet(_descSet);
 
 			_quad = createQuad(device);
-
-			spRenderPass renderPass = device->getScreenRenderPass();
-
-			_main->setRenderPass(renderPass);
-			_main->create();
 
 			auto screenBuffers = device->getScreenbuffers();
 			for(const auto& screen : screenBuffers){
