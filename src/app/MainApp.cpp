@@ -49,7 +49,7 @@ void MainApp::run(){
 glm::ivec2 MainApp::wndSize(){
 	int width;
 	int height;
-	glfwGetWindowSize(_window, &width, &height);
+	glfwGetFramebufferSize(_window, &width, &height);
 	return glm::vec2(width,height);
 }
 
