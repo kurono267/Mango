@@ -8,7 +8,8 @@
 using namespace mango::scene;
 
 SceneTransform::SceneTransform() {
-
+	_scale = glm::vec3(1.f);
+	setRotation(glm::vec3(0.f));
 }
 
 SceneTransform::~SceneTransform() {

@@ -22,6 +22,7 @@
 #include <unified/Image.hpp>
 
 #include <scene/Camera.hpp>
+#include <scene/SceneNode.hpp>
 
 #ifdef MANGO_VULKAN
 #include <vk/instance_vk.hpp>

@@ -4,6 +4,20 @@
 
 #include "App.hpp"
 
+struct Data {
+	glm::mat4 view;
+	glm::mat4 proj;
+	glm::mat4 viewProj;
+};
+
+void App::updateCameraUniform(const spSceneNode& cameraNode) {
+	Data data;
+	data.view = cameraNode->getWorldTransform();
+	data.proj = cameraNode->getCamera()->getProj();
+	data.viewProj = data.proj*data.view;
+	_cameraUniform.set(sizeof(Data),&data);
+}
+
 bool App::init() {
     auto mainWnd = mainApp.lock();
 
@@ -13,14 +27,21 @@ bool App::init() {
     auto device = _instance->device();
     std::cout << device->device_name() << std::endl;
 
-	_camera = std::make_shared<CameraAtPoint>(device,glm::vec3(0.f,0.f,-5.f));
-	_camera->initProj(glm::radians(45.0f),(float)(1280)/(float)(720),0.1f,1000.0f);
+    // Create scene with camera only
+    _cameraNode = std::make_shared<SceneNode>(std::make_shared<Camera>(glm::radians(45.0f),(float)(1280)/(float)(720),0.1f,1000.0f));
+	_cameraNode->setPos(glm::vec3(0.f,0.f,-5.f));
+
+	_cameraOrbit = std::make_shared<SceneNode>();
+	_cameraOrbit->addChild(_cameraNode);
+
+    _cameraUniform.create(device,sizeof(Data));
+    updateCameraUniform(_cameraNode);
 
 	_texture = checkboardTexture(device, 1280, 720, 100);
 	auto texView = _texture->createTextureView();
 
 	_descSet = device->createDescSet();
-	_descSet->setUniformBuffer(_camera->getCameraUniform(), 0, ShaderStage::Vertex);
+	_descSet->setUniformBuffer(_cameraUniform, 0, ShaderStage::Vertex);
 	_descSet->setTexture(texView, Sampler(), 1, ShaderStage::Fragment);
 	_descSet->create();
 
@@ -80,7 +101,7 @@ bool App::draw() {
 }
 
 bool App::update() {
-    _camera->updateUniform();
+    updateCameraUniform(_cameraNode);
     return true;
 }
 
@@ -99,7 +120,10 @@ bool App::onMouse(const GLFWMouse& mouse) {
         if(_isPressed){
             if(!_isFirst){
                 glm::vec2 dp = glm::vec2(mouse.x,mouse.y)-_prev_mouse;
-                _camera->rotate(dp,_dt);
+				glm::vec3 eulerAngles = _cameraOrbit->rotationEuler();
+				eulerAngles.y += dp.x*_dt;
+				eulerAngles.x += dp.y*_dt;
+				_cameraOrbit->setRotation(eulerAngles);
             }
             _prev_mouse = glm::vec2(mouse.x,mouse.y);
             _isFirst = false;

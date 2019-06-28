@@ -32,7 +32,9 @@ protected:
     spMesh _cube;
     spTexture _texture;
 
-    std::shared_ptr<Camera> _camera;
+    spSceneNode _cameraNode;
+    spSceneNode _cameraOrbit;
+    Uniform _cameraUniform;
 
     // For camera rotate
     bool _isPressed = false;
@@ -45,6 +47,8 @@ protected:
 
     spSemaphore _screenAvailable;
     spSemaphore _renderFinish;
+protected:
+	void updateCameraUniform(const spSceneNode& cameraNode);
 };
 
 
