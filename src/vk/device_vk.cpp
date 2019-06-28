@@ -162,7 +162,7 @@ void DeviceVK::createLogicalDevice(){
 	deviceFeatures.samplerAnisotropy = true;
 	deviceFeatures.tessellationShader = true;
 	deviceFeatures.multiViewport = true;
-	deviceFeatures.geometryShader = true;
+	//deviceFeatures.geometryShader = true; // MoltenVK doesn't support geometry shader feature
 
 	vk::DeviceCreateInfo createInfo;
 
