@@ -19,7 +19,7 @@ struct SwapchainSupportDetails {
 class Swapchain {
 	public:
 		Swapchain() = default;
-		~Swapchain() = default;
+		~Swapchain();
 
 		void create(const spDevice& device,const vk::SurfaceKHR& surface,const glm::ivec2& size,const uint32_t queueFamilyIndices[2]);
 		void release();

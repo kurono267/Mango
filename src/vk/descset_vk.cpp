@@ -11,6 +11,10 @@ namespace mango::vulkan {
 
 DescSetVK::DescSetVK(const spDevice &device) : _device(device) {}
 
+DescSetVK::~DescSetVK() {
+	//if(_device)release(_device); TODO fix free memory
+}
+
 void DescSetVK::create(){
     // Create Decription Set Layout
     std::vector<vk::DescriptorSetLayoutBinding> layoutBinds;
@@ -84,17 +88,18 @@ void DescSetVK::setTexture(const spTextureView &texture, const Sampler &sampler,
 void DescSetVK::release(spDevice device){
     auto vk_device = std::dynamic_pointer_cast<DeviceVK>(device)->getDevice();
 
-    std::set<vk::Sampler> samplerSet;
+    /*std::set<vk::Sampler> samplerSet;
     for(auto s : _samplerBinds){
         samplerSet.insert(s.sampler);
     }
 
     for(auto s : samplerSet){
         vk_device.destroySampler(s);
-    }
+    }*/
 
+    vk_device.freeDescriptorSets(_descPool,1,&_descSet);
+	vk_device.destroyDescriptorPool(_descPool);
     vk_device.destroyDescriptorSetLayout(_descLayout);
-    vk_device.destroyDescriptorPool(_descPool);
 }
 
     DescSetVK::UBOBinding::UBOBinding(const Uniform &_buffer, size_t _binding, const vk::ShaderStageFlags &_stage,

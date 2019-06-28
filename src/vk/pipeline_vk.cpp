@@ -8,7 +8,6 @@
 #include <api/utils.hpp>
 #include "pipeline_vk.hpp"
 #include "convert_vk.hpp"
-#include "descset_vk.hpp"
 
 using namespace mango::vulkan;
 
@@ -94,6 +93,7 @@ PipelineVK::PipelineVK(const spDevice& device,const mango::PipelineInfo &rp) : P
 
 PipelineVK::~PipelineVK() {
 	std::cout << "~PipelineVK" << std::endl;
+
 }
 
 void PipelineVK::addShader(const mango::ShaderStage &type, const std::string &filename) {
@@ -222,8 +222,11 @@ vk::Pipeline PipelineVK::getVK(){
 
 void PipelineVK::setDescSet(const std::vector<mango::spDescSet> &descSets) {
 	_descLayouts.clear();
+	_descSet.clear();
 	for(auto d : descSets){
-		_descLayouts.push_back(std::dynamic_pointer_cast<DescSetVK>(d)->getLayout());
+		auto descSetVK = std::dynamic_pointer_cast<DescSetVK>(d);
+		_descSet.push_back(descSetVK);
+		_descLayouts.push_back(descSetVK->getLayout());
 	}
 	_pipelineLayoutInfo = vk::PipelineLayoutCreateInfo(
 			vk::PipelineLayoutCreateFlags(),

@@ -65,7 +65,7 @@ DeviceVK::~DeviceVK(){
 }
 
 void DeviceVK::release(){
-	_swapchain.release();
+	//_swapchain.release();
 	//_device.destroyCommandPool(_pool);
 	//_device.destroy();
 }
@@ -343,6 +343,10 @@ uint32_t DeviceVK::nextScreen(const mango::spSemaphore& signal){
 mango::spDescSet DeviceVK::createDescSet() {
     spDescSet descSet = std::make_shared<DescSetVK>(shared_from_this());
     return descSet;
+}
+
+void DeviceVK::waitIdle() {
+	_device.waitIdle();
 }
 
 void SemaphoreVK::create(const spDeviceVK& device){

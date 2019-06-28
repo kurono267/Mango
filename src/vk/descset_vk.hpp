@@ -14,7 +14,7 @@ namespace mango::vulkan {
 class DescSetVK : public mango::DescSet {
 public:
     DescSetVK(const spDevice& device);
-    ~DescSetVK() override = default;
+    ~DescSetVK() override;
 
     void create() override;
 

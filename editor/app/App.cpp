@@ -132,11 +132,6 @@ bool App::onMouse(const GLFWMouse& mouse) {
     return true;
 }
 bool App::onExit() {
-	_instance->device()->waitIdle();
     return true;
-}
-
-App::~App() {
-	std::cout << "~App" << std::endl;
 }
 

@@ -7,6 +7,7 @@
 
 #include "instance_vk.hpp"
 #include "api/pipeline.hpp"
+#include "descset_vk.hpp"
 
 #include <iostream>
 
@@ -59,6 +60,7 @@ class PipelineVK : public mango::Pipeline {
 		std::vector<vk::PipelineShaderStageCreateInfo> _shaders;
 		vk::PipelineViewportStateCreateInfo      _viewportState;
 
+		std::vector<std::shared_ptr<DescSetVK>> _descSet;
 		std::vector<vk::DescriptorSetLayout> _descLayouts;
 		vk::PipelineLayoutCreateInfo _pipelineLayoutInfo;
 
