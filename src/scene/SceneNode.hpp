@@ -5,7 +5,7 @@
 #ifndef MANGO_SCENENODE_HPP
 #define MANGO_SCENENODE_HPP
 
-#include <unified/mesh.hpp>
+#include <unified/Mesh.hpp>
 #include "SceneTransform.hpp"
 #include "Camera.hpp"
 #include <vector>

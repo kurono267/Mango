@@ -1,43 +1,43 @@
 set(MANGO_SRC
 app/MainApp.cpp
-api/pipeline.cpp
-api/buffer.hpp
-unified/mesh.cpp
-unified/mesh.hpp
-api/texture.hpp
-api/framebuffer.hpp
-api/pipeline.cpp
-api/framebuffer.cpp
-api/utils.hpp
-api/utils.cpp
-api/commandbuffer.hpp
-unified/utils.cpp
-unified/utils.hpp
+        api/Pipeline.cpp
+        api/Buffer.hpp
+        unified/Mesh.cpp
+        unified/Mesh.hpp
+        api/Texture.hpp
+        api/Framebuffer.hpp
+        api/Pipeline.cpp
+        api/Framebuffer.cpp
+        api/Utils.hpp
+        api/Utils.cpp
+        api/CommandBuffer.hpp
+        unified/Utils.cpp
+        unified/Utils.hpp
 scene/Camera.cpp
 scene/Camera.hpp
-unified/image.cpp
-unified/uniform.cpp
-unified/uniform.hpp scene/SceneTransform.cpp scene/SceneTransform.hpp)
+        unified/Image.cpp
+        unified/Uniform.cpp
+        unified/Uniform.hpp scene/SceneTransform.cpp scene/SceneTransform.hpp)
 
 set(MANGO_VK
-vk/instance_vk.cpp
-vk/device_vk.cpp
-vk/swapchain.cpp
-vk/pipeline_vk.cpp
-vk/pipeline_vk.hpp
-vk/convert_vk.hpp
-vk/convert_vk.cpp
-vk/buffer_vk.cpp
-vk/buffer_vk.hpp
-vk/texture_vk.cpp
-vk/texture_vk.hpp
-vk/framebuffer_vk.cpp
-vk/framebuffer_vk.hpp
-vk/commandbuffer_vk.cpp
-vk/commandbuffer_vk.hpp
-api/descset.hpp
-vk/descset_vk.cpp
-vk/descset_vk.hpp
+        vk/InstanceVK.cpp
+        vk/DeviceVK.cpp
+        vk/Swapchain.cpp
+        vk/PipelineVK.cpp
+        vk/PipelineVK.hpp
+        vk/ConvertVK.hpp
+        vk/ConvertVK.cpp
+        vk/BufferVK.cpp
+        vk/BufferVK.hpp
+        vk/TextureVK.cpp
+        vk/TextureVK.hpp
+        vk/FramebufferVK.cpp
+        vk/FramebufferVK.hpp
+        vk/CommandBufferVK.cpp
+        vk/CommandBufferVK.hpp
+        api/DescSet.hpp
+        vk/DescSetVK.cpp
+        vk/DescSetVK.hpp
         scene/SceneNode.cpp scene/SceneNode.hpp)
 
 add_library(mango SHARED ${MANGO_SRC} ${MANGO_VK})
