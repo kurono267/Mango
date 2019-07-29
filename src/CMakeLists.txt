@@ -17,7 +17,7 @@ scene/Camera.cpp
 scene/Camera.hpp
         unified/Image.cpp
         unified/Uniform.cpp
-        unified/Uniform.hpp scene/SceneTransform.cpp scene/SceneTransform.hpp)
+        unified/Uniform.hpp scene/SceneTransform.cpp scene/SceneTransform.hpp scene/Scene.cpp scene/Scene.hpp scene/Material.cpp scene/Material.hpp)
 
 set(MANGO_VK
         vk/InstanceVK.cpp
@@ -38,7 +38,7 @@ set(MANGO_VK
         api/DescSet.hpp
         vk/DescSetVK.cpp
         vk/DescSetVK.hpp
-        scene/SceneNode.cpp scene/SceneNode.hpp)
+        scene/SceneNode.cpp scene/SceneNode.hpp scene/Geometry.cpp scene/Geometry.hpp)
 
 add_library(mango SHARED ${MANGO_SRC} ${MANGO_VK})
 target_link_libraries(mango glfw ${Vulkan_LIBRARY} shaderc_combined)

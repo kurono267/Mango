@@ -4,7 +4,7 @@
 
 #include "Camera.hpp"
 
-namespace mango::scene {
+namespace mango {
 
 	Camera::Camera(float angle,float aspect,float near,float far){
 		_proj = glm::perspective(angle,aspect,near,far);

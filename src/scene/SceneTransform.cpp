@@ -5,7 +5,7 @@
 #include "SceneTransform.hpp"
 #include <glm/gtx/matrix_decompose.hpp>
 
-using namespace mango::scene;
+using namespace mango;
 
 SceneTransform::SceneTransform() {
 	_scale = glm::vec3(1.f);

@@ -5,12 +5,11 @@
 #ifndef MANGO_SCENENODE_HPP
 #define MANGO_SCENENODE_HPP
 
-#include <unified/Mesh.hpp>
 #include "SceneTransform.hpp"
 #include "Camera.hpp"
 #include <vector>
 
-namespace mango::scene {
+namespace mango {
 
 class SceneNode : public SceneTransform, public std::enable_shared_from_this<SceneNode> {
 	typedef std::shared_ptr<SceneNode> ptr;

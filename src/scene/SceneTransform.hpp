@@ -7,7 +7,7 @@
 
 #include <api/default.hpp>
 
-namespace mango::scene {
+namespace mango {
 
 class SceneTransform {
 	public:

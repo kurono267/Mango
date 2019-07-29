@@ -4,7 +4,7 @@
 
 #include "SceneNode.hpp"
 
-using namespace mango::scene;
+using namespace mango;
 
 SceneNode::SceneNode() {
 	_parent = nullptr;
