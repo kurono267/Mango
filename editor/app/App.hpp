@@ -15,7 +15,7 @@ using namespace mango::scene;
 class App : public BaseApp {
 public:
     explicit App(const spMainApp& app) : BaseApp(app) {}
-    ~App() final = default;
+    virtual ~App() final;
 
     bool init() final;
     bool draw() final;

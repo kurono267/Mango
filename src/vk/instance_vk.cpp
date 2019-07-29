@@ -16,8 +16,8 @@ InstanceVK::InstanceVK(){
 }
 
 InstanceVK::~InstanceVK(){
-	_device->release();
 	std::cout << "Instance Destructor" << std::endl;
+	_device.reset();
 }
 
 void InstanceVK::init(const std::string& title, GLFWwindow* window,const glm::ivec2& size){

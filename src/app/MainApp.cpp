@@ -44,6 +44,7 @@ void MainApp::run(){
 		if(glfwWindowShouldClose(_window))_isRun = false;
 	}
 	_app->onExit();
+	_app.reset();
 }
 
 glm::ivec2 MainApp::wndSize(){

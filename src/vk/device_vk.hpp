@@ -29,7 +29,7 @@ class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
 	friend class InstanceVK;
 	public:
 		DeviceVK() = default;
-		~DeviceVK() final;
+		~DeviceVK() override;
 
 		std::string device_name() final;
 
@@ -61,7 +61,6 @@ class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
 
 		uint32_t nextScreen(const spSemaphore& signal);
 
-		void release();
 	    void waitIdle();
 private:
 		void create(const vk::Instance& instance,const vk::SurfaceKHR& surface,const glm::ivec2& size);

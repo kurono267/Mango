@@ -18,6 +18,10 @@ void App::updateCameraUniform(const spSceneNode& cameraNode) {
 	_cameraUniform.set(sizeof(Data),&data);
 }
 
+App::~App() {
+	std::cout << "~App" << std::endl;
+}
+
 bool App::init() {
     auto mainWnd = mainApp.lock();
 
@@ -132,6 +136,7 @@ bool App::onMouse(const GLFWMouse& mouse) {
     return true;
 }
 bool App::onExit() {
+	_instance->device()->waitIdle();
     return true;
 }
 

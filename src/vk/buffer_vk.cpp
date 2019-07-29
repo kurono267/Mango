@@ -80,6 +80,7 @@ void BufferVK::copy(const vk::Buffer& src,const vk::Buffer& dst,const size_t& si
 }
 
 BufferVK::~BufferVK() {
+	auto impDevice = std::dynamic_pointer_cast<DeviceVK>(_device);
 
 }
 

@@ -61,13 +61,10 @@ QueueFamilyIndices queueFamilies(const vk::PhysicalDevice& device,const vk::Surf
 }
 
 DeviceVK::~DeviceVK(){
-	std::cout << "Device Destructor" << std::endl;
-}
-
-void DeviceVK::release(){
-	//_swapchain.release();
-	//_device.destroyCommandPool(_pool);
-	//_device.destroy();
+	std::cout << "~DeviceVK" << std::endl;
+	_swapchain.release();
+	_device.destroyCommandPool(_pool);
+	_device.destroy();
 }
 
 void DeviceVK::create(const vk::Instance& instance,const vk::SurfaceKHR& surface,const glm::ivec2& size){

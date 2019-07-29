@@ -93,7 +93,6 @@ PipelineVK::PipelineVK(const spDevice& device,const mango::PipelineInfo &rp) : P
 
 PipelineVK::~PipelineVK() {
 	std::cout << "~PipelineVK" << std::endl;
-
 }
 
 void PipelineVK::addShader(const mango::ShaderStage &type, const std::string &filename) {

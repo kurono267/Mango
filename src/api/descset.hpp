@@ -24,8 +24,6 @@ public:
 
     virtual void setUniformBuffer(const Uniform& buffer,size_t binding,const ShaderStage& stage) = 0;
     virtual void setTexture(const spTextureView& texture,const Sampler& sampler, size_t binding, const ShaderStage& stage) = 0;
-
-    virtual void release(spDevice device) = 0;
 };
 
 typedef std::shared_ptr<DescSet> spDescSet;

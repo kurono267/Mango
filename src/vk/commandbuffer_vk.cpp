@@ -88,9 +88,18 @@ void CommandBufferVK::setViewport(const glm::ivec2& size, const glm::ivec2& offs
 }
 
 void CommandBufferVK::create(const spDeviceVK& device){
+	_device = device;
 	vk::CommandBufferAllocateInfo allocInfo(device->getCommandPool(),vk::CommandBufferLevel::ePrimary, 1);
 	auto cmds = device->getDevice().allocateCommandBuffers(allocInfo);
 	_cmd = cmds[0];
+}
+
+CommandBufferVK::~CommandBufferVK() {
+	std::cout << "~CommandBufferVK" << std::endl;
+	if(_cmd){
+		_cmd.reset(vk::CommandBufferResetFlagBits::eReleaseResources);
+		_device->getDevice().freeCommandBuffers(_device->getCommandPool(),1,&_cmd);
+	}
 }
 
 vk::CommandBuffer CommandBufferVK::getVK(){

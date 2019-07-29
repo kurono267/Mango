@@ -23,8 +23,6 @@ public:
     void setTexture(const spTextureView &texture, const Sampler &sampler, size_t binding,
                     const ShaderStage &stage) override;
 
-    void release(spDevice device) override;
-
     vk::DescriptorSet getSet(){return _descSet;}
     vk::DescriptorSetLayout getLayout(){return _descLayout;}
 private:

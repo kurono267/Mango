@@ -12,7 +12,21 @@ namespace mango::vulkan {
 DescSetVK::DescSetVK(const spDevice &device) : _device(device) {}
 
 DescSetVK::~DescSetVK() {
-	//if(_device)release(_device); TODO fix free memory
+	std::cout << "~DescSetVK" << std::endl;
+	auto vk_device = std::dynamic_pointer_cast<DeviceVK>(_device)->getDevice();
+
+	std::set<vk::Sampler> samplerSet;
+	for(auto s : _samplerBinds){
+		samplerSet.insert(s.sampler);
+	}
+
+	for(auto s : samplerSet){
+		vk_device.destroySampler(s);
+	}
+
+	vk_device.freeDescriptorSets(_descPool,1,&_descSet);
+	vk_device.destroyDescriptorPool(_descPool);
+	vk_device.destroyDescriptorSetLayout(_descLayout);
 }
 
 void DescSetVK::create(){
@@ -43,17 +57,11 @@ void DescSetVK::create(){
             typesDesc[(int)s.descType] += 1;
         }
     }
-    /*int poolSize = 0;
-    for(auto t : typesDesc){
-        std::cout << to_string((vk::DescriptorType)t.first) << " " << t.second << std::endl;
-        poolSizes.push_back(vk::DescriptorPoolSize((vk::DescriptorType)t.first,t.second));
-        poolSize++;
-    }*/
 
     vk::DescriptorSetLayoutCreateInfo layoutInfo(vk::DescriptorSetLayoutCreateFlags(),layoutBinds.size(),layoutBinds.data());
     _descLayout = vk_device.createDescriptorSetLayout(layoutInfo);
 
-    vk::DescriptorPoolCreateInfo poolInfo(vk::DescriptorPoolCreateFlags(),1,poolSizes.size(),poolSizes.data());
+    vk::DescriptorPoolCreateInfo poolInfo(vk::DescriptorPoolCreateFlags() | vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet,1,poolSizes.size(),poolSizes.data());
     _descPool = vk_device.createDescriptorPool(poolInfo);
 
     vk::DescriptorSetAllocateInfo allocInfo(_descPool,1,&_descLayout);
@@ -83,23 +91,6 @@ void DescSetVK::setTexture(const spTextureView &texture, const Sampler &sampler,
                            const ShaderStage &stage){
     auto internalTexture = std::dynamic_pointer_cast<TextureViewVK>(texture);
     _samplerBinds.emplace_back(internalTexture->getView(),createSampler(_device,sampler),binding,shaderStageVK(stage),vk::DescriptorType::eCombinedImageSampler,vk::ImageLayout::eShaderReadOnlyOptimal);
-}
-
-void DescSetVK::release(spDevice device){
-    auto vk_device = std::dynamic_pointer_cast<DeviceVK>(device)->getDevice();
-
-    /*std::set<vk::Sampler> samplerSet;
-    for(auto s : _samplerBinds){
-        samplerSet.insert(s.sampler);
-    }
-
-    for(auto s : samplerSet){
-        vk_device.destroySampler(s);
-    }*/
-
-    vk_device.freeDescriptorSets(_descPool,1,&_descSet);
-	vk_device.destroyDescriptorPool(_descPool);
-    vk_device.destroyDescriptorSetLayout(_descLayout);
 }
 
     DescSetVK::UBOBinding::UBOBinding(const Uniform &_buffer, size_t _binding, const vk::ShaderStageFlags &_stage,

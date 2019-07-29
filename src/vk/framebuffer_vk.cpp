@@ -39,3 +39,11 @@ vk::Framebuffer FramebufferVK::getVK(){
 FramebufferVK::FramebufferVK(const mango::spDevice &device) : Framebuffer(device) {
 
 }
+
+FramebufferVK::~FramebufferVK() {
+	std::cout << "~FramebufferVK" << std::endl;
+	if(_framebuffer){
+		auto device_vk = std::dynamic_pointer_cast<DeviceVK>(_device);
+		device_vk->getDevice().destroyFramebuffer(_framebuffer);
+	}
+}
