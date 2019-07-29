@@ -31,6 +31,8 @@ void BufferVK::create(const spDevice& device,const BufferType &type,const Memory
 			case BufferType::Storage:
 				gpuUsage = vk::BufferUsageFlagBits::eStorageBuffer;
 				break;
+			default:
+				break;
 		}
 
 		createBuffer(size,

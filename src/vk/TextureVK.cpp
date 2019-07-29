@@ -123,6 +123,8 @@ void flagsFromLayout(const vk::ImageLayout& layout,vk::AccessFlags& accessFlag,v
 			accessFlag = vk::AccessFlagBits::eColorAttachmentWrite;
 			stage      = vk::PipelineStageFlagBits::eColorAttachmentOutput;
 			break;
+		default:
+			throw std::runtime_error("flagsFromLayout not supported this ImageLayout");
 	}
 }
 
