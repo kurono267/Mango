@@ -85,7 +85,7 @@ void PipelineInfo::blend(const uint& attachments,const bool& enable,const std::v
 		s.dstColorBlendFactor = dstColorBlendFactor;
 		s.colorBlendOp = colorBlendOp;
 		s.srcAlphaBlendFactor = srcAlphaBlendFactor;
-		s.dstColorBlendFactor = dstAlphaBlendFactor;
+		s.dstAlphaBlendFactor = dstAlphaBlendFactor;
 		s.alphaBlendOp = alphaBlendOp;
 		_blendAttachments.push_back(s);
 	}
