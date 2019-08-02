@@ -11,22 +11,35 @@ namespace mango {
 
 class Material {
 	public:
-		Material() = default;
+		Material(const spDevice& device);
 		~Material() = default;
 
+		void setAlbedo(const glm::vec4& value);
 		void setAlbedo(const spTexture& texture);
-		void setAlbedo(const glm::vec4& color);
-
-		void setRoughness(const spTexture& texture);
 		void setRoughness(const float& value);
-
-		void setMetalness(const spTexture& texture);
+		void setRoughness(const spTexture& texture);
 		void setMetalness(const float& value);
+		void setMetalness(const spTexture& texture);
+
+		spTexture getAlbedo();
+		spTexture getRoughness();
+		spTexture getMetalness();
+
+		spDescSet getDescSet();
 	protected:
 		spTexture _albedo;
 		spTexture _roughness;
 		spTexture _metalness;
+
+		spTextureView _albedoView;
+		spTextureView _roughnessView;
+		spTextureView _metalnessView;
+
+		std::weak_ptr<Device> _device;
+		spDescSet _descSet;
 };
+
+typedef std::shared_ptr<Material> spMaterial;
 
 }
 

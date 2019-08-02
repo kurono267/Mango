@@ -10,6 +10,8 @@
 namespace mango {
 
 spTexture checkboardTexture(spDevice device,uint32_t width, uint32_t height, uint32_t step);
+spTexture createSinglePixelTexture(spDevice device, float value);
+spTexture createSinglePixelTexture(spDevice device, const glm::vec4& value);
 
 }
 

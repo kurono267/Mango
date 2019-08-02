@@ -18,7 +18,7 @@ class TextureVK : public Texture {
 
 		void create(const spDevice& device,int width, int height,int miplevels,const Format& format, const TextureType &type) override;
 	    void create(const spDevice& device,int width,int height,int miplevels,const Format& format,const TextureType &type,const vk::Image& image);
-		spTextureView createTextureView(const ComponentSwizzle& swizzle = ComponentSwizzle(),int minLevel = 0,int maxLevel = -1) override;
+		spTextureView createTextureView(const ComponentMapping& componentMapping = ComponentMapping(),int minLevel = 0,int maxLevel = -1) override;
 
 	    void set(const spBuffer &buffer) override;
 

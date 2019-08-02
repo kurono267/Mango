@@ -174,7 +174,7 @@ void TextureVK::transition(const vk::ImageLayout& newLayout){
 	_layout = newLayout;
 }
 
-mango::spTextureView TextureVK::createTextureView(const ComponentSwizzle& swizzle,const int minLevel,const int maxLevel){
+mango::spTextureView TextureVK::createTextureView(const ComponentMapping& componentMapping,const int minLevel,const int maxLevel){
 	vk::ImageAspectFlags imageAspectFlags = vk::ImageAspectFlagBits::eColor;
 	if(hasDepthComponent(_format))imageAspectFlags = vk::ImageAspectFlagBits::eDepth;
 	auto viewCreateInfo = vk::ImageViewCreateInfo(
@@ -182,7 +182,7 @@ mango::spTextureView TextureVK::createTextureView(const ComponentSwizzle& swizzl
 		_image,
 		vk::ImageViewType::e2D,
 		formatVK(_format),
-		vk::ComponentMapping(),
+		componentMappingVK(componentMapping),
 		vk::ImageSubresourceRange(
 			imageAspectFlags,
 			minLevel, maxLevel!=-1?maxLevel:_mipLevels, 0, 1)

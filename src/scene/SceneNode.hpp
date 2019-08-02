@@ -7,6 +7,7 @@
 
 #include "SceneTransform.hpp"
 #include "Camera.hpp"
+#include "Geometry.hpp"
 #include <vector>
 
 namespace mango {

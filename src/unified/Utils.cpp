@@ -28,4 +28,18 @@ spTexture checkboardTexture(spDevice device, uint32_t width, uint32_t height, ui
     return texture;
 }
 
+spTexture createSinglePixelTexture(spDevice device, float value) {
+	spTexture texture = device->createTexture(1,1,1,Format::R32Sfloat,TextureType::Input);
+	spBuffer buffer = device->createBuffer(BufferType::CPU,MemoryType::HOST,sizeof(float),(void*)&value);
+	texture->set(buffer);
+	return texture;
+}
+
+spTexture mango::createSinglePixelTexture(spDevice device, const glm::vec4 &value) {
+	spTexture texture = device->createTexture(1,1,1,Format::R32G32B32A32Sfloat,TextureType::Input);
+	spBuffer buffer = device->createBuffer(BufferType::CPU,MemoryType::HOST,sizeof(glm::vec4),(void*)&value);
+	texture->set(buffer);
+	return texture;
+}
+
 }

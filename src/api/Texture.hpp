@@ -83,7 +83,7 @@ class Texture : public std::enable_shared_from_this<Texture> {
 
 		virtual void create(const spDevice& device,int width,int height,
 							int miplevels, const Format& format,const TextureType& type) = 0;
-		virtual spTextureView createTextureView(const ComponentSwizzle& swizzle = ComponentSwizzle(),int minLevel = 0,int maxLevel = -1) = 0;
+		virtual spTextureView createTextureView(const ComponentMapping& componentMapping = ComponentMapping(),int minLevel = 0,int maxLevel = -1) = 0;
 
 		virtual void set(const spBuffer& buffer) = 0;
 

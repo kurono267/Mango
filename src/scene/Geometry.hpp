@@ -6,6 +6,7 @@
 #define MANGO_GEOMETRY_HPP
 
 #include <unified/Mesh.hpp>
+#include "Material.hpp"
 
 namespace mango {
 
@@ -15,9 +16,9 @@ class Geometry {
 
 	protected:
 		spMesh _mesh;
-		spMaterial _material;
+//		spMaterial _material;
 };
 
-};
+}
 
 #endif //MANGO_GEOMETRY_HPP
