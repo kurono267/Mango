@@ -14,10 +14,14 @@ namespace mango {
 /// Using for load and cache textures and meshes
 class Assets {
 	public:
+		/// Init Assets, required call before first using loadTexture or loadModel
+		/// @param device Mango device
 		static void init(const spDevice& device);
-
+		/// Load texture or return it from cache if it already loaded
+		/// @param filename filename of image
 		static spTexture loadTexture(const std::string& filename);
 
+		/// Free texture cache
 		static void freeTextureCache();
 	private:
 		Assets() = default;
