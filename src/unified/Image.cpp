@@ -59,7 +59,6 @@ size_t computeMaxMipLevels(const glm::ivec2 &size) {
 
 spImage4f loadImageHDRI(const std::string &filename, bool clamp) {
 	int width,height,channels;
-	stbi_loadf(filename.c_str(),&width, &height, &channels, 4);
 	float *data = stbi_loadf(filename.c_str(),&width, &height, &channels, 4); // we want RGBA always
 	if (!data) {
 		std::cout << "Can't load resource image " << filename << std::endl;

@@ -82,8 +82,11 @@ void BufferVK::copy(const vk::Buffer& src,const vk::Buffer& dst,const size_t& si
 }
 
 BufferVK::~BufferVK() {
+	std::cout << "~BufferVK" << std::endl;
 	auto impDevice = std::dynamic_pointer_cast<DeviceVK>(_device);
-
+	auto vkDeivce = impDevice->getDevice();
+	vkDeivce.freeMemory(_memory);
+	vkDeivce.destroyBuffer(_buffer);
 }
 
 vk::Buffer BufferVK::getVKBuffer() {

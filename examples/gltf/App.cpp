@@ -2,6 +2,7 @@
 // Created by kurono267 on 2018-12-07.
 //
 
+#include <scene/Assets.hpp>
 #include "App.hpp"
 
 struct Data {
@@ -25,6 +26,7 @@ bool App::init() {
     _instance->init("GLTF", mainWnd->window(), mainWnd->wndSize());
 
     auto device = _instance->device();
+    Assets::init(device);
     std::cout << device->device_name() << std::endl;
 
     // Create scene with camera only
@@ -37,7 +39,7 @@ bool App::init() {
     _cameraUniform.create(device,sizeof(Data));
     updateCameraUniform(_cameraNode);
 
-	_texture = checkboardTexture(device, 1280, 720, 100);
+	_texture = Assets::loadTexture("test16bit.png");//checkboardTexture(device, 1280, 720, 100);
 	auto texView = _texture->createTextureView();
 
 	_descSet = device->createDescSet();

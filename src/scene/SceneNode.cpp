@@ -15,9 +15,14 @@ SceneNode::SceneNode(const spCamera &camera) {
 	_camera = camera;
 }
 
-SceneNode::SceneNode(const mango::spMesh &geometry) {
+SceneNode::SceneNode(const mango::spGeometry &geometry) {
 	_parent = nullptr;
 	_geometry = geometry;
+}
+
+SceneNode::SceneNode(const spMesh &mesh, const spMaterial &material) {
+	_parent = nullptr;
+	_geometry = Geometry::make(mesh,material);
 }
 
 SceneNode::~SceneNode(){
@@ -41,11 +46,11 @@ void SceneNode::setCamera(const spCamera &camera) {
 	_camera = camera;
 }
 
-void SceneNode::setGeometry(const mango::spMesh &mesh) {
-	_geometry = mesh;
+void SceneNode::setGeometry(const spGeometry &geometry) {
+	_geometry = geometry;
 }
 
-mango::spMesh SceneNode::getGeometry() {
+spGeometry SceneNode::getGeometry() {
 	return _geometry;
 }
 

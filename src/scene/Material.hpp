@@ -5,7 +5,9 @@
 #ifndef MANGO_MATERIAL_HPP
 #define MANGO_MATERIAL_HPP
 
-#include <mango.hpp>
+#include <api/Device.hpp>
+#include <api/Texture.hpp>
+#include <unified/Utils.hpp>
 
 namespace mango {
 

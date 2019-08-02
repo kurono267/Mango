@@ -17,7 +17,8 @@ class SceneNode : public SceneTransform, public std::enable_shared_from_this<Sce
 	public:
 		SceneNode();
 		SceneNode(const spCamera& camera);
-		SceneNode(const spMesh& geometry);
+		SceneNode(const spGeometry& geometry);
+		SceneNode(const spMesh& mesh, const spMaterial& material);
 		~SceneNode();
 
 		void addChild(const ptr& child);
@@ -26,9 +27,9 @@ class SceneNode : public SceneTransform, public std::enable_shared_from_this<Sce
 		ptr getParent();
 
 		void setCamera(const spCamera& camera);
-		void setGeometry(const spMesh& mesh);
+		void setGeometry(const spGeometry& geometry);
 
-		spMesh getGeometry();
+		spGeometry getGeometry();
 		spCamera getCamera();
 
 		glm::mat4 getWorldTransform();
@@ -37,7 +38,7 @@ class SceneNode : public SceneTransform, public std::enable_shared_from_this<Sce
 		mutable ptr _parent;
 
 		spCamera _camera;
-		spMesh _geometry; // TODO made separeted class geometry
+		spGeometry _geometry;
 };
 
 typedef std::shared_ptr<SceneNode> spSceneNode;

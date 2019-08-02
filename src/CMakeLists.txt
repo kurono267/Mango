@@ -17,7 +17,7 @@ scene/Camera.cpp
 scene/Camera.hpp
         unified/Image.cpp
         unified/Uniform.cpp
-        unified/Uniform.hpp scene/SceneTransform.cpp scene/SceneTransform.hpp scene/Scene.cpp scene/Scene.hpp scene/Material.cpp scene/Material.hpp)
+        unified/Uniform.hpp scene/SceneTransform.cpp scene/SceneTransform.hpp scene/Scene.cpp scene/Scene.hpp scene/Material.cpp scene/Material.hpp scene/Assets.cpp scene/Assets.hpp)
 
 set(MANGO_VK
         vk/InstanceVK.cpp

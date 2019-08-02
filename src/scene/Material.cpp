@@ -3,6 +3,7 @@
 //
 
 #include "Material.hpp"
+#include <api/DescSet.hpp>
 
 using namespace mango;
 

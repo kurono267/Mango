@@ -13,11 +13,22 @@ namespace mango {
 /// Geometry consist of mesh and material
 class Geometry {
 	public:
+		Geometry() = default;
+		Geometry(const spMesh& mesh, const spMaterial& material);
 
+		void setMesh(const spMesh& mesh);
+		void setMaterial(const spMaterial& material);
+
+		spMesh getMesh();
+		spMaterial getMaterial();
+
+		static std::shared_ptr<Geometry> make(const spMesh& mesh = nullptr, const spMaterial& material = nullptr);
 	protected:
 		spMesh _mesh;
-//		spMaterial _material;
+		spMaterial _material;
 };
+
+typedef std::shared_ptr<Geometry> spGeometry;
 
 }
 
