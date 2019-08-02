@@ -7,6 +7,7 @@
 
 #include <api/Texture.hpp>
 #include <unordered_map>
+#include "SceneNode.hpp"
 
 namespace mango {
 
@@ -21,6 +22,9 @@ class Assets {
 		/// @param filename filename of image
 		static spTexture loadTexture(const std::string& filename);
 
+		/// Load model or create scene node from data in cache
+		static spSceneNode loadModel(const std::string& filename);
+
 		/// Free texture cache
 		static void freeTextureCache();
 	private:
@@ -32,6 +36,7 @@ class Assets {
 		static Assets& get();
 	private:
 		std::unordered_map<std::string,spTexture> _textureCache;
+		std::unordered_map<std::string,spSceneNode> _modelCache;
 		spDevice _device;
 };
 

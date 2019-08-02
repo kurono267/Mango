@@ -4,7 +4,7 @@
 
 #include <iostream>
 #define STB_IMAGE_IMPLEMENTATION
-#include <stbi/stb_image.h>
+#include <stb_image.h>
 
 #include "Image.hpp"
 

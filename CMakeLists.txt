@@ -4,6 +4,8 @@ project (MANGO)
 
 add_definitions(-std=c++17)
 
+link_directories(/usr/local/opt/llvm/lib)
+
 if(UNIX)
 if (NOT APPLE)
     find_package(PkgConfig REQUIRED)

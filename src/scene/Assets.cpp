@@ -3,11 +3,16 @@
 //
 
 #include "Assets.hpp"
-#include <stbi/stb_image.h>
+#include <stb_image.h>
+#define TINYGLTF_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <tiny_gltf.h>
 #include <iostream>
 #include <api/Utils.hpp>
+#include <filesystem>
 
 using namespace mango;
+namespace fs = std::filesystem;
 
 spTexture loadTexture(const spDevice& device,const std::string& filename){
 	bool isHDR = stbi_is_hdr(filename.c_str());
@@ -57,19 +62,30 @@ spTexture loadTexture(const spDevice& device,const std::string& filename){
 		compSize = 1;
 		switch(comp){
 			case 1:
-				format = Format::R8Srgb;
+				format = Format::R8Unorm;
 				break;
 			case 2:
-				format = Format::R8G8Srgb;
+				format = Format::R8G8Unorm;
 				break;
 			case 3:
-				format = Format::R8G8B8Srgb;
-				break;
 			case 4:
-				format = Format::R8G8B8A8Srgb;
+				format = Format::R8G8B8A8Unorm;
 				break;
 			default:
 				format = Format::Undefined;
+		}
+		if(comp == 3){
+			uint8_t* pixels = new uint8_t[4*width*height];
+			for(int y = 0;y<height;++y){
+				for(int x = 0;x<width;++x){
+					for(int c = 0;c<3;++c){
+						pixels[(y*width+x)*4+c] = ((uint8_t*)data)[(y*width+x)*3+c];
+					}
+					pixels[(y*width+x)*4+3] = 255;
+				}
+			}
+			data = pixels;
+			comp = 4;
 		}
 	}
 
@@ -83,6 +99,7 @@ spTexture loadTexture(const spDevice& device,const std::string& filename){
 	spTexture texture = device->createTexture(width,height,1,format,TextureType::Input);
 	spBuffer buffer = device->createBuffer(BufferType::CPU,MemoryType::HOST,width*height*comp*compSize,data);
 	texture->set(buffer);
+
 	return texture;
 }
 
@@ -115,4 +132,115 @@ Assets &Assets::get() {
 void Assets::init(const spDevice &device) {
 	Assets& instance = Assets::get();
 	instance._device = device;
+}
+
+spSceneNode recursiveLoadNodes(const spDevice& device,const fs::path& path,const tinygltf::Node& tfNode,tinygltf::Model& tfModel){
+	spSceneNode node = std::make_shared<SceneNode>();
+	if(tfNode.mesh >= 0) {
+		auto tfMesh = tfModel.meshes[tfNode.mesh];
+		for (auto tfPrim : tfMesh.primitives) {
+			std::vector<sVertex> vertices;
+			// Get position data from mesh
+			const tinygltf::Accessor &posAccess = tfModel.accessors[tfPrim.attributes["POSITION"]];
+			const tinygltf::BufferView &posBufferView = tfModel.bufferViews[posAccess.bufferView];
+			vertices.resize(posAccess.count);
+			const tinygltf::Buffer &posBuffer = tfModel.buffers[posBufferView.buffer];
+			const float *positions = reinterpret_cast<const float *>(&posBuffer.data[posBufferView.byteOffset +
+																					 posAccess.byteOffset]);
+			for (size_t i = 0; i < posAccess.count; ++i) {
+				glm::vec4 pos(positions[i * 3 + 0], positions[i * 3 + 1], positions[i * 3 + 2], 1.0f);
+				vertices[i].pos = glm::vec3(pos.x,pos.z,pos.y);
+			}
+
+			// Get normal data from mesh
+			const tinygltf::Accessor &normalAccess = tfModel.accessors[tfPrim.attributes["NORMAL"]];
+			const tinygltf::BufferView &normalBufferView = tfModel.bufferViews[normalAccess.bufferView];
+			if (normalAccess.count) {
+				const tinygltf::Buffer &normalBuffer = tfModel.buffers[posBufferView.buffer];
+				const float *normals = reinterpret_cast<const float *>(&normalBuffer.data[normalBufferView.byteOffset +
+																						  normalAccess.byteOffset]);
+				for (size_t i = 0; i < normalAccess.count; ++i) {
+					glm::vec4 normal(normals[i * 3 + 0], normals[i * 3 + 1], normals[i * 3 + 2], 1.0f);
+					vertices[i].normal = glm::normalize(glm::vec3(normal.x,normal.z,normal.y));
+				}
+			}
+			// Get uv data from mesh
+			const tinygltf::Accessor &uvAccess = tfModel.accessors[tfPrim.attributes["TEXCOORD_0"]];
+			const tinygltf::BufferView &uvBufferView = tfModel.bufferViews[uvAccess.bufferView];
+			if (uvAccess.count) {
+				const tinygltf::Buffer &uvBuffer = tfModel.buffers[uvBufferView.buffer];
+				const float *uvs = reinterpret_cast<const float *>(&uvBuffer.data[uvBufferView.byteOffset +
+																				  uvAccess.byteOffset]);
+				for (size_t i = 0; i < uvAccess.count; ++i) {
+					vertices[i].uv = glm::vec2(uvs[i * 2 + 0], uvs[i * 2 + 1]);
+				}
+			}
+			// Get indices from mesh
+			std::vector<uint32_t> indices;
+			const tinygltf::Accessor &indicesAccess = tfModel.accessors[tfPrim.indices];
+			const tinygltf::BufferView &indicesBufferView = tfModel.bufferViews[indicesAccess.bufferView];
+			indices.resize(indicesAccess.count);
+			const tinygltf::Buffer &indicesBuffer = tfModel.buffers[indicesBufferView.buffer];
+			const uint32_t *tfIndices = reinterpret_cast<const uint32_t *>(&indicesBuffer.data[
+					indicesBufferView.byteOffset + indicesAccess.byteOffset]);
+			for (int i = 0; i < indicesAccess.count; ++i) {
+				indices[i] = tfIndices[i];
+			}
+			spMesh mesh = std::make_shared<Mesh>();
+			mesh->create(device,vertices,indices);
+
+			spMaterial mat = std::make_shared<Material>(device);
+			// TODO Fix material later
+
+			auto tfMaterial = tfModel.materials[tfPrim.material];
+			auto baseColorFactorItr = tfMaterial.values.find("baseColorFactor");
+			if (baseColorFactorItr != tfMaterial.values.end()) {
+				auto colorFactor = baseColorFactorItr->second.ColorFactor();
+				mat->setAlbedo(glm::vec4(colorFactor[0], colorFactor[1], colorFactor[2], colorFactor[3]));
+			}
+			auto baseColorTextureItr = tfMaterial.values.find("baseColorTexture");
+			if (baseColorTextureItr != tfMaterial.values.end()) {
+				auto textureId = baseColorTextureItr->second.TextureIndex();
+				fs::path colorPath = path/tfModel.images[textureId].uri;
+				mat->setAlbedo(Assets::loadTexture(colorPath));
+			}
+			auto roughnessFactorItr = tfMaterial.values.find("roughnessFactor");
+			if (roughnessFactorItr != tfMaterial.values.end()) {
+				mat->setRoughness(roughnessFactorItr->second.Factor());
+			}
+
+			node->setGeometry(Geometry::make(mesh,mat));
+		}
+	}
+	for(int i = 0;i<tfNode.children.size();++i){
+		spSceneNode children = recursiveLoadNodes(device,path,tfModel.nodes[tfNode.children[i]],tfModel);
+		node->addChild(children);
+	}
+	return node;
+}
+
+spSceneNode Assets::loadModel(const std::string &filename) {
+	auto& instance = Assets::get();
+
+	tinygltf::Model tfModel;
+	tinygltf::TinyGLTF tfLoader;
+	std::string err;
+	std::string warn;
+
+	bool ret = tfLoader.LoadASCIIFromFile(&tfModel, &err, &warn, filename);
+	if(!ret){
+		std::cout << "loadModel " << filename << " Failed " << err << std::endl;
+		return nullptr;
+	}
+	std::cout << "loadModel " << filename << std::endl;
+	if(!warn.empty())std::cout << "Warnings! " << warn << std::endl;
+
+	auto tfRootNode = tfModel.nodes[0];
+
+	auto path = fs::path(filename).remove_filename();
+	spSceneNode node = recursiveLoadNodes(instance._device,path,tfRootNode,tfModel);
+
+	std::cout << "Finish Loading " << std::endl;
+
+	return node;
 }

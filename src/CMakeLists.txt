@@ -41,4 +41,4 @@ set(MANGO_VK
         scene/SceneNode.cpp scene/SceneNode.hpp scene/Geometry.cpp scene/Geometry.hpp)
 
 add_library(mango SHARED ${MANGO_SRC} ${MANGO_VK})
-target_link_libraries(mango glfw ${Vulkan_LIBRARY} shaderc_combined)
+target_link_libraries(mango glfw ${Vulkan_LIBRARY} shaderc_combined libc++fs.a)

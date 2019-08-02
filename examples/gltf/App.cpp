@@ -36,6 +36,8 @@ bool App::init() {
 	_cameraOrbit = std::make_shared<SceneNode>();
 	_cameraOrbit->addChild(_cameraNode);
 
+	_scene = Assets::loadModel("bunny/scene.gltf");
+
     _cameraUniform.create(device,sizeof(Data));
     updateCameraUniform(_cameraNode);
 

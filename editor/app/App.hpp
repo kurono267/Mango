@@ -10,7 +10,6 @@
 #include "scene/Camera.hpp"
 
 using namespace mango;
-using namespace mango::scene;
 
 class App : public BaseApp {
 public:

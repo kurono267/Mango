@@ -33,6 +33,7 @@ protected:
 
     spSceneNode _cameraNode;
     spSceneNode _cameraOrbit;
+    spSceneNode _scene;
     Uniform _cameraUniform;
 
     // For camera rotate
