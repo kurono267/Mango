@@ -208,6 +208,7 @@ spSceneNode recursiveLoadNodes(const spDevice& device,const fs::path& path,const
 			if (roughnessFactorItr != tfMaterial.values.end()) {
 				mat->setRoughness(roughnessFactorItr->second.Factor());
 			}
+			mat->setMetalness(0.5f);
 
 			node->setGeometry(Geometry::make(mesh,mat));
 		}

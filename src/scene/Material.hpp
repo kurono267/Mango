@@ -28,6 +28,7 @@ class Material {
 		spTexture getMetalness();
 
 		spDescSet getDescSet();
+		static spDescSet generalDescSet(const std::weak_ptr<Device> &device); // Desc set stored format of material
 	protected:
 		spTexture _albedo;
 		spTexture _roughness;

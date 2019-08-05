@@ -46,15 +46,17 @@ bool App::init() {
 
 	_descSet = device->createDescSet();
 	_descSet->setUniformBuffer(_cameraUniform, 0, ShaderStage::Vertex);
-	_descSet->setTexture(texView, Sampler(), 1, ShaderStage::Fragment);
 	_descSet->create();
 
     PipelineInfo rp;
     rp.viewport(Viewport(glm::vec2(0), mainWnd->wndSize()));
     rp.scissor(glm::ivec2(0), mainWnd->wndSize());
-    rp.addShader(ShaderStage::Vertex, "../glsl/cube.vert");
-    rp.addShader(ShaderStage::Fragment, "../glsl/cube.frag");
-    rp.setDescSet(_descSet);
+    rp.addShader(ShaderStage::Vertex, "../glsl/gltf.vert");
+    rp.addShader(ShaderStage::Fragment, "../glsl/gltf.frag");
+	std::vector<spDescSet> descSets(2);
+	descSets[0] = _descSet;
+	descSets[1] = Material::generalDescSet(device);
+    rp.setDescSet(descSets);
     rp.setRenderPass(device->getScreenRenderPass());
 
     _main = device->createPipeline(rp);
@@ -76,8 +78,20 @@ bool App::init() {
         _cmdScreen[i]->beginRenderPass(rp.getRenderPass(), screenBuffers[i],
                                        RenderArea(screenBuffers[i]->getSize(), glm::ivec2(0)));
         _cmdScreen[i]->bindPipeline(_main);
-        _cmdScreen[i]->bindDescriptorSet(_main, _descSet);
-        _cube->draw(_cmdScreen[i]);
+        descSets[0] = _descSet;
+        //_cmdScreen[i]->bindDescriptorSet(_main, _descSet);
+		_scene->run([&](const spSceneNode& node, bool& stop){
+			if(!node->getGeometry())return;
+			// Get descriptor set of material
+			auto geometry = node->getGeometry();
+			auto material = geometry->getMaterial();
+			auto mesh = geometry->getMesh();
+			if(!material || !mesh)return;
+			descSets[1] = material->getDescSet();
+			_cmdScreen[i]->bindDescriptorSet(_main,descSets);
+			mesh->draw(_cmdScreen[i]);
+		});
+
         _cmdScreen[i]->endRenderPass();
 
         _cmdScreen[i]->end();

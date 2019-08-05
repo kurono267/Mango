@@ -52,12 +52,27 @@ spDescSet Material::getDescSet() {
 		auto deviceInstance = _device.lock();
 		_descSet = deviceInstance->createDescSet();
 		_albedoView = _albedo->createTextureView();
-		_roughnessView = _roughness->createTextureView(ComponentMapping(ComponentSwizzle::R,ComponentSwizzle::G,ComponentSwizzle::B,ComponentSwizzle::One));
-		_metalnessView = _metalness->createTextureView(ComponentMapping(ComponentSwizzle::R,ComponentSwizzle::G,ComponentSwizzle::B,ComponentSwizzle::One));
+		_roughnessView = _roughness->createTextureView(ComponentMapping());
+		_metalnessView = _metalness->createTextureView(ComponentMapping());
 		_descSet->setTexture(_albedoView,Sampler(),0,ShaderStage::Fragment);
 		_descSet->setTexture(_roughnessView,Sampler(),1,ShaderStage::Fragment);
 		_descSet->setTexture(_metalnessView,Sampler(),2,ShaderStage::Fragment);
 		_descSet->create();
 	}
 	return _descSet;
+}
+
+spDescSet Material::generalDescSet(const std::weak_ptr<Device> &device) {
+	auto deviceInstance = device.lock();
+	auto descSet = deviceInstance->createDescSet();
+	spTexture albedo = createSinglePixelTexture(deviceInstance,glm::vec4(1.f));
+	spTexture rm = createSinglePixelTexture(deviceInstance,1.f);
+	spTextureView albedoView = albedo->createTextureView();
+	spTextureView roughnessView = rm->createTextureView(ComponentMapping());
+	spTextureView metalView = rm->createTextureView(ComponentMapping());
+	descSet->setTexture(albedoView,Sampler(),0,ShaderStage::Fragment);
+	descSet->setTexture(roughnessView,Sampler(),1,ShaderStage::Fragment);
+	descSet->setTexture(metalView,Sampler(),2,ShaderStage::Fragment);
+	descSet->create();
+	return descSet;
 }

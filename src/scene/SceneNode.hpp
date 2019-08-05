@@ -33,6 +33,8 @@ class SceneNode : public SceneTransform, public std::enable_shared_from_this<Sce
 		spCamera getCamera();
 
 		glm::mat4 getWorldTransform();
+
+		void run(const std::function<void(const ptr& node, bool& stop)>& func,bool isRunForThis = true);
 	protected:
 		std::vector<ptr> _childs;
 		mutable ptr _parent;

@@ -67,3 +67,14 @@ glm::mat4 SceneNode::getWorldTransform() {
 	}
 	return transform;
 }
+
+void SceneNode::run(const std::function<void(const ptr &, bool &)> &func, bool isRunForThis) {
+	bool stop = false;
+	if(isRunForThis)func(shared_from_this(),stop);
+	if(stop)return;
+	for(auto child : _childs){
+		func(child,stop);
+		if(stop)return;
+		child->run(func,false);
+	}
+}
