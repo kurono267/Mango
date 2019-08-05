@@ -78,3 +78,16 @@ void SceneNode::run(const std::function<void(const ptr &, bool &)> &func, bool i
 		child->run(func,false);
 	}
 }
+
+BBox SceneNode::boundingBox() {
+	BBox box;
+	if(_geometry && _geometry->getMesh()){
+		box.expand(_geometry->getMesh()->getBoundingBox());
+	}
+	for(auto& child : _childs){
+		auto childBox = child->boundingBox();
+		childBox = childBox.applyTransform(child->transform());
+		box.expand(child->boundingBox());
+	}
+	return box;
+}

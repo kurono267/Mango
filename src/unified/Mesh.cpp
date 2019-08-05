@@ -9,6 +9,10 @@ using namespace mango;
 
 void Mesh::create(const mango::spDevice &device, const std::vector<mango::sVertex> &vertices,
                          const std::vector<uint32_t> &indices) {
+	_bbox = BBox();
+	for(auto& vertex : vertices){
+		_bbox.expand(vertex.pos);
+	}
     _vbHost = device->createBuffer(BufferType::Vertex,MemoryType::HOST,vertices.size()*sizeof(sVertex),(void*)vertices.data());
     _vbDevice = device->createBuffer(BufferType::Vertex,MemoryType::DEVICE,vertices.size()*sizeof(sVertex));
     _vbHost->copy(_vbDevice);
@@ -30,6 +34,10 @@ void Mesh::draw(const spCommandBuffer& cmd){
 	cmd->bindVertexBuffer(_vbDevice);
 	cmd->bindIndexBuffer(_ibDevice);
 	cmd->drawIndexed(_indexCount);
+}
+
+BBox Mesh::getBoundingBox() {
+	return _bbox;
 }
 
 spMesh mango::createQuad(const mango::spDevice &device){

@@ -1,5 +1,5 @@
 set(MANGO_SRC
-app/MainApp.cpp
+        app/MainApp.cpp
         api/Pipeline.cpp
         api/Buffer.hpp
         unified/Mesh.cpp
@@ -11,13 +11,28 @@ app/MainApp.cpp
         api/Utils.hpp
         api/Utils.cpp
         api/CommandBuffer.hpp
+        api/DescSet.hpp
         unified/Utils.cpp
         unified/Utils.hpp
-scene/Camera.cpp
-scene/Camera.hpp
         unified/Image.cpp
         unified/Uniform.cpp
-        unified/Uniform.hpp scene/SceneTransform.cpp scene/SceneTransform.hpp scene/Scene.cpp scene/Scene.hpp scene/Material.cpp scene/Material.hpp scene/Assets.cpp scene/Assets.hpp)
+        unified/Uniform.hpp
+        scene/Camera.cpp
+        scene/Camera.hpp
+        scene/SceneTransform.cpp
+        scene/SceneTransform.hpp
+        scene/Scene.cpp
+        scene/Scene.hpp
+        scene/Material.cpp
+        scene/Material.hpp
+        scene/Assets.cpp
+        scene/Assets.hpp
+        scene/SceneNode.cpp
+        scene/SceneNode.hpp
+        scene/Geometry.cpp
+        scene/Geometry.hpp
+        scene/BBox.cpp
+        scene/BBox.hpp)
 
 set(MANGO_VK
         vk/InstanceVK.cpp
@@ -35,10 +50,8 @@ set(MANGO_VK
         vk/FramebufferVK.hpp
         vk/CommandBufferVK.cpp
         vk/CommandBufferVK.hpp
-        api/DescSet.hpp
         vk/DescSetVK.cpp
-        vk/DescSetVK.hpp
-        scene/SceneNode.cpp scene/SceneNode.hpp scene/Geometry.cpp scene/Geometry.hpp)
+        vk/DescSetVK.hpp)
 
 add_definitions(-DMVK_CONFIG_FULL_IMAGE_VIEW_SWIZZLE=1)
 

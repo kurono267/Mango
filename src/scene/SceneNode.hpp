@@ -5,10 +5,12 @@
 #ifndef MANGO_SCENENODE_HPP
 #define MANGO_SCENENODE_HPP
 
+#include <vector>
+
 #include "SceneTransform.hpp"
 #include "Camera.hpp"
 #include "Geometry.hpp"
-#include <vector>
+#include "BBox.hpp"
 
 namespace mango {
 
@@ -28,6 +30,8 @@ class SceneNode : public SceneTransform, public std::enable_shared_from_this<Sce
 
 		void setCamera(const spCamera& camera);
 		void setGeometry(const spGeometry& geometry);
+
+		BBox boundingBox();
 
 		spGeometry getGeometry();
 		spCamera getCamera();

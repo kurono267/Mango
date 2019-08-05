@@ -6,6 +6,7 @@
 #define MANGO_MESH_HPP
 
 #include <vector>
+#include <scene/BBox.hpp>
 #include "api/Buffer.hpp"
 #include "api/default.hpp"
 #include "api/Types.hpp"
@@ -60,12 +61,15 @@ class Mesh {
 
 		void create(const spDevice& device, const std::vector<sVertex>& vertices,const std::vector<uint32_t>& indices);
 		void draw(const spCommandBuffer& cmd);
+
+		BBox getBoundingBox();
 	protected:
 		spBuffer _vbHost;
 		spBuffer _vbDevice;
 		spBuffer _ibHost;
 		spBuffer _ibDevice;
 		uint32_t _indexCount;
+		BBox _bbox;
 };
 
 typedef std::shared_ptr<Mesh> spMesh;

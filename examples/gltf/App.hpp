@@ -35,6 +35,7 @@ protected:
     spSceneNode _cameraOrbit;
     spSceneNode _scene;
     Uniform _cameraUniform;
+    Uniform _nodeUniform;
 
     // For camera rotate
     bool _isPressed = false;
