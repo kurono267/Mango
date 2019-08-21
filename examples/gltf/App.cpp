@@ -32,6 +32,7 @@ bool App::init() {
     // Create scene with camera only
     _cameraNode = std::make_shared<SceneNode>(std::make_shared<Camera>(glm::radians(45.0f),(float)(1280)/(float)(720),0.1f,1000.0f));
 	_cameraNode->setPos(glm::vec3(0.f,0.f,-3.f));
+	//_cameraNode->setRotation(glm::vec3(0.f,0.f,glm::radians(180.f)));
 
 	_cameraOrbit = std::make_shared<SceneNode>();
 	_cameraOrbit->addChild(_cameraNode);

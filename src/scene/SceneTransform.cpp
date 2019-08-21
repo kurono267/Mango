@@ -4,6 +4,7 @@
 
 #include "SceneTransform.hpp"
 #include <glm/gtx/matrix_decompose.hpp>
+#include <glm/gtx/euler_angles.hpp>
 
 using namespace mango;
 
@@ -61,7 +62,7 @@ void SceneTransform::setRotation(const glm::quat& quat) {
 void SceneTransform::setRotation(const glm::vec3& euler) {
 	_rotationEuler = euler;
 	// Update rotationQuat and transform
-	_rotationQuat = glm::quat(euler);
+	_rotationQuat = glm::toQuat( glm::orientate3( euler ) );
 	_transform = createTransform(_pos,_rotationQuat,_scale);
 }
 
@@ -72,7 +73,8 @@ void SceneTransform::setScale(const glm::vec3& scale) {
 }
 
 glm::mat4 SceneTransform::createTransform(const glm::vec3& pos, const glm::quat& rotation, const glm::vec3& scale) {
-	glm::mat4 transform = glm::mat4_cast(rotation);
-	transform = glm::scale(transform,scale);
-	return glm::translate(transform,pos);
+	glm::mat4 rotMat = glm::mat4_cast(rotation);
+	glm::mat4 scaleMat = glm::scale(scale);
+	glm::mat4 translateMat = glm::translate(pos);
+	return scaleMat*rotMat*translateMat;
 }

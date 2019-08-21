@@ -59,12 +59,8 @@ spCamera SceneNode::getCamera() {
 }
 
 glm::mat4 SceneNode::getWorldTransform() {
-	ptr rootNode = _parent;
-	glm::mat4 transform = _transform;
-	while(rootNode != nullptr){
-		transform *= rootNode->transform();
-		rootNode = rootNode->getParent();
-	}
+	if(!_parent)return _transform;
+	glm::mat4 transform = _transform*_parent->getWorldTransform();
 	return transform;
 }
 
