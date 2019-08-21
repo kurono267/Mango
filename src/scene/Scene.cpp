@@ -6,6 +6,15 @@
 
 using namespace mango;
 
-void Scene::loadGLTF(const std::string& filename) {
+Scene::Scene(const spSceneNode& node) : rootNode(node) {}
 
+spSceneNode Scene::getCameraNode() {
+	spSceneNode finded;
+	rootNode->run([&finded](const spSceneNode& node, bool& isStop){
+		if(node->getCamera() != nullptr){
+			finded = node;
+			isStop = true;
+		}
+	});
+	return finded;
 }

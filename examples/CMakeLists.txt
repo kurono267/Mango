@@ -6,3 +6,6 @@ target_link_libraries(cube mango)
 
 add_executable(gltf gltf/App.cpp gltf/App.hpp gltf/main.cpp)
 target_link_libraries(gltf mango)
+
+add_executable(renderer renderer/App.cpp renderer/App.hpp renderer/main.cpp)
+target_link_libraries(renderer mango)

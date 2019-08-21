@@ -11,10 +11,13 @@ namespace mango {
 
 class Scene {
 	public:
-		Scene();
+		Scene() = default;
+		Scene(const spSceneNode& node);
 
-		void loadGLTF(const std::string& filename);
+		spSceneNode getCameraNode();
 
+		spTexture background;
+		spTexture environmentLight;
 		spSceneNode rootNode;
 };
 
