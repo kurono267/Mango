@@ -2,6 +2,8 @@
 #include "Swapchain.hpp"
 #include "TextureVK.hpp"
 #include "DeviceVK.hpp"
+#include "ConvertVK.hpp"
+#include <api/Utils.hpp>
 
 using namespace mango::vulkan;
 
@@ -10,8 +12,14 @@ vk::SurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormat
 		return {vk::Format::eB8G8R8A8Unorm, vk::ColorSpaceKHR::eSrgbNonlinear};
 	}
 
+	std::cout << "Available swap surface format" << std::endl;
 	for (const auto& availableFormat : availableFormats) {
-		if (availableFormat.format == vk::Format::eB8G8R8A8Unorm && availableFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
+		std::cout << mango::to_string(formatVK2Mango(availableFormat.format)) << std::endl;
+	}
+	for (const auto& availableFormat : availableFormats) {
+		if (availableFormat.format == vk::Format::eR16G16B16A16Sfloat/* && availableFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear*/) { // TODO Crossplatform support wide channels swapchain
+		//	std::cout << vk::to_string(availableFormat.colorSpace) << std::endl;
+		//if (availableFormat.format == vk::Format::eB8G8R8A8Srgb && availableFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
 			return availableFormat;
 		}
 	}

@@ -15,6 +15,11 @@ bool App::init() {
     Assets::init(device);
     std::cout << device->device_name() << std::endl;
 
+	auto screenBuffers = device->getScreenbuffers();
+	for (const auto &screen : screenBuffers) {
+		std::cout << screen->info() << std::endl;
+	}
+
 	_renderer = Renderer::make(device,glm::ivec2(1280,720));
 
     return true;

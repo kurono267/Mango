@@ -32,7 +32,7 @@ set(MANGO_SRC
         scene/Geometry.cpp
         scene/Geometry.hpp
         scene/BBox.cpp
-        scene/BBox.hpp renderer/Renderer.cpp renderer/Renderer.hpp)
+        scene/BBox.hpp renderer/Renderer.cpp renderer/Renderer.hpp renderer/GBuffer.cpp renderer/GBuffer.hpp)
 
 set(MANGO_VK
         vk/InstanceVK.cpp

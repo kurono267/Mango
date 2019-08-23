@@ -69,7 +69,7 @@ spTexture loadTexture(const spDevice& device,const std::string& filename){
 				break;
 			case 3:
 			case 4:
-				format = Format::R8G8B8A8Unorm;
+				format = Format::R8G8B8A8Srgb;
 				break;
 			default:
 				format = Format::Undefined;
