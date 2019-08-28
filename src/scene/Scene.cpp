@@ -8,7 +8,7 @@ using namespace mango;
 
 Scene::Scene(const spSceneNode& node) : rootNode(node) {}
 
-spSceneNode Scene::getCameraNode() {
+spSceneNode Scene::getCameraNode() const {
 	spSceneNode finded;
 	rootNode->run([&finded](const spSceneNode& node, bool& isStop){
 		if(node->getCamera() != nullptr){

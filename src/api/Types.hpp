@@ -463,11 +463,13 @@ enum class MemoryType {
 	DEVICE
 };
 
-enum class TextureType {
-	Input,
-	Output,
-	DepthStencil
+enum class TextureType : unsigned {
+	Input = 0x1,
+	Output = 0x2,
+	DepthStencil = 0x4
 };
+
+TextureType operator |(TextureType lhs, TextureType rhs);
 
 enum class Filter {
 	Nearest,

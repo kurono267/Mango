@@ -11,7 +11,7 @@
 
 using namespace mango::vulkan;
 
-void RenderPassVK::create(const spDeviceVK& device){
+void RenderPassVK::create(const spDevice& device){
 	_attachmentsDesc.clear();
 	_attachmentsRef.clear();
 	for(auto a : _attachments){
@@ -73,7 +73,9 @@ void RenderPassVK::create(const spDeviceVK& device){
 	_renderPassInfo.setDependencyCount(2);
 	_renderPassInfo.setPDependencies(_subPassDep);
 
-	_renderPass = device->getDevice().createRenderPass(_renderPassInfo);
+	auto deviceVK = std::dynamic_pointer_cast<DeviceVK>(device);
+
+	_renderPass = deviceVK->getDevice().createRenderPass(_renderPassInfo);
 }
 
 vk::RenderPass RenderPassVK::getVK(){

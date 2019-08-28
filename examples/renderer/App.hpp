@@ -32,6 +32,8 @@ protected:
 
     Renderer::ptr _renderer;
 
+    Scene _scene;
+
     // For camera rotate
     bool _isPressed = false;
     bool _isFirst = false;

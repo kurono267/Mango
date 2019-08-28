@@ -35,7 +35,7 @@ spTexture createSinglePixelTexture(spDevice device, float value) {
 	return texture;
 }
 
-spTexture mango::createSinglePixelTexture(spDevice device, const glm::vec4 &value) {
+spTexture createSinglePixelTexture(spDevice device, const glm::vec4 &value) {
 	spTexture texture = device->createTexture(1,1,1,Format::R32G32B32A32Sfloat,TextureType::Input);
 	spBuffer buffer = device->createBuffer(BufferType::CPU,MemoryType::HOST,sizeof(glm::vec4),(void*)&value);
 	texture->set(buffer);

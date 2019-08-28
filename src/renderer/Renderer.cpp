@@ -9,7 +9,8 @@ using namespace mango;
 
 Renderer::Renderer(const spDevice& device,const glm::ivec2 &frameSize)
 	: _device(device), _frameSize(frameSize) {
-	_frame = _device->createTexture(_frameSize.x,_frameSize.y,1,Format::R8G8B8A8Srgb,TextureType::Input);
+	//_frame = _device->createTexture(_frameSize.x,_frameSize.y,1,Format::R8G8B8A8Srgb,TextureType::Input);
+	_gBuffer = std::make_shared<GBuffer>(_device,frameSize);
 	_renderPass = _device->getScreenRenderPass();
 
 	const auto& screenbuffers = _device->getScreenbuffers();
@@ -22,7 +23,7 @@ Renderer::Renderer(const spDevice& device,const glm::ivec2 &frameSize)
 	pipelineInfo.addShader(ShaderStage::Fragment, "../glsl/renderer/final.frag");
 
 	_frameDescSet = _device->createDescSet();
-	_frameDescSet->setTexture(_frame->createTextureView(),Sampler(),0,ShaderStage::Fragment);
+	_frameDescSet->setTexture(_gBuffer->getAlbedo()->createTextureView(),Sampler(),0,ShaderStage::Fragment);
 	_frameDescSet->create();
 
 	pipelineInfo.setDescSet(_frameDescSet);
@@ -52,12 +53,19 @@ Renderer::Renderer(const spDevice& device,const glm::ivec2 &frameSize)
 
 	_screenAvailable = device->createSemaphore();
 	_renderFinish = device->createSemaphore();
+	_gbufferFinish = device->createSemaphore();
 }
 
-void Renderer::render() {
+void Renderer::init(const Scene& scene) {
+	_gBuffer->update(scene.rootNode);
+}
+
+void Renderer::render(const Scene& scene) {
 	auto imageIndex = _device->nextScreen(_screenAvailable);
 
-	_device->submit(_frameCommandBuffers[imageIndex],_screenAvailable,_renderFinish);
+	_gBuffer->render(scene,_screenAvailable,_gbufferFinish);
+
+	_device->submit(_frameCommandBuffers[imageIndex],_gbufferFinish,_renderFinish);
 	_device->present(imageIndex,_renderFinish);
 }
 

@@ -14,13 +14,13 @@ class Scene {
 		Scene() = default;
 		Scene(const spSceneNode& node);
 
-		spSceneNode getCameraNode();
+		spSceneNode getCameraNode() const;
 
 		spTexture background;
 		spTexture environmentLight;
 		spSceneNode rootNode;
 };
 
-};
+}
 
 #endif //MANGO_SCENE_HPP

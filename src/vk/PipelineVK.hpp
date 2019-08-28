@@ -18,7 +18,7 @@ class RenderPassVK : public RenderPass {
 		RenderPassVK() = default;
 		virtual ~RenderPassVK() = default;
 
-		void create(const spDeviceVK& device);
+		virtual void create(const spDevice& device) final;
 
 		vk::RenderPass getVK();
 	protected:

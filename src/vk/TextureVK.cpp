@@ -40,19 +40,17 @@ void TextureVK::create(const spDevice& device,const int width, const int height,
 	_type = type;
 	_format = format;
 
-	vk::ImageUsageFlags usage;
+	vk::ImageUsageFlags usage = (vk::ImageUsageFlags)0;
 	vk::ImageLayout layout = vk::ImageLayout::ePreinitialized;
-	switch(type){
-		case mango::TextureType::Input:
-		usage = vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled;
-		break;
-		case mango::TextureType::Output:
-		usage = vk::ImageUsageFlagBits::eColorAttachment;
-		break;
-		case mango::TextureType::DepthStencil:
-		usage = vk::ImageUsageFlagBits::eDepthStencilAttachment;
+	if(type == mango::TextureType::DepthStencil){
+		usage |= vk::ImageUsageFlagBits::eDepthStencilAttachment;
 		layout = vk::ImageLayout::eUndefined;
-		break;
+	}
+	if((uint32_t)type & (uint32_t)mango::TextureType::Input){
+		usage |= vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled;
+	}
+	if((uint32_t)type & (uint32_t)mango::TextureType::Output) {
+		usage |= vk::ImageUsageFlagBits::eColorAttachment;
 	}
 
 	vk::ImageCreateInfo imageInfo(

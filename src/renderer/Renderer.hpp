@@ -7,6 +7,7 @@
 
 #include <mango.hpp>
 #include <scene/Scene.hpp>
+#include "GBuffer.hpp"
 
 namespace mango {
 
@@ -14,7 +15,9 @@ class Renderer {
 	public:
 		Renderer(const spDevice& device,const glm::ivec2& frameSize);
 
-		void render();
+		void init(const Scene& scene);
+
+		void render(const Scene& scene);
 
 		typedef std::shared_ptr<Renderer> ptr;
 		static ptr make(const spDevice& device, const glm::ivec2& frameSize);
@@ -23,7 +26,7 @@ class Renderer {
 
 		Scene _scene;
 		glm::ivec2 _frameSize;
-		spTexture _frame;
+		//spTexture _frame;
 
 		spDescSet _frameDescSet;
 		spPipeline _framePipeline;
@@ -33,6 +36,9 @@ class Renderer {
 
 		spSemaphore _screenAvailable;
 		spSemaphore _renderFinish;
+		spSemaphore _gbufferFinish;
+
+		spGBuffer _gBuffer;
 };
 
 }

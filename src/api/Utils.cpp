@@ -276,3 +276,11 @@ std::string mango::to_string(Format value) {
     default: return "invalid";
     }
 }
+
+TextureType mango::operator |(TextureType lhs, TextureType rhs)
+{
+	return static_cast<TextureType> (
+			static_cast<std::underlying_type<TextureType>::type>(lhs) |
+			static_cast<std::underlying_type<TextureType>::type>(rhs)
+	);
+}

@@ -15,6 +15,8 @@
 #include <api/Texture.hpp>
 #include <api/Utils.hpp>
 #include <api/DescSet.hpp>
+#include <api/CommandBuffer.hpp>
+#include <api/Utils.hpp>
 
 #include <unified/Mesh.hpp>
 #include <unified/Uniform.hpp>
@@ -23,6 +25,7 @@
 
 #include <scene/Camera.hpp>
 #include <scene/SceneNode.hpp>
+#include <scene/Scene.hpp>
 
 #ifdef MANGO_VULKAN
 #include <vk/InstanceVK.hpp>
