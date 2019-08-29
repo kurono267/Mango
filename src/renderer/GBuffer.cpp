@@ -30,7 +30,7 @@ GBuffer::GBuffer(const spDevice &device, const glm::ivec2& size) : _device(devic
 	_renderPass->addAttachment(Attachment(_pos->format(),false,1));
 	_renderPass->addAttachment(Attachment(_albedo->format(),false,2));
 	_renderPass->addAttachment(Attachment(_device->getDepthFormat(),true,3));
-	_renderPass->create(_device);
+	_renderPass->create();
 
 	_framebuffer = _device->createFramebuffer();
 	_framebuffer->attachment(_normal->createTextureView());
@@ -65,6 +65,8 @@ GBuffer::GBuffer(const spDevice &device, const glm::ivec2& size) : _device(devic
 }
 
 void GBuffer::update(const spSceneNode &scene) {
+	std::cout << "All Materials " << Assets::getMaterials().size() << std::endl;
+
 	_commandBuffer = _device->createCommandBuffer();
 	_commandBuffer->begin();
 
@@ -91,7 +93,6 @@ void GBuffer::update(const spSceneNode &scene) {
 
 		NodeData nodeData;
 		nodeData.world = node->getWorldTransform();
-		nodeData.material = 0;
 
 		_nodeUniform.set(sizeof(NodeData),&nodeData);
 		_commandBuffer->bindDescriptorSet(_pipeline,descSets);

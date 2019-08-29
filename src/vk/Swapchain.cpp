@@ -50,13 +50,12 @@ vk::Extent2D chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities,con
 	}
 }
 
-void Swapchain::create(const spDevice& device,
-						const vk::SurfaceKHR& surface,const glm::ivec2& size,
+void Swapchain::create(const vk::SurfaceKHR& surface,const glm::ivec2& size,
 						const uint32_t queueFamilyIndices[2]){
-	auto vkDevice = std::dynamic_pointer_cast<DeviceVK>(device);
+	auto device = Instance::device<DeviceVK>();
 
-	_device = vkDevice->getDevice();
-	SwapchainSupportDetails swapChainSupport = swapchainSupport(vkDevice->getPhysicalDevice(),surface);
+	auto vkDevice = device->getDevice();
+	SwapchainSupportDetails swapChainSupport = swapchainSupport(device->getPhysicalDevice(),surface);
 
 	vk::SurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
 	vk::PresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
@@ -94,11 +93,11 @@ void Swapchain::create(const spDevice& device,
 
 	//createInfo.setOldSwapchain(SwapchainKHR());
 
-	_swapchain = _device.createSwapchainKHR(createInfo);
-	auto imageVK = _device.getSwapchainImagesKHR(_swapchain);
+	_swapchain = vkDevice.createSwapchainKHR(createInfo);
+	auto imageVK = vkDevice.getSwapchainImagesKHR(_swapchain);
 	for(auto i : imageVK){
 		auto tex = std::make_shared<TextureVK>();
-		tex->create(device,extent.width,extent.height,1,formatVK2Mango(surfaceFormat.format),TextureType::Output,i);
+		tex->create(extent.width,extent.height,1,formatVK2Mango(surfaceFormat.format),TextureType::Output,i);
 		tex->transition(vk::ImageLayout::ePresentSrcKHR);
 		_imageViews.push_back(tex->createTextureView());
 	}
@@ -120,11 +119,12 @@ void Swapchain::createImageViews(const vk::Device& device){
 
 void Swapchain::release(){
 	std::cout << "Swapchain release" << std::endl;
+	auto device = Instance::device<DeviceVK>();
 	for (uint i = 0; i < _imageViews.size(); ++i) {
 		auto view = std::dynamic_pointer_cast<TextureViewVK>(_imageViews[i]);
-		_device.destroyImageView(view->getView());
+		device->getDevice().destroyImageView(view->getView());
 	}
-	_device.destroySwapchainKHR(_swapchain);
+	device->getDevice().destroySwapchainKHR(_swapchain);
 }
 
 Swapchain::~Swapchain() {

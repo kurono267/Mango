@@ -81,7 +81,7 @@ class Texture : public std::enable_shared_from_this<Texture> {
 		Texture() = default;
 		virtual ~Texture() = default;
 
-		virtual void create(const spDevice& device,int width,int height,
+		virtual void create(int width,int height,
 							int miplevels, const Format& format,const TextureType& type) = 0;
 		virtual spTextureView createTextureView(const ComponentMapping& componentMapping = ComponentMapping(),int minLevel = 0,int maxLevel = -1) = 0;
 

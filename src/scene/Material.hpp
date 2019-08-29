@@ -23,6 +23,9 @@ class Material {
 		void setMetalness(const float& value);
 		void setMetalness(const spTexture& texture);
 
+		uint32_t getID();
+		void setID(const uint32_t& id);
+
 		spTexture getAlbedo();
 		spTexture getRoughness();
 		spTexture getMetalness();
@@ -40,6 +43,8 @@ class Material {
 
 		std::weak_ptr<Device> _device;
 		spDescSet _descSet;
+
+		uint32_t _id;
 };
 
 typedef std::shared_ptr<Material> spMaterial;

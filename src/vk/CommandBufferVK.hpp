@@ -39,11 +39,10 @@ class CommandBufferVK : public CommandBuffer {
 
 		void setViewport(const glm::ivec2& size, const glm::ivec2& offset = glm::ivec2(0)) final;
 
-		void create(const spDeviceVK& device);
+		void create();
 
 		vk::CommandBuffer getVK();
 	protected:
-		spDeviceVK _device;
 		vk::CommandBuffer _cmd;
 		std::unordered_map<int,glm::vec4> _clearColors;
 		std::unordered_map<int,glm::vec2> _clearDepthStencil;

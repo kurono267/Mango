@@ -10,7 +10,7 @@
 
 namespace mango::vulkan {
 
-class InstanceVK : public Instance {
+class InstanceVK : public InstanceAPI {
 	public:
 		InstanceVK();
 		~InstanceVK() final;

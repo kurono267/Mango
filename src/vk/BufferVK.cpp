@@ -6,8 +6,7 @@
 
 using namespace mango::vulkan;
 
-void BufferVK::create(const spDevice& device,const BufferType &type,const MemoryType& memory,const size_t &size,void* data) {
-	_device = device;
+void BufferVK::create(const BufferType &type,const MemoryType& memory,const size_t &size,void* data) {
 	_size = size;
 	if(memory == MemoryType::HOST){
 		createBuffer(size,
@@ -48,7 +47,7 @@ void BufferVK::copy(const spBuffer& dst){
 }
 
 void BufferVK::set(const void* src,const size_t& size,const vk::DeviceMemory& dst){
-	auto vkDeivce = std::dynamic_pointer_cast<DeviceVK>(_device)->getDevice();
+	auto vkDeivce = Instance::device<DeviceVK>()->getDevice();
 	void* map_data = vkDeivce.mapMemory(dst,0,(vk::DeviceSize)size);
 		memcpy(map_data,src,size);
 	vkDeivce.unmapMemory(dst);
@@ -61,7 +60,7 @@ void BufferVK::set(const size_t &size, const void *data) {
 void BufferVK::createBuffer(vk::DeviceSize size,vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties,
 							vk::Buffer& buffer,vk::DeviceMemory& memory){
 	vk::BufferCreateInfo bufferInfo(vk::BufferCreateFlags(),size,usage);
-	auto impDevice = std::dynamic_pointer_cast<DeviceVK>(_device);
+	auto impDevice = Instance::device<DeviceVK>();
 	auto vkDeivce = impDevice->getDevice();
 
     buffer = vkDeivce.createBuffer(bufferInfo);
@@ -75,7 +74,7 @@ void BufferVK::createBuffer(vk::DeviceSize size,vk::BufferUsageFlags usage, vk::
 }
 
 void BufferVK::copy(const vk::Buffer& src,const vk::Buffer& dst,const size_t& size){
-	auto impDevice = std::dynamic_pointer_cast<DeviceVK>(_device);
+	auto impDevice = Instance::device<DeviceVK>();
 	auto commands = beginSingle(impDevice->getDevice(),impDevice->getCommandPool());
 		commands.copyBuffer(src,dst,vk::BufferCopy(0,0,size));
 	endSingle(impDevice->getDevice(),impDevice->getGraphicsQueue(),impDevice->getCommandPool(),commands);
@@ -83,7 +82,7 @@ void BufferVK::copy(const vk::Buffer& src,const vk::Buffer& dst,const size_t& si
 
 BufferVK::~BufferVK() {
 	std::cout << "~BufferVK" << std::endl;
-	auto impDevice = std::dynamic_pointer_cast<DeviceVK>(_device);
+	auto impDevice = Instance::device<DeviceVK>();
 	auto vkDeivce = impDevice->getDevice();
 	vkDeivce.freeMemory(_memory);
 	vkDeivce.destroyBuffer(_buffer);

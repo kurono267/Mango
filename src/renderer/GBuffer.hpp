@@ -31,7 +31,7 @@ class GBuffer {
 
 		std::vector<spDescSet> _descSets;
 
-		std::vector<spMaterial> _materials;
+
 
 		spCommandBuffer _commandBuffer;
 		spPipeline _pipeline;

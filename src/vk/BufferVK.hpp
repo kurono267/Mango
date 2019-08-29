@@ -16,7 +16,7 @@ class BufferVK : public Buffer {
 		BufferVK() = default;
 		virtual ~BufferVK() final;
 
-		void create(const spDevice& device,const BufferType &type,const MemoryType& memory,const size_t &size,void* data = nullptr);
+		void create(const BufferType &type,const MemoryType& memory,const size_t &size,void* data = nullptr);
 		void set(const size_t &size, const void *data) override;
 
 		void copy(const spBuffer& dst) final;
@@ -31,8 +31,6 @@ class BufferVK : public Buffer {
 
 		vk::DeviceMemory _memory;
 		vk::Buffer _buffer;
-
-		spDevice _device;
 
 		size_t _size;
 };

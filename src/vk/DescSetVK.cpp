@@ -9,11 +9,11 @@
 
 namespace mango::vulkan {
 
-DescSetVK::DescSetVK(const spDevice &device) : _device(device) {}
+DescSetVK::DescSetVK() {}
 
 DescSetVK::~DescSetVK() {
 	std::cout << "~DescSetVK" << std::endl;
-	auto vk_device = std::dynamic_pointer_cast<DeviceVK>(_device)->getDevice();
+	auto vk_device = Instance::device<DeviceVK>()->getDevice();
 
 	std::set<vk::Sampler> samplerSet;
 	for(auto s : _samplerBinds){
@@ -34,7 +34,7 @@ void DescSetVK::create(){
     std::vector<vk::DescriptorSetLayoutBinding> layoutBinds;
     std::vector<vk::DescriptorPoolSize>         poolSizes;
 
-    auto vk_device = std::dynamic_pointer_cast<DeviceVK>(_device)->getDevice();
+    auto vk_device = Instance::device<DeviceVK>()->getDevice();
 
     std::unordered_map<int,int> typesDesc;
     // Add Layout binding for UBO
@@ -90,7 +90,7 @@ void DescSetVK::setUniformBuffer(const Uniform &buffer, size_t binding, const Sh
 void DescSetVK::setTexture(const spTextureView &texture, const Sampler &sampler, size_t binding,
                            const ShaderStage &stage){
     auto internalTexture = std::dynamic_pointer_cast<TextureViewVK>(texture);
-    _samplerBinds.emplace_back(internalTexture->getView(),createSampler(_device,sampler),binding,shaderStageVK(stage),vk::DescriptorType::eCombinedImageSampler,vk::ImageLayout::eShaderReadOnlyOptimal);
+    _samplerBinds.emplace_back(internalTexture->getView(),createSampler(sampler),binding,shaderStageVK(stage),vk::DescriptorType::eCombinedImageSampler,vk::ImageLayout::eShaderReadOnlyOptimal);
 }
 
     DescSetVK::UBOBinding::UBOBinding(const Uniform &_buffer, size_t _binding, const vk::ShaderStageFlags &_stage,

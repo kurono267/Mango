@@ -11,7 +11,7 @@
 
 using namespace mango::vulkan;
 
-void RenderPassVK::create(const spDevice& device){
+void RenderPassVK::create(){
 	_attachmentsDesc.clear();
 	_attachmentsRef.clear();
 	for(auto a : _attachments){
@@ -73,7 +73,7 @@ void RenderPassVK::create(const spDevice& device){
 	_renderPassInfo.setDependencyCount(2);
 	_renderPassInfo.setPDependencies(_subPassDep);
 
-	auto deviceVK = std::dynamic_pointer_cast<DeviceVK>(device);
+	auto deviceVK = Instance::device<DeviceVK>();
 
 	_renderPass = deviceVK->getDevice().createRenderPass(_renderPassInfo);
 }
@@ -82,9 +82,7 @@ vk::RenderPass RenderPassVK::getVK(){
 	return _renderPass;
 }
 
-PipelineVK::PipelineVK(const spDevice& device,const mango::PipelineInfo &rp) : Pipeline(rp) {
-	_device = std::dynamic_pointer_cast<DeviceVK>(device);
-
+PipelineVK::PipelineVK(const mango::PipelineInfo &rp) : Pipeline(rp) {
 	setRenderPass(_renderPattern.getRenderPass());
 	for(const auto& shaderPair : _renderPattern.getShaders()){
 		addShader(shaderPair.first,shaderPair.second);
@@ -131,7 +129,7 @@ void PipelineVK::addShader(const mango::ShaderStage &type, const std::string &fi
 	}
 
 	vk::ShaderModuleCreateInfo createInfo(vk::ShaderModuleCreateFlags(),shaderBinary.size()*sizeof(uint32_t),shaderBinary.data());
-	auto shaderModule = _device->getDevice().createShaderModule(createInfo);
+	auto shaderModule = Instance::device<DeviceVK>()->getDevice().createShaderModule(createInfo);
 
 	_shaderModules.push_back(shaderModule);
 	vk::PipelineShaderStageCreateInfo shaderStageInfo(
@@ -148,7 +146,7 @@ void PipelineVK::setRenderPass(const spRenderPass &rp) {
 }
 
 void PipelineVK::create() {
-	_vk_device = _device->getDevice();
+	auto vk_device = Instance::device<DeviceVK>()->getDevice();
 
 	std::vector<vk::DynamicState> dynamicStates;
 	if(_renderPattern.isDynamicScissor()){
@@ -161,7 +159,7 @@ void PipelineVK::create() {
 	dynamicStatesCreteInfo.pDynamicStates    = dynamicStates.data();
 	dynamicStatesCreteInfo.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
 
-	_pLayout = _vk_device.createPipelineLayout(_pipelineLayoutInfo);
+	_pLayout = vk_device.createPipelineLayout(_pipelineLayoutInfo);
 
 	// Set Vertex format
 
@@ -214,7 +212,7 @@ void PipelineVK::create() {
 		_pLayout,
 		_renderPass->getVK(),0);
 
-	_pipeline = _vk_device.createGraphicsPipelines(nullptr,pipelineInfo)[0];
+	_pipeline = vk_device.createGraphicsPipelines(nullptr,pipelineInfo)[0];
 }
 
 vk::Pipeline PipelineVK::getVK(){

@@ -11,8 +11,13 @@
 #include "Camera.hpp"
 #include "Geometry.hpp"
 #include "BBox.hpp"
+#include <unified/Uniform.hpp>
 
 namespace mango {
+
+struct NodeData {
+	glm::mat4 world;
+};
 
 class SceneNode : public SceneTransform, public std::enable_shared_from_this<SceneNode> {
 	typedef std::shared_ptr<SceneNode> ptr;
@@ -31,12 +36,20 @@ class SceneNode : public SceneTransform, public std::enable_shared_from_this<Sce
 		void setCamera(const spCamera& camera);
 		void setGeometry(const spGeometry& geometry);
 
+		spDescSet getDescSet(const spDevice& device);
+
 		BBox boundingBox();
 
 		spGeometry getGeometry();
 		spCamera getCamera();
 
 		glm::mat4 getWorldTransform();
+
+		void setTransform(const glm::mat4& transform) override;
+		void setPos(const glm::vec3& pos) override;
+		void setRotation(const glm::quat& quat) override;
+		void setRotation(const glm::vec3& euler) override;
+		void setScale(const glm::vec3& scale) override;
 
 		void run(const std::function<void(const ptr& node, bool& stop)>& func,bool isRunForThis = true);
 	protected:
@@ -45,6 +58,8 @@ class SceneNode : public SceneTransform, public std::enable_shared_from_this<Sce
 
 		spCamera _camera;
 		spGeometry _geometry;
+		spDescSet _descSet;
+		Uniform _uniform;
 };
 
 typedef std::shared_ptr<SceneNode> spSceneNode;

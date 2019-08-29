@@ -12,7 +12,7 @@ namespace mango::vulkan {
 
 class FramebufferVK : public Framebuffer {
 	public:
-		FramebufferVK(const spDevice &device);
+		FramebufferVK();
 		virtual ~FramebufferVK() final;
 
 		void create(const int width, const int height, const spRenderPass& renderPass) final;

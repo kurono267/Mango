@@ -36,35 +36,53 @@ typedef std::shared_ptr<CommandBuffer> spCommandBuffer;
 typedef std::shared_ptr<Semaphore> spSemaphore;
 typedef std::shared_ptr<DescSet> spDescSet;
 
+/// Abstract Device API
 class Device {
 	public:
 		Device() = default;
 		virtual ~Device() = default;
+		/// Get Device Name
+		/// @return device name
+		virtual std::string deviceName() = 0;
 
-		virtual std::string device_name() = 0;
+		/// Get Default Depth Format
+		/// @return default depth format
+		virtual Format getDepthFormat() = 0;
 
 		virtual spRenderPass createRenderPass() = 0;
 		virtual spPipeline createPipeline(const PipelineInfo& rp) = 0;
 		virtual spBuffer createBuffer(const BufferType& type,const MemoryType& memory,const size_t& size,void* data = nullptr) = 0;
 		virtual spDescSet createDescSet() = 0;
-
-		virtual spTexture createTexture(int width,int height,
-					int miplevels, const Format& format,const TextureType& type) = 0;
-
-		virtual Format getDepthFormat() = 0;
-
-		virtual std::vector<spFramebuffer> getScreenbuffers() = 0;
-		virtual spRenderPass getScreenRenderPass() = 0;
-
-		virtual spFramebuffer createFramebuffer() = 0;
 		virtual spCommandBuffer createCommandBuffer() = 0;
 		virtual spSemaphore createSemaphore() = 0;
+		virtual spFramebuffer createFramebuffer() = 0;
 
+		virtual spTexture createTexture(int width,int height,
+										int miplevels, const Format& format,const TextureType& type) = 0;
+
+		/// Get Screen framebuffers
+		/// @return screen framebuffers
+		virtual std::vector<spFramebuffer> getScreenbuffers() = 0;
+		/// Get Screen render pass
+		/// @return screen render pass
+		virtual spRenderPass getScreenRenderPass() = 0;
+
+		/// Submit command buffer
+		/// @param cmd command buffer
+		/// @param waitForIt semaphore waited before execute command buffer
+		/// @param result semaphore changed when execute complete
 		virtual void submit(const spCommandBuffer& cmd, const spSemaphore& waitForIt, const spSemaphore& result) = 0;
+		/// Present screen
+		/// @param screen Screen ID
+		/// @param signal semaphore changed when execute complete
 		virtual void present(uint32_t screen, const spSemaphore& signal) = 0;
 
+		/// Get next screen ID
+		/// @param semaphore changed when screen available
+		/// @return screen ID
 		virtual uint32_t nextScreen(const spSemaphore& signal) = 0;
 
+		/// Wait when all executed command buffer finished
 		virtual void waitIdle() = 0;
 };
 

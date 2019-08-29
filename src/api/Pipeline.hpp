@@ -61,7 +61,7 @@ class RenderPass {
 
 		void addAttachment(const Attachment& a);
 
-		virtual void create(const spDevice& device) = 0;
+		virtual void create() = 0;
 	protected:
 		std::vector<Attachment> _attachments;
 };

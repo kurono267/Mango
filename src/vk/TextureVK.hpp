@@ -16,8 +16,8 @@ class TextureVK : public Texture {
 		TextureVK() = default;
 		~TextureVK() final;
 
-		void create(const spDevice& device,int width, int height,int miplevels,const Format& format, const TextureType &type) override;
-	    void create(const spDevice& device,int width,int height,int miplevels,const Format& format,const TextureType &type,const vk::Image& image);
+		void create(int width, int height,int miplevels,const Format& format, const TextureType &type) override;
+	    void create(int width,int height,int miplevels,const Format& format,const TextureType &type,const vk::Image& image);
 		spTextureView createTextureView(const ComponentMapping& componentMapping = ComponentMapping(),int minLevel = 0,int maxLevel = -1) override;
 
 	    void set(const spBuffer &buffer) override;
@@ -26,7 +26,6 @@ class TextureVK : public Texture {
 
         void setBuffer(const spBuffer& buffer, const glm::ivec2& size, const uint& mipLevel, const uint& layer, const uint& offsetBuffer);
 protected:
-		vk::Device _vk_device;
 		vk::Image _image;
 		vk::DeviceMemory _memory;
 		vk::CommandPool _pool;
@@ -49,7 +48,7 @@ class TextureViewVK : public TextureView {
 
 typedef std::shared_ptr<TextureVK> spTextureVK;
 
-vk::Sampler createSampler(const spDevice& device, const Sampler& sampler);
+vk::Sampler createSampler(const Sampler& sampler);
 
 };
 

@@ -119,6 +119,11 @@ spTexture Assets::loadTexture(const std::string &filename) {
 	}
 }
 
+const std::vector<spMaterial>& Assets::getMaterials(){
+	Assets& instance = Assets::get();
+	return instance._materials;
+}
+
 void Assets::freeTextureCache() {
 	Assets& instance = Assets::get();
 	instance._textureCache.clear();
@@ -134,7 +139,7 @@ void Assets::init(const spDevice &device) {
 	instance._device = device;
 }
 
-spSceneNode recursiveLoadNodes(const spDevice& device,const fs::path& path,const tinygltf::Node& tfNode,tinygltf::Model& tfModel){
+spSceneNode recursiveLoadNodes(const spDevice& device,std::vector<spMaterial>& materials,const fs::path& path,const tinygltf::Node& tfNode,tinygltf::Model& tfModel){
 	spSceneNode node = std::make_shared<SceneNode>();
 	if(tfNode.mesh >= 0) {
 		auto tfMesh = tfModel.meshes[tfNode.mesh];
@@ -210,11 +215,14 @@ spSceneNode recursiveLoadNodes(const spDevice& device,const fs::path& path,const
 			}
 			mat->setMetalness(0.5f);
 
+			materials.push_back(mat);
+			mat->setID(materials.size()-1);
+
 			node->setGeometry(Geometry::make(mesh,mat));
 		}
 	}
 	for(int i = 0;i<tfNode.children.size();++i){
-		spSceneNode children = recursiveLoadNodes(device,path,tfModel.nodes[tfNode.children[i]],tfModel);
+		spSceneNode children = recursiveLoadNodes(device,materials,path,tfModel.nodes[tfNode.children[i]],tfModel);
 		node->addChild(children);
 	}
 	return node;
@@ -239,7 +247,7 @@ spSceneNode Assets::loadModel(const std::string &filename) {
 	auto tfRootNode = tfModel.nodes[0];
 
 	auto path = fs::path(filename).remove_filename();
-	spSceneNode node = recursiveLoadNodes(instance._device,path,tfRootNode,tfModel);
+	spSceneNode node = recursiveLoadNodes(instance._device,instance._materials,path,tfRootNode,tfModel);
 
 	std::cout << "Finish Loading " << std::endl;
 

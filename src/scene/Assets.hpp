@@ -25,6 +25,8 @@ class Assets {
 		/// Load model or create scene node from data in cache
 		static spSceneNode loadModel(const std::string& filename);
 
+		static const std::vector<spMaterial>& getMaterials();
+
 		/// Free texture cache
 		static void freeTextureCache();
 	private:
@@ -37,6 +39,7 @@ class Assets {
 	private:
 		std::unordered_map<std::string,spTexture> _textureCache;
 		std::unordered_map<std::string,spSceneNode> _modelCache;
+		std::vector<spMaterial> _materials;
 		spDevice _device;
 };
 

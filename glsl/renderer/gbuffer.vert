@@ -23,6 +23,7 @@ layout(location = 2) in vec2 inUV;
 layout(location = 0) out vec3 outPos;
 layout(location = 1) out vec3 outNormal;
 layout(location = 2) out vec2 outUV;
+layout(location = 3) out uint outMaterial;
 
 void main() {
     vec4 worldPos = node.world*vec4(inPosition,1.f);
@@ -30,4 +31,5 @@ void main() {
     outUV = inUV;
     outPos = worldPos.xyz;
     outNormal = inNormal;
+    outMaterial = node.material;
 }

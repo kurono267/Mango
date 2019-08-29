@@ -28,7 +28,7 @@ void FramebufferVK::create(const int width, const int height, const vk::RenderPa
 		height, // Height
 		1 // Layers
 	);
-	auto device_vk = std::dynamic_pointer_cast<DeviceVK>(_device);
+	auto device_vk = Instance::device<DeviceVK>();
 	_framebuffer = device_vk->getDevice().createFramebuffer(framebufferInfo);
 }
 
@@ -36,14 +36,14 @@ vk::Framebuffer FramebufferVK::getVK(){
 	return _framebuffer;
 }
 
-FramebufferVK::FramebufferVK(const mango::spDevice &device) : Framebuffer(device) {
+FramebufferVK::FramebufferVK() {
 
 }
 
 FramebufferVK::~FramebufferVK() {
 	std::cout << "~FramebufferVK" << std::endl;
 	if(_framebuffer){
-		auto device_vk = std::dynamic_pointer_cast<DeviceVK>(_device);
+		auto device_vk = Instance::device<DeviceVK>();
 		device_vk->getDevice().destroyFramebuffer(_framebuffer);
 	}
 }

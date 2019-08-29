@@ -25,13 +25,13 @@ const std::vector<const char*> validationLayers = {
     "VK_LAYER_LUNARG_parameter_validation"
 };
 
-class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
+class DeviceVK : public Device {
 	friend class InstanceVK;
 	public:
 		DeviceVK() = default;
 		~DeviceVK() override;
 
-		std::string device_name() final;
+		std::string deviceName() final;
 
 		vk::Device getDevice();
 		vk::PhysicalDevice getPhysicalDevice();
@@ -41,20 +41,20 @@ class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
 		spRenderPass createRenderPass() final;
 		spPipeline createPipeline(const PipelineInfo& rp) final;
 
-	    spDescSet createDescSet() override;
+	    spDescSet createDescSet() final;
 	    spBuffer createBuffer(const BufferType& type,const MemoryType& memory,const size_t& size,void* data) final;
 
 		spTexture createTexture(int width, int height, int miplevels,
 								const Format &format, const TextureType &type) final;
 
+		spFramebuffer createFramebuffer() final;
+		spCommandBuffer createCommandBuffer() final;
+		spSemaphore createSemaphore() final;
+
 		Format getDepthFormat() final;
 
 		std::vector<spFramebuffer> getScreenbuffers() final;
 		spRenderPass getScreenRenderPass() final;
-
-		spFramebuffer createFramebuffer() final;
-		spCommandBuffer createCommandBuffer() final;
-		spSemaphore createSemaphore() final;
 
 		void submit(const spCommandBuffer& cmd, const spSemaphore& waitForIt, const spSemaphore& result) final;
 		void present(uint32_t screen, const spSemaphore& signal) final;
@@ -94,7 +94,7 @@ typedef std::shared_ptr<DeviceVK> spDeviceVK;
 
 class SemaphoreVK : public mango::Semaphore {
 	public:
-		void create(const spDeviceVK& device);
+		SemaphoreVK();
 
 		vk::Semaphore getVK();
 	protected:

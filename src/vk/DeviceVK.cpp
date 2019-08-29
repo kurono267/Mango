@@ -80,7 +80,7 @@ void DeviceVK::create(const vk::Instance& instance,const vk::SurfaceKHR& surface
 	//vk::CommandPoolCreateInfo poolComputeInfo(vk::CommandPoolCreateFlags(),queueFamily.computeFamily);
 	//_poolCompute = _device.createCommandPool(poolComputeInfo);
 
-	_swapchain.create(shared_from_this(),_surface,size,familyIndices);
+	_swapchain.create(_surface,size,familyIndices);
 
 	createScreen();
 }
@@ -184,7 +184,7 @@ void DeviceVK::createLogicalDevice(){
 	_computeQueue  = _device.getQueue(indices.computeFamily,0);
 }
 
-std::string DeviceVK::device_name(){
+std::string DeviceVK::deviceName(){
 	vk::PhysicalDeviceProperties pdProp = _pDevice.getProperties();
 	return pdProp.deviceName;
 }
@@ -206,12 +206,12 @@ vk::Queue DeviceVK::getGraphicsQueue(){
 }
 
 mango::spPipeline DeviceVK::createPipeline(const PipelineInfo& rp){
-	return PipelineVK::make(shared_from_this(),rp);
+	return PipelineVK::make(rp);
 }
 
 mango::spBuffer DeviceVK::createBuffer(const BufferType& type,const MemoryType& memory,const size_t& size,void* data){
 	auto buffer = std::make_shared<BufferVK>();
-	buffer->create(shared_from_this(),type,memory,size,data);
+	buffer->create(type,memory,size,data);
 	return buffer;
 }
 
@@ -222,17 +222,17 @@ mango::spRenderPass DeviceVK::createRenderPass(){
 mango::spTexture DeviceVK::createTexture(int width, int height, int miplevels, const mango::Format &format,
                                   const TextureType &type) {
 	auto texture = std::make_shared<TextureVK>();
-	texture->create(shared_from_this(),width,height,miplevels,format,type);
+	texture->create(width,height,miplevels,format,type);
 	return texture;
 }
 
 mango::spFramebuffer DeviceVK::createFramebuffer(){
-	return std::make_shared<FramebufferVK>(shared_from_this());
+	return std::make_shared<FramebufferVK>();
 }
 
 mango::spCommandBuffer DeviceVK::createCommandBuffer(){
 	auto cmd = std::make_shared<CommandBufferVK>();
-	cmd->create(shared_from_this());
+	cmd->create();
 	return cmd;
 }
 
@@ -263,7 +263,7 @@ void DeviceVK::createScreen(){
 	_screenRenderPass = std::make_shared<RenderPassVK>();
 	_screenRenderPass->addAttachment(Attachment(formatVK2Mango(_swapchain.getFormat()),false,0));
 	_screenRenderPass->addAttachment(Attachment(getDepthFormat(),true,1));
-	_screenRenderPass->create(shared_from_this());
+	_screenRenderPass->create();
 
 	auto imageViews = _swapchain.getImageViews();
 	auto extent = _swapchain.getExtent();
@@ -293,7 +293,6 @@ std::vector<mango::spFramebuffer> DeviceVK::getScreenbuffers(){
 
 mango::spSemaphore DeviceVK::createSemaphore(){
 	auto semaphore = std::make_shared<SemaphoreVK>();
-	semaphore->create(shared_from_this());
 	return semaphore;
 }
 
@@ -338,7 +337,7 @@ uint32_t DeviceVK::nextScreen(const mango::spSemaphore& signal){
 }
 
 mango::spDescSet DeviceVK::createDescSet() {
-    spDescSet descSet = std::make_shared<DescSetVK>(shared_from_this());
+    spDescSet descSet = std::make_shared<DescSetVK>();
     return descSet;
 }
 
@@ -346,8 +345,8 @@ void DeviceVK::waitIdle() {
 	_device.waitIdle();
 }
 
-void SemaphoreVK::create(const spDeviceVK& device){
-	_semaphore = device->getDevice().createSemaphore(vk::SemaphoreCreateInfo());
+SemaphoreVK::SemaphoreVK() {
+	_semaphore = Instance::device<DeviceVK>()->getDevice().createSemaphore(vk::SemaphoreCreateInfo());
 }
 
 vk::Semaphore SemaphoreVK::getVK(){

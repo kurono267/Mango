@@ -35,6 +35,14 @@ void Material::setMetalness(const float &value) {
 	setMetalness(createSinglePixelTexture(_device.lock(),value));
 }
 
+uint32_t Material::getID() {
+	return _id;
+}
+
+void Material::setID(const uint32_t& id) {
+	_id = id;
+}
+
 spTexture Material::getAlbedo() {
 	return _albedo;
 }

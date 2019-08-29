@@ -21,7 +21,7 @@ class Swapchain {
 		Swapchain() = default;
 		~Swapchain();
 
-		void create(const spDevice& device,const vk::SurfaceKHR& surface,const glm::ivec2& size,const uint32_t queueFamilyIndices[2]);
+		void create(const vk::SurfaceKHR& surface,const glm::ivec2& size,const uint32_t queueFamilyIndices[2]);
 		void release();
 
 		vk::SwapchainKHR getSwapchain() const ;
@@ -38,8 +38,6 @@ class Swapchain {
 
 		void createImageViews(const vk::Device& device);
 		std::vector<mango::spTextureView> _imageViews;
-
-		vk::Device _device;
 
 		bool _isInit;
 };

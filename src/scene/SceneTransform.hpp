@@ -20,11 +20,11 @@ class SceneTransform {
 		glm::vec3 rotationEuler() const;
 		glm::vec3 scale() const;
 
-		void setTransform(const glm::mat4& transform);
-		void setPos(const glm::vec3& pos);
-		void setRotation(const glm::quat& quat);
-		void setRotation(const glm::vec3& euler);
-		void setScale(const glm::vec3& scale);
+		virtual void setTransform(const glm::mat4& transform);
+		virtual void setPos(const glm::vec3& pos);
+		virtual void setRotation(const glm::quat& quat);
+		virtual void setRotation(const glm::vec3& euler);
+		virtual void setScale(const glm::vec3& scale);
 	protected:
 		glm::mat4 _transform;
 		glm::vec3 _pos;

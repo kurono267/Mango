@@ -25,8 +25,6 @@ public:
     bool onMouse(const GLFWMouse& mouse) final;
     bool onExit() final;
 protected:
-    std::unique_ptr<Instance> _instance;
-
     spSceneNode _cameraNode;
     spSceneNode _cameraOrbit;
 

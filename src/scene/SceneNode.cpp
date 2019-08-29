@@ -64,6 +64,37 @@ glm::mat4 SceneNode::getWorldTransform() {
 	return transform;
 }
 
+spDescSet SceneNode::getDescSet(const spDevice& device) {
+	if(!_descSet){
+		_descSet = device->createDescSet();
+	}
+}
+
+void SceneNode::setTransform(const glm::mat4& transform) {
+	SceneTransform::setTransform(transform);
+
+}
+
+void SceneNode::setPos(const glm::vec3& pos) {
+	SceneTransform::setPos(pos);
+
+}
+
+void SceneNode::setRotation(const glm::quat& quat) {
+	SceneTransform::setRotation(quat);
+
+}
+
+void SceneNode::setRotation(const glm::vec3& euler) {
+	SceneTransform::setRotation(euler);
+
+}
+
+void SceneNode::setScale(const glm::vec3& scale) {
+	SceneTransform::setRotation(scale);
+
+}
+
 void SceneNode::run(const std::function<void(const ptr &, bool &)> &func, bool isRunForThis) {
 	bool stop = false;
 	if(isRunForThis)func(shared_from_this(),stop);

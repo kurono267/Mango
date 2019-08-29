@@ -13,7 +13,7 @@ namespace mango::vulkan {
 
 class DescSetVK : public mango::DescSet {
 public:
-    DescSetVK(const spDevice& device);
+    DescSetVK();
     ~DescSetVK() override;
 
     void create() override;
@@ -26,8 +26,6 @@ public:
     vk::DescriptorSet getSet(){return _descSet;}
     vk::DescriptorSetLayout getLayout(){return _descLayout;}
 private:
-    spDevice _device;
-
     vk::DescriptorSetLayout _descLayout;
     vk::DescriptorSet       _descSet;
     vk::DescriptorPool      _descPool;

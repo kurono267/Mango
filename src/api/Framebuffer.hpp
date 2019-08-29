@@ -13,7 +13,7 @@ namespace mango {
 
 class Framebuffer {
 	public:
-		Framebuffer(const spDevice& device) : _device(device) {}
+		Framebuffer() {}
 		virtual ~Framebuffer() = default;
 
 		void attachment(const spTextureView& imageView);
@@ -27,8 +27,6 @@ class Framebuffer {
 
 		virtual void create(const int width,const int height,const spRenderPass& renderPass) = 0;
 	protected:
-		spDevice _device;
-
 		std::vector<spTextureView> _attachments;
 		spTexture _depthBuffer;
 		spTextureView _depthView;

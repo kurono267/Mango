@@ -18,7 +18,7 @@ class RenderPassVK : public RenderPass {
 		RenderPassVK() = default;
 		virtual ~RenderPassVK() = default;
 
-		virtual void create(const spDevice& device) final;
+		virtual void create() final;
 
 		vk::RenderPass getVK();
 	protected:
@@ -38,10 +38,10 @@ typedef std::shared_ptr<RenderPassVK> spRenderPassVK;
 
 class PipelineVK : public mango::Pipeline {
 	public:
-		PipelineVK(const spDevice& device,const PipelineInfo &rp);
+		PipelineVK(const PipelineInfo &rp);
 		virtual ~PipelineVK() final;
 
-		static spPipeline make(const spDevice& device,const PipelineInfo & rp){ return std::make_shared<PipelineVK>(device,rp); }
+		static spPipeline make(const PipelineInfo & rp){ return std::make_shared<PipelineVK>(rp); }
 
 		vk::Pipeline getVK();
 		vk::PipelineLayout getLayout();
@@ -54,9 +54,6 @@ class PipelineVK : public mango::Pipeline {
 
 		void create();
 	private:
-		spDeviceVK _device;
-		vk::Device _vk_device;
-
 		std::vector<vk::PipelineShaderStageCreateInfo> _shaders;
 		vk::PipelineViewportStateCreateInfo      _viewportState;
 
