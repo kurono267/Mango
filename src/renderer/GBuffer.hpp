@@ -27,7 +27,6 @@ class GBuffer {
 		spDevice _device;
 
 		Uniform _cameraUniform;
-		Uniform _nodeUniform;
 
 		std::vector<spDescSet> _descSets;
 

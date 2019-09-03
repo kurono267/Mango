@@ -13,11 +13,6 @@ struct CameraData {
 	glm::mat4 viewProj;
 };
 
-struct NodeData {
-	glm::mat4 world;
-	int material;
-};
-
 GBuffer::GBuffer(const spDevice &device, const glm::ivec2& size) : _device(device) {
 	std::cout << "GBuffer create" << std::endl;
 	_albedo = _device->createTexture(size.x,size.y,1,Format::R16G16B16A16Unorm, TextureType::Input | TextureType::Output);
@@ -40,16 +35,16 @@ GBuffer::GBuffer(const spDevice &device, const glm::ivec2& size) : _device(devic
 	_framebuffer->create(size.x,size.y,_renderPass);
 
 	_cameraUniform.create(_device,sizeof(CameraData));
-	_nodeUniform.create(_device,sizeof(NodeData));
 
-	_descSets.resize(2);
+	_descSets.resize(3);
 
 	_descSets[0] = _device->createDescSet();
 	_descSets[0]->setUniformBuffer(_cameraUniform,0,ShaderStage::Vertex);
-	_descSets[0]->setUniformBuffer(_nodeUniform,1,ShaderStage::Vertex);
 	_descSets[0]->create();
 
 	_descSets[1] = Material::generalDescSet(_device);
+
+	_descSets[2] = SceneNode::generalDescSet();
 
 	PipelineInfo pipelineInfo;
 	pipelineInfo.setRenderPass(_renderPass);
@@ -80,7 +75,7 @@ void GBuffer::update(const spSceneNode &scene) {
 	_commandBuffer->bindPipeline(_pipeline);
 
 	uint32_t matId = 0;
-	std::vector<spDescSet> descSets(2);
+	std::vector<spDescSet> descSets(3);
 	descSets[0] = _descSets[0];
 	scene->run([&](const spSceneNode& node, bool& stop){
 		if(!node->getGeometry())return;
@@ -90,11 +85,8 @@ void GBuffer::update(const spSceneNode &scene) {
 		auto mesh = geometry->getMesh();
 		if(!material || !mesh)return;
 		descSets[1] = material->getDescSet();
+		descSets[2] = node->getDescSet();
 
-		NodeData nodeData;
-		nodeData.world = node->getWorldTransform();
-
-		_nodeUniform.set(sizeof(NodeData),&nodeData);
 		_commandBuffer->bindDescriptorSet(_pipeline,descSets);
 		mesh->draw(_commandBuffer);
 	});

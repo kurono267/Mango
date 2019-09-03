@@ -36,7 +36,7 @@ class SceneNode : public SceneTransform, public std::enable_shared_from_this<Sce
 		void setCamera(const spCamera& camera);
 		void setGeometry(const spGeometry& geometry);
 
-		spDescSet getDescSet(const spDevice& device);
+		const spDescSet& getDescSet() const;
 
 		BBox boundingBox();
 
@@ -52,7 +52,12 @@ class SceneNode : public SceneTransform, public std::enable_shared_from_this<Sce
 		void setScale(const glm::vec3& scale) override;
 
 		void run(const std::function<void(const ptr& node, bool& stop)>& func,bool isRunForThis = true);
+
+		static spDescSet generalDescSet();
 	protected:
+		void createDescSet();
+		void updateDescSet();
+
 		std::vector<ptr> _childs;
 		mutable ptr _parent;
 
@@ -60,6 +65,7 @@ class SceneNode : public SceneTransform, public std::enable_shared_from_this<Sce
 		spGeometry _geometry;
 		spDescSet _descSet;
 		Uniform _uniform;
+		NodeData _nodeData;
 };
 
 typedef std::shared_ptr<SceneNode> spSceneNode;

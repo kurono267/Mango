@@ -11,9 +11,8 @@ layout(set = 0, binding = 0) uniform Camera {
     mat4 viewProj;
 } camera;
 
-layout(set = 0, binding = 1) uniform Node {
+layout(set = 2, binding = 0) uniform Node {
     mat4 world;
-    uint material;
 } node;
 
 layout(location = 0) in vec3 inPosition;
@@ -23,7 +22,6 @@ layout(location = 2) in vec2 inUV;
 layout(location = 0) out vec3 outPos;
 layout(location = 1) out vec3 outNormal;
 layout(location = 2) out vec2 outUV;
-layout(location = 3) out uint outMaterial;
 
 void main() {
     vec4 worldPos = node.world*vec4(inPosition,1.f);
@@ -31,5 +29,4 @@ void main() {
     outUV = inUV;
     outPos = worldPos.xyz;
     outNormal = inNormal;
-    outMaterial = node.material;
 }
