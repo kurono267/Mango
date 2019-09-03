@@ -8,6 +8,7 @@
 #include <api/Device.hpp>
 #include <api/Texture.hpp>
 #include <unified/Utils.hpp>
+#include <unified/Uniform.hpp>
 
 namespace mango {
 
@@ -18,31 +19,38 @@ class Material {
 
 		void setAlbedo(const glm::vec4& value);
 		void setAlbedo(const spTexture& texture);
-		void setRoughness(const float& value);
-		void setRoughness(const spTexture& texture);
-		void setMetalness(const float& value);
-		void setMetalness(const spTexture& texture);
+		void setRoughnessFactor(const float& value);
+		void setMetallicRoughness(const spTexture& texture);
+		void setMetallicFactor(const float& value);
 
 		uint32_t getID();
 		void setID(const uint32_t& id);
 
 		spTexture getAlbedo();
-		spTexture getRoughness();
-		spTexture getMetalness();
+		float getMetallicFactor();
+		float getRoughnessFactor();
+		spTexture getMetallicRoughness();
 
 		spDescSet getDescSet();
 		static spDescSet generalDescSet(const std::weak_ptr<Device> &device); // Desc set stored format of material
 	protected:
 		spTexture _albedo;
-		spTexture _roughness;
-		spTexture _metalness;
+		union {
+			float _roughnessFactor;
+			float _metallicFactor;
+			struct {
+				glm::vec2 _factors;
+			};
+		};
+		spTexture _metallicRoughness;
 
 		spTextureView _albedoView;
-		spTextureView _roughnessView;
-		spTextureView _metalnessView;
+		spTextureView _metallicRoughnessView;
 
 		std::weak_ptr<Device> _device;
 		spDescSet _descSet;
+
+		Uniform _uniform;
 
 		uint32_t _id;
 };

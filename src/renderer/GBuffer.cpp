@@ -18,19 +18,22 @@ GBuffer::GBuffer(const spDevice &device, const glm::ivec2& size) : _device(devic
 	_albedo = _device->createTexture(size.x,size.y,1,Format::R16G16B16A16Unorm, TextureType::Input | TextureType::Output);
 	_normal = _device->createTexture(size.x,size.y,1,Format::R16G16B16A16Unorm,TextureType::Input | TextureType::Output);
 	_pos = _device->createTexture(size.x,size.y,1,Format::R32G32B32A32Sfloat,TextureType::Input | TextureType::Output);
+	_material = _device->createTexture(size.x,size.y,1,Format::R16G16B16A16Sfloat,TextureType::Input | TextureType::Output);
 	std::cout << "GBuffer create finish" << std::endl;
 
 	_renderPass = _device->createRenderPass();
 	_renderPass->addAttachment(Attachment(_normal->format(),false,0));
 	_renderPass->addAttachment(Attachment(_pos->format(),false,1));
 	_renderPass->addAttachment(Attachment(_albedo->format(),false,2));
-	_renderPass->addAttachment(Attachment(_device->getDepthFormat(),true,3));
+	_renderPass->addAttachment(Attachment(_material->format(),false,3));
+	_renderPass->addAttachment(Attachment(_device->getDepthFormat(),true,4));
 	_renderPass->create();
 
 	_framebuffer = _device->createFramebuffer();
 	_framebuffer->attachment(_normal->createTextureView());
 	_framebuffer->attachment(_pos->createTextureView());
 	_framebuffer->attachment(_albedo->createTextureView());
+	_framebuffer->attachment(_material->createTextureView());
 	_framebuffer->depth(size.x,size.y);
 	_framebuffer->create(size.x,size.y,_renderPass);
 
@@ -54,7 +57,7 @@ GBuffer::GBuffer(const spDevice &device, const glm::ivec2& size) : _device(devic
 	pipelineInfo.addShader(ShaderStage::Vertex, "../glsl/renderer/gbuffer.vert");
 	pipelineInfo.addShader(ShaderStage::Fragment, "../glsl/renderer/gbuffer.frag");
 	pipelineInfo.setDescSet(_descSets);
-	pipelineInfo.blend(3);
+	pipelineInfo.blend(4,false);
 
 	_pipeline = _device->createPipeline(pipelineInfo);
 }
@@ -65,10 +68,11 @@ void GBuffer::update(const spSceneNode &scene) {
 	_commandBuffer = _device->createCommandBuffer();
 	_commandBuffer->begin();
 
-	_commandBuffer->setClearColor(0, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-	_commandBuffer->setClearColor(1, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-	_commandBuffer->setClearColor(2, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-	_commandBuffer->setClearDepthStencil(3, 1.0f, 0.0f);
+	_commandBuffer->setClearColor(0, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+	_commandBuffer->setClearColor(1, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+	_commandBuffer->setClearColor(2, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+	_commandBuffer->setClearColor(3, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+	_commandBuffer->setClearDepthStencil(4, 1.0f, 0.0f);
 
 	_commandBuffer->beginRenderPass(_pipeline->info().getRenderPass(), _framebuffer,
 								   RenderArea(_framebuffer->getSize(), glm::ivec2(0)));
@@ -118,4 +122,8 @@ spTexture GBuffer::getNormal() const {
 
 spTexture GBuffer::getPos() const {
 	return _pos;
+}
+
+spTexture GBuffer::getMaterial() const {
+	return _material;
 }

@@ -8,7 +8,8 @@
 using namespace mango;
 
 Material::Material(const spDevice &device) : _device(device),_descSet(nullptr) {
-
+	_uniform.create(device,sizeof(_factors));
+	_metallicRoughness = createSinglePixelTexture(device,glm::vec4(1,1,0,0));
 }
 
 void Material::setAlbedo(const spTexture &texture) {
@@ -19,20 +20,18 @@ void Material::setAlbedo(const glm::vec4 &value) {
 	setAlbedo(createSinglePixelTexture(_device.lock(),value));
 }
 
-void Material::setRoughness(const spTexture &texture) {
-	_roughness = texture;
+void Material::setRoughnessFactor(const float& value) {
+	_roughnessFactor = value;
+	_uniform.set(sizeof(_factors),&_factors);
 }
 
-void Material::setRoughness(const float &value) {
-	setRoughness(createSinglePixelTexture(_device.lock(),value));
+void Material::setMetallicRoughness(const spTexture& texture) {
+	_metallicRoughness = texture;
 }
 
-void Material::setMetalness(const spTexture &texture) {
-	_metalness = texture;
-}
-
-void Material::setMetalness(const float &value) {
-	setMetalness(createSinglePixelTexture(_device.lock(),value));
+void Material::setMetallicFactor(const float& value) {
+	_metallicFactor = value;
+	_uniform.set(sizeof(_factors),&_factors);
 }
 
 uint32_t Material::getID() {
@@ -47,12 +46,16 @@ spTexture Material::getAlbedo() {
 	return _albedo;
 }
 
-spTexture Material::getRoughness() {
-	return _roughness;
+float Material::getMetallicFactor() {
+	return _metallicFactor;
 }
 
-spTexture Material::getMetalness() {
-	return _metalness;
+float Material::getRoughnessFactor() {
+	return _roughnessFactor;
+}
+
+spTexture Material::getMetallicRoughness() {
+	return _metallicRoughness;
 }
 
 spDescSet Material::getDescSet() {
@@ -60,11 +63,10 @@ spDescSet Material::getDescSet() {
 		auto deviceInstance = _device.lock();
 		_descSet = deviceInstance->createDescSet();
 		_albedoView = _albedo->createTextureView();
-		_roughnessView = _roughness->createTextureView(ComponentMapping());
-		_metalnessView = _metalness->createTextureView(ComponentMapping());
+		_metallicRoughnessView = _metallicRoughness->createTextureView(ComponentMapping());
 		_descSet->setTexture(_albedoView,Sampler(),0,ShaderStage::Fragment);
-		_descSet->setTexture(_roughnessView,Sampler(),1,ShaderStage::Fragment);
-		_descSet->setTexture(_metalnessView,Sampler(),2,ShaderStage::Fragment);
+		_descSet->setTexture(_metallicRoughnessView,Sampler(),1,ShaderStage::Fragment);
+		_descSet->setUniformBuffer(_uniform,2,ShaderStage::Fragment);
 		_descSet->create();
 	}
 	return _descSet;
@@ -74,13 +76,14 @@ spDescSet Material::generalDescSet(const std::weak_ptr<Device> &device) {
 	auto deviceInstance = device.lock();
 	auto descSet = deviceInstance->createDescSet();
 	spTexture albedo = createSinglePixelTexture(deviceInstance,glm::vec4(1.f));
-	spTexture rm = createSinglePixelTexture(deviceInstance,1.f);
+	spTexture metallicRoughness = createSinglePixelTexture(deviceInstance,1.f);
 	spTextureView albedoView = albedo->createTextureView();
-	spTextureView roughnessView = rm->createTextureView(ComponentMapping());
-	spTextureView metalView = rm->createTextureView(ComponentMapping());
+	spTextureView mrView = metallicRoughness->createTextureView();
+	Uniform uniform;
+	uniform.create(deviceInstance,sizeof(glm::vec2));
 	descSet->setTexture(albedoView,Sampler(),0,ShaderStage::Fragment);
-	descSet->setTexture(roughnessView,Sampler(),1,ShaderStage::Fragment);
-	descSet->setTexture(metalView,Sampler(),2,ShaderStage::Fragment);
+	descSet->setTexture(mrView,Sampler(),1,ShaderStage::Fragment);
+	descSet->setUniformBuffer(uniform,2,ShaderStage::Fragment);
 	descSet->create();
 	return descSet;
 }

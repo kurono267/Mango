@@ -23,7 +23,7 @@ Renderer::Renderer(const spDevice& device,const glm::ivec2 &frameSize)
 	pipelineInfo.addShader(ShaderStage::Fragment, "../glsl/renderer/final.frag");
 
 	_frameDescSet = _device->createDescSet();
-	_frameDescSet->setTexture(_gBuffer->getNormal()->createTextureView(),Sampler(),0,ShaderStage::Fragment);
+	_frameDescSet->setTexture(_gBuffer->getMaterial()->createTextureView(),Sampler(),0,ShaderStage::Fragment);
 	_frameDescSet->create();
 
 	pipelineInfo.setDescSet(_frameDescSet);

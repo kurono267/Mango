@@ -211,9 +211,18 @@ spSceneNode recursiveLoadNodes(const spDevice& device,std::vector<spMaterial>& m
 			}
 			auto roughnessFactorItr = tfMaterial.values.find("roughnessFactor");
 			if (roughnessFactorItr != tfMaterial.values.end()) {
-				mat->setRoughness(roughnessFactorItr->second.Factor());
+				mat->setRoughnessFactor(roughnessFactorItr->second.Factor());
 			}
-			mat->setMetalness(0.5f);
+			auto metallicFactorItr = tfMaterial.values.find("metallicFactor");
+			if (metallicFactorItr != tfMaterial.values.end()) {
+				mat->setMetallicFactor(metallicFactorItr->second.Factor());
+			}
+			auto metallicRoughnessTextureItr = tfMaterial.values.find("metallicRoughnessTexture");
+			if(metallicRoughnessTextureItr != tfMaterial.values.end()){
+				auto textureId = metallicRoughnessTextureItr->second.TextureIndex();
+				fs::path mrPath = path/tfModel.images[textureId].uri;
+				mat->setMetallicRoughness(Assets::loadTexture(mrPath));
+			}
 
 			materials.push_back(mat);
 			mat->setID(materials.size()-1);
