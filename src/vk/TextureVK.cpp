@@ -79,6 +79,14 @@ void TextureVK::create(const int width, const int height,const int miplevels , c
 	_memory = vkDevice.allocateMemory(allocInfo);
 
 	vkDevice.bindImageMemory(_image,_memory,0);
+
+	if(((uint32_t)type & (uint32_t)mango::TextureType::Output)
+	   && ((uint32_t)type & (uint32_t)mango::TextureType::Input)){
+		transition(vk::ImageLayout::eShaderReadOnlyOptimal);
+	}
+	if(type == mango::TextureType::DepthStencil){
+		transition(vk::ImageLayout::eDepthStencilAttachmentOptimal);
+	}
 }
 
 void flagsFromLayout(const vk::ImageLayout& layout,vk::AccessFlags& accessFlag,vk::PipelineStageFlags& stage){

@@ -8,6 +8,7 @@
 #include <mango.hpp>
 #include <scene/Scene.hpp>
 #include "GBuffer.hpp"
+#include "PBR.hpp"
 
 namespace mango {
 
@@ -37,8 +38,10 @@ class Renderer {
 		spSemaphore _screenAvailable;
 		spSemaphore _renderFinish;
 		spSemaphore _gbufferFinish;
+		spSemaphore _pbrFinish;
 
 		spGBuffer _gBuffer;
+		spPBR _pbr;
 };
 
 }

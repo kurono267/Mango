@@ -11,7 +11,7 @@
 
 using namespace mango::vulkan;
 
-void RenderPassVK::create(){
+void RenderPassVK::create(const bool isPresent){
 	_attachmentsDesc.clear();
 	_attachmentsRef.clear();
 	for(auto a : _attachments){
@@ -24,9 +24,9 @@ void RenderPassVK::create(){
 		else desc.setStoreOp(vk::AttachmentStoreOp::eDontCare);
 		desc.setStencilLoadOp(vk::AttachmentLoadOp::eDontCare);
 		desc.setStencilStoreOp(vk::AttachmentStoreOp::eDontCare);
-		if(!a.depth)desc.setInitialLayout(vk::ImageLayout::ePresentSrcKHR);
+		if(!a.depth)desc.setInitialLayout(isPresent?vk::ImageLayout::ePresentSrcKHR:vk::ImageLayout::eShaderReadOnlyOptimal);
 		else desc.setInitialLayout(vk::ImageLayout::eDepthStencilAttachmentOptimal);
-		if(!a.depth)desc.setFinalLayout(vk::ImageLayout::ePresentSrcKHR);
+		if(!a.depth)desc.setFinalLayout(isPresent?vk::ImageLayout::ePresentSrcKHR:vk::ImageLayout::eShaderReadOnlyOptimal);
 		else desc.setFinalLayout(vk::ImageLayout::eDepthStencilAttachmentOptimal);
 
 		vk::AttachmentReference ref;

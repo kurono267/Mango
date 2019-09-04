@@ -18,7 +18,7 @@ class RenderPassVK : public RenderPass {
 		RenderPassVK() = default;
 		virtual ~RenderPassVK() = default;
 
-		virtual void create() final;
+		virtual void create(const bool isPresent = false) final;
 
 		vk::RenderPass getVK();
 	protected:

@@ -263,7 +263,7 @@ void DeviceVK::createScreen(){
 	_screenRenderPass = std::make_shared<RenderPassVK>();
 	_screenRenderPass->addAttachment(Attachment(formatVK2Mango(_swapchain.getFormat()),false,0));
 	_screenRenderPass->addAttachment(Attachment(getDepthFormat(),true,1));
-	_screenRenderPass->create();
+	_screenRenderPass->create(true);
 
 	auto imageViews = _swapchain.getImageViews();
 	auto extent = _swapchain.getExtent();

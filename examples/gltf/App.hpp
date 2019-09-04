@@ -24,8 +24,6 @@ public:
     bool onMouse(const GLFWMouse& mouse) final;
     bool onExit() final;
 protected:
-    std::unique_ptr<Instance> _instance;
-
     spPipeline _main;
     std::vector<spCommandBuffer> _cmdScreen;
     spMesh _cube;
