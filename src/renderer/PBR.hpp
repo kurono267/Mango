@@ -13,7 +13,7 @@ class PBR {
 	public:
 		PBR(const spGBuffer& gbuffer, const glm::ivec2& size);
 
-		void render(const spSemaphore& wait, const spSemaphore& finish);
+		void render(const Scene &scene,const spSemaphore& wait, const spSemaphore& finish);
 
 		spTexture getLightResult();
 	protected:
@@ -27,6 +27,8 @@ class PBR {
 		spDescSet _descSet;
 
 		spMesh _quad;
+
+		Uniform _uniform;
 };
 
 typedef std::shared_ptr<PBR> spPBR;

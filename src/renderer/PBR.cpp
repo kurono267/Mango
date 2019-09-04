@@ -21,11 +21,14 @@ PBR::PBR(const spGBuffer &gbuffer, const glm::ivec2& size) : _gBuffer(gbuffer) {
 	_framebuffer->depth(size.x,size.y);
 	_framebuffer->create(size.x,size.y,_renderPass);
 
+	_uniform.create(device,sizeof(glm::vec3));
+
 	_descSet = device->createDescSet();
 	_descSet->setTexture(_gBuffer->getPos()->createTextureView(),Sampler(),0,ShaderStage::Fragment);
 	_descSet->setTexture(_gBuffer->getNormal()->createTextureView(),Sampler(),1,ShaderStage::Fragment);
 	_descSet->setTexture(_gBuffer->getAlbedo()->createTextureView(),Sampler(),2,ShaderStage::Fragment);
 	_descSet->setTexture(_gBuffer->getMaterial()->createTextureView(),Sampler(),3,ShaderStage::Fragment);
+	_descSet->setUniformBuffer(_uniform,4,ShaderStage::Fragment);
 	_descSet->create();
 
 	PipelineInfo pipelineInfo;
@@ -57,7 +60,12 @@ PBR::PBR(const spGBuffer &gbuffer, const glm::ivec2& size) : _gBuffer(gbuffer) {
 	_commandBuffer->end();
 }
 
-void PBR::render(const spSemaphore &wait, const spSemaphore &finish) {
+void PBR::render(const Scene &scene, const spSemaphore &wait, const spSemaphore &finish) {
+	spSceneNode cameraNode = scene.getCameraNode();
+	glm::vec3 cameraPos = glm::vec3(cameraNode->getWorldTransform()*glm::vec4(0.f,0.f,0.f,1.f));
+	std::cout << "CameraPos " << glm::to_string(cameraPos) << std::endl;
+	_uniform.set(sizeof(glm::vec3),&cameraPos);
+
 	Instance::device()->submit(_commandBuffer,wait,finish);
 }
 

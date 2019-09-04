@@ -66,7 +66,7 @@ void Renderer::render(const Scene& scene) {
 	auto imageIndex = _device->nextScreen(_screenAvailable);
 
 	_gBuffer->render(scene,_screenAvailable,_gbufferFinish);
-	_pbr->render(_gbufferFinish,_pbrFinish);
+	_pbr->render(scene,_gbufferFinish,_pbrFinish);
 
 	_device->submit(_frameCommandBuffers[imageIndex],_pbrFinish,_renderFinish);
 	_device->present(imageIndex,_renderFinish);
