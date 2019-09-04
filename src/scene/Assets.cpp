@@ -6,6 +6,7 @@
 #include <stb_image.h>
 #define TINYGLTF_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
+#define TINYGLTF_NO_EXTERNAL_IMAGE
 #include <tiny_gltf.h>
 #include <iostream>
 #include <api/Utils.hpp>
@@ -143,6 +144,7 @@ spSceneNode recursiveLoadNodes(const spDevice& device,std::vector<spMaterial>& m
 	spSceneNode node = std::make_shared<SceneNode>();
 	if(tfNode.mesh >= 0) {
 		auto tfMesh = tfModel.meshes[tfNode.mesh];
+		std::cout << "mesh.primitives count " << tfMesh.primitives.size() << std::endl;
 		for (auto tfPrim : tfMesh.primitives) {
 			std::vector<sVertex> vertices;
 			// Get position data from mesh
@@ -153,8 +155,7 @@ spSceneNode recursiveLoadNodes(const spDevice& device,std::vector<spMaterial>& m
 			const float *positions = reinterpret_cast<const float *>(&posBuffer.data[posBufferView.byteOffset +
 																					 posAccess.byteOffset]);
 			for (size_t i = 0; i < posAccess.count; ++i) {
-				glm::vec4 pos(positions[i * 3 + 0], positions[i * 3 + 1], positions[i * 3 + 2], 1.0f);
-				vertices[i].pos = glm::vec3(pos.x,pos.z,pos.y);
+				vertices[i].pos = glm::vec3(positions[i * 3 + 0], positions[i * 3 + 1], positions[i * 3 + 2]);
 			}
 
 			// Get normal data from mesh
@@ -165,8 +166,7 @@ spSceneNode recursiveLoadNodes(const spDevice& device,std::vector<spMaterial>& m
 				const float *normals = reinterpret_cast<const float *>(&normalBuffer.data[normalBufferView.byteOffset +
 																						  normalAccess.byteOffset]);
 				for (size_t i = 0; i < normalAccess.count; ++i) {
-					glm::vec4 normal(normals[i * 3 + 0], normals[i * 3 + 1], normals[i * 3 + 2], 1.0f);
-					vertices[i].normal = glm::normalize(glm::vec3(normal.x,normal.z,normal.y));
+					vertices[i].normal = glm::normalize(glm::vec3(normals[i * 3 + 0], normals[i * 3 + 1], normals[i * 3 + 2]));
 				}
 			}
 			// Get uv data from mesh
@@ -195,7 +195,6 @@ spSceneNode recursiveLoadNodes(const spDevice& device,std::vector<spMaterial>& m
 			mesh->create(device,vertices,indices);
 
 			spMaterial mat = std::make_shared<Material>(device);
-			// TODO Fix material later
 
 			auto tfMaterial = tfModel.materials[tfPrim.material];
 			auto baseColorFactorItr = tfMaterial.values.find("baseColorFactor");
@@ -230,6 +229,24 @@ spSceneNode recursiveLoadNodes(const spDevice& device,std::vector<spMaterial>& m
 			node->setGeometry(Geometry::make(mesh,mat));
 		}
 	}
+	if(tfNode.matrix.size() == 16){
+		glm::mat4 transform(tfNode.matrix[0],tfNode.matrix[1],tfNode.matrix[2],tfNode.matrix[3],
+							tfNode.matrix[4],tfNode.matrix[5],tfNode.matrix[6],tfNode.matrix[7],
+							tfNode.matrix[8],tfNode.matrix[9],tfNode.matrix[10],tfNode.matrix[11],
+							tfNode.matrix[12],tfNode.matrix[13],tfNode.matrix[14],tfNode.matrix[15]);
+		node->setTransform(transform);
+	} else {
+		if(tfNode.scale.size() == 3){
+			node->setScale(glm::vec3(tfNode.scale[0],tfNode.scale[1],tfNode.scale[2]));
+		}
+		if(tfNode.rotation.size() == 4){
+			node->setRotation(glm::quat(tfNode.rotation[0],tfNode.rotation[1],tfNode.rotation[2],tfNode.rotation[3]));
+		}
+		if(tfNode.translation.size() == 3){
+			node->setPos(glm::vec3(tfNode.translation[0],tfNode.translation[1],tfNode.translation[2]));
+		}
+	}
+
 	for(int i = 0;i<tfNode.children.size();++i){
 		spSceneNode children = recursiveLoadNodes(device,materials,path,tfModel.nodes[tfNode.children[i]],tfModel);
 		node->addChild(children);

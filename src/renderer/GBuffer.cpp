@@ -91,6 +91,8 @@ void GBuffer::update(const spSceneNode &scene) {
 		descSets[1] = material->getDescSet();
 		descSets[2] = node->getDescSet();
 
+		glm::mat4 transform = node->getWorldTransform();
+
 		_commandBuffer->bindDescriptorSet(_pipeline,descSets);
 		mesh->draw(_commandBuffer);
 	});

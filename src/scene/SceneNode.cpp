@@ -104,6 +104,7 @@ void SceneNode::setScale(const glm::vec3& scale) {
 }
 
 void SceneNode::updateDescSet(){
+	if(!_descSet)createDescSet();
 	if(_descSet){
 		_nodeData.world = getWorldTransform();
 		_uniform.set(sizeof(NodeData),&_nodeData);

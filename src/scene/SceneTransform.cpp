@@ -76,5 +76,5 @@ glm::mat4 SceneTransform::createTransform(const glm::vec3& pos, const glm::quat&
 	glm::mat4 rotMat = glm::mat4_cast(rotation);
 	glm::mat4 scaleMat = glm::scale(scale);
 	glm::mat4 translateMat = glm::translate(pos);
-	return scaleMat*rotMat*translateMat;
+	return translateMat*rotMat*scaleMat;
 }

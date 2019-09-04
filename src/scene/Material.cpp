@@ -62,6 +62,7 @@ spDescSet Material::getDescSet() {
 	if(!_descSet){
 		auto deviceInstance = _device.lock();
 		_descSet = deviceInstance->createDescSet();
+		if(!_albedo)_albedo = createSinglePixelTexture(deviceInstance,glm::vec4(1.f));
 		_albedoView = _albedo->createTextureView();
 		_metallicRoughnessView = _metallicRoughness->createTextureView(ComponentMapping());
 		_descSet->setTexture(_albedoView,Sampler(),0,ShaderStage::Fragment);
