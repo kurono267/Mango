@@ -32,6 +32,18 @@ bool App::init() {
 		std::cout << screen->info() << std::endl;
 	}
 
+	// Test BVH
+	_scene.rootNode->run([](const spSceneNode& node, bool& isStop){
+		auto geometry = node->getGeometry();
+		if(!geometry)return;
+		auto mesh = geometry->getMesh();
+		if(!mesh)return;
+		spBVH bvh = std::make_shared<BVH>(mesh);
+		for(auto& bvhNode : bvh->nodes()){
+			std::cout << bvhNode;
+		}
+	});
+
 	_renderer = Renderer::make(device,glm::ivec2(1280,720));
 	_renderer->init(_scene);
 

@@ -40,6 +40,30 @@ BBox Mesh::getBoundingBox() {
 	return _bbox;
 }
 
+size_t Mesh::verticesCount() {
+	return _vbHost->size()/sizeof(sVertex);
+}
+
+sVertex *Mesh::mapVertices() {
+	return (sVertex*)_vbHost->map();
+}
+
+void Mesh::unmapVertices() {
+	_vbHost->unmap();
+}
+
+size_t Mesh::indicesCount() {
+	return _ibHost->size()/sizeof(uint32_t);
+}
+
+uint32_t *Mesh::mapIndices() {
+	return (uint32_t*)_ibHost->map();
+}
+
+void Mesh::unmapIndices() {
+	_ibHost->unmap();
+}
+
 spMesh mango::createQuad(const mango::spDevice &device){
 	std::vector<sVertex> vdata = {
 			sVertex(-1.0, 1.0, 0.0f, // Pos

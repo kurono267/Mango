@@ -62,6 +62,14 @@ class Mesh {
 		void create(const spDevice& device, const std::vector<sVertex>& vertices,const std::vector<uint32_t>& indices);
 		void draw(const spCommandBuffer& cmd);
 
+		size_t verticesCount();
+		sVertex* mapVertices();
+		void unmapVertices();
+
+		size_t indicesCount();
+		uint32_t* mapIndices();
+		void unmapIndices();
+
 		BBox getBoundingBox();
 	protected:
 		spBuffer _vbHost;

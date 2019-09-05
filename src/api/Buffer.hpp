@@ -18,6 +18,10 @@ class Buffer {
 
 		virtual void set(const size_t& size,const void* data) = 0;
 		virtual void copy(const std::shared_ptr<Buffer>& dst) = 0;
+
+		virtual size_t size() = 0;
+		virtual void* map() = 0;
+		virtual void unmap() = 0;
 };
 
 typedef std::shared_ptr<Buffer> spBuffer;

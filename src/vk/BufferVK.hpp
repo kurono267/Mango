@@ -17,9 +17,13 @@ class BufferVK : public Buffer {
 		virtual ~BufferVK() final;
 
 		void create(const BufferType &type,const MemoryType& memory,const size_t &size,void* data = nullptr);
-		void set(const size_t &size, const void *data) override;
+		void set(const size_t &size, const void *data) final;
 
 		void copy(const spBuffer& dst) final;
+
+		size_t size() final;
+		void* map() final;
+		void unmap() final;
 
 		vk::Buffer getVKBuffer();
 	protected:

@@ -47,10 +47,10 @@ void BufferVK::copy(const spBuffer& dst){
 }
 
 void BufferVK::set(const void* src,const size_t& size,const vk::DeviceMemory& dst){
-	auto vkDeivce = Instance::device<DeviceVK>()->getDevice();
-	void* map_data = vkDeivce.mapMemory(dst,0,(vk::DeviceSize)size);
+	auto vkDevice = Instance::device<DeviceVK>()->getDevice();
+	void* map_data = vkDevice.mapMemory(dst,0,(vk::DeviceSize)size);
 		memcpy(map_data,src,size);
-	vkDeivce.unmapMemory(dst);
+	vkDevice.unmapMemory(dst);
 }
 
 void BufferVK::set(const size_t &size, const void *data) {
@@ -61,16 +61,16 @@ void BufferVK::createBuffer(vk::DeviceSize size,vk::BufferUsageFlags usage, vk::
 							vk::Buffer& buffer,vk::DeviceMemory& memory){
 	vk::BufferCreateInfo bufferInfo(vk::BufferCreateFlags(),size,usage);
 	auto impDevice = Instance::device<DeviceVK>();
-	auto vkDeivce = impDevice->getDevice();
+	auto vkDevice = impDevice->getDevice();
 
-    buffer = vkDeivce.createBuffer(bufferInfo);
+    buffer = vkDevice.createBuffer(bufferInfo);
 
-    vk::MemoryRequirements memRequirements = vkDeivce.getBufferMemoryRequirements(buffer);
+    vk::MemoryRequirements memRequirements = vkDevice.getBufferMemoryRequirements(buffer);
 
     vk::MemoryAllocateInfo allocInfo(memRequirements.size,findMemoryType(impDevice->getPhysicalDevice(), memRequirements.memoryTypeBits, properties));
-    memory = vkDeivce.allocateMemory(allocInfo);
+    memory = vkDevice.allocateMemory(allocInfo);
 
-	vkDeivce.bindBufferMemory(buffer,memory, 0);
+	vkDevice.bindBufferMemory(buffer,memory, 0);
 }
 
 void BufferVK::copy(const vk::Buffer& src,const vk::Buffer& dst,const size_t& size){
@@ -83,13 +83,27 @@ void BufferVK::copy(const vk::Buffer& src,const vk::Buffer& dst,const size_t& si
 BufferVK::~BufferVK() {
 	std::cout << "~BufferVK" << std::endl;
 	auto impDevice = Instance::device<DeviceVK>();
-	auto vkDeivce = impDevice->getDevice();
-	vkDeivce.freeMemory(_memory);
-	vkDeivce.destroyBuffer(_buffer);
+	auto vkDevice = impDevice->getDevice();
+	vkDevice.freeMemory(_memory);
+	vkDevice.destroyBuffer(_buffer);
 }
 
 vk::Buffer BufferVK::getVKBuffer() {
 	return _buffer;
+}
+
+size_t BufferVK::size() {
+	return _size;
+}
+
+void *BufferVK::map() {
+	auto vkDevice = Instance::device<DeviceVK>()->getDevice();
+	return vkDevice.mapMemory(_memory,0,(vk::DeviceSize)_size);
+}
+
+void BufferVK::unmap() {
+	auto vkDevice = Instance::device<DeviceVK>()->getDevice();
+	vkDevice.unmapMemory(_memory);
 }
 
 uint32_t mango::vulkan::findMemoryType(vk::PhysicalDevice pDevice,uint32_t typeFilter, vk::MemoryPropertyFlags properties) {
