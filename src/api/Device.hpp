@@ -19,6 +19,7 @@ class Texture;
 class Framebuffer;
 class CommandBuffer;
 class DescSet;
+class Compute;
 
 // Semaphore empty class
 class Semaphore {
@@ -35,6 +36,7 @@ typedef std::shared_ptr<Framebuffer> spFramebuffer;
 typedef std::shared_ptr<CommandBuffer> spCommandBuffer;
 typedef std::shared_ptr<Semaphore> spSemaphore;
 typedef std::shared_ptr<DescSet> spDescSet;
+typedef std::shared_ptr<Compute> spCompute;
 
 /// Abstract Device API
 class Device {
@@ -56,6 +58,7 @@ class Device {
 		virtual spCommandBuffer createCommandBuffer() = 0;
 		virtual spSemaphore createSemaphore() = 0;
 		virtual spFramebuffer createFramebuffer() = 0;
+		virtual spCompute createCompute(const std::string& filename, const std::vector<spDescSet>& descSets) = 0;
 
 		virtual spTexture createTexture(int width,int height,
 										int miplevels, const Format& format,const TextureType& type) = 0;

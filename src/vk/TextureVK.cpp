@@ -53,6 +53,9 @@ void TextureVK::create(const int width, const int height,const int miplevels , c
 	if((uint32_t)type & (uint32_t)mango::TextureType::Output) {
 		usage |= vk::ImageUsageFlagBits::eColorAttachment;
 	}
+	if((uint32_t)type & (uint32_t)mango::TextureType::Storage){
+		usage |= vk::ImageUsageFlagBits::eStorage;
+	}
 
 	vk::ImageCreateInfo imageInfo(
 		vk::ImageCreateFlags(), // Basic

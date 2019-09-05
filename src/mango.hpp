@@ -17,6 +17,7 @@
 #include <api/DescSet.hpp>
 #include <api/CommandBuffer.hpp>
 #include <api/Utils.hpp>
+#include <api/Compute.hpp>
 
 #include <unified/Mesh.hpp>
 #include <unified/Uniform.hpp>

@@ -36,7 +36,9 @@ class DeviceVK : public Device {
 		vk::Device getDevice();
 		vk::PhysicalDevice getPhysicalDevice();
 		vk::CommandPool getCommandPool();
+		vk::CommandPool getComputeCommandPool();
 		vk::Queue getGraphicsQueue();
+		vk::Queue getComputeQueue();
 
 		spRenderPass createRenderPass() final;
 		spPipeline createPipeline(const PipelineInfo& rp) final;
@@ -50,6 +52,8 @@ class DeviceVK : public Device {
 		spFramebuffer createFramebuffer() final;
 		spCommandBuffer createCommandBuffer() final;
 		spSemaphore createSemaphore() final;
+
+		spCompute createCompute(const std::string& filename, const std::vector<spDescSet>& descSets) final;
 
 		Format getDepthFormat() final;
 
@@ -84,6 +88,7 @@ private:
 		std::vector<spFramebuffer> _screenbuffers;
 
 		vk::CommandPool    _pool;
+		vk::CommandPool    _computePool;
 
 		Swapchain          _swapchain;
 
@@ -100,5 +105,7 @@ class SemaphoreVK : public mango::Semaphore {
 	protected:
 		vk::Semaphore _semaphore;
 };
+
+typedef std::shared_ptr<SemaphoreVK> spSemaphoreVK;
 
 };

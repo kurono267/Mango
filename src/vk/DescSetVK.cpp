@@ -83,8 +83,16 @@ void DescSetVK::create(){
 }
 
 void DescSetVK::setUniformBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage){
-
     _uboBinds.emplace_back(buffer,binding,shaderStageVK(stage),vk::DescriptorType::eUniformBuffer);
+}
+
+void DescSetVK::setStorageBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage){
+	_uboBinds.emplace_back(buffer,binding,shaderStageVK(stage),vk::DescriptorType::eStorageBuffer);
+}
+
+void DescSetVK::setStorageTexture(const spTextureView &texture, const Sampler &sampler, size_t binding, const ShaderStage &stage) {
+	auto internalTexture = std::dynamic_pointer_cast<TextureViewVK>(texture);
+	_samplerBinds.emplace_back(internalTexture->getView(),createSampler(sampler),binding,shaderStageVK(stage),vk::DescriptorType::eStorageImage,vk::ImageLayout::eGeneral);
 }
 
 void DescSetVK::setTexture(const spTextureView &texture, const Sampler &sampler, size_t binding,

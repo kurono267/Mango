@@ -12,8 +12,10 @@
 #include "TextureVK.hpp"
 #include "FramebufferVK.hpp"
 #include "DescSetVK.hpp"
+#include "ComputeVK.hpp"
 
 using namespace mango::vulkan;
+using namespace mango;
 
 const std::vector<const char*> deviceExtensions = {
 	VK_KHR_SWAPCHAIN_EXTENSION_NAME
@@ -77,8 +79,8 @@ void DeviceVK::create(const vk::Instance& instance,const vk::SurfaceKHR& surface
 
 	vk::CommandPoolCreateInfo poolInfo(vk::CommandPoolCreateFlagBits::eResetCommandBuffer,queueFamily.graphicsFamily);
 	_pool = _device.createCommandPool(poolInfo);
-	//vk::CommandPoolCreateInfo poolComputeInfo(vk::CommandPoolCreateFlags(),queueFamily.computeFamily);
-	//_poolCompute = _device.createCommandPool(poolComputeInfo);
+	vk::CommandPoolCreateInfo poolComputeInfo(vk::CommandPoolCreateFlagBits::eResetCommandBuffer,queueFamily.computeFamily);
+	_computePool = _device.createCommandPool(poolComputeInfo);
 
 	_swapchain.create(_surface,size,familyIndices);
 
@@ -296,6 +298,10 @@ mango::spSemaphore DeviceVK::createSemaphore(){
 	return semaphore;
 }
 
+spCompute DeviceVK::createCompute(const std::string& filename, const std::vector<spDescSet>& descSets) {
+	return std::make_shared<ComputeVK>(filename,descSets);
+}
+
 void DeviceVK::submit(const mango::spCommandBuffer& cmd, const mango::spSemaphore& waitForIt, const mango::spSemaphore& result){
 	auto cmd_vk = std::dynamic_pointer_cast<CommandBufferVK>(cmd)->getVK();
 
@@ -343,6 +349,14 @@ mango::spDescSet DeviceVK::createDescSet() {
 
 void DeviceVK::waitIdle() {
 	_device.waitIdle();
+}
+
+vk::CommandPool DeviceVK::getComputeCommandPool() {
+	return _computePool;
+}
+
+vk::Queue DeviceVK::getComputeQueue() {
+	return _computeQueue;
 }
 
 SemaphoreVK::SemaphoreVK() {

@@ -32,7 +32,7 @@ set(MANGO_SRC
         scene/Geometry.cpp
         scene/Geometry.hpp
         scene/BBox.cpp
-        scene/BBox.hpp renderer/Renderer.cpp renderer/Renderer.hpp renderer/GBuffer.cpp renderer/GBuffer.hpp api/Instance.cpp renderer/PBR.cpp renderer/PBR.hpp)
+        scene/BBox.hpp renderer/Renderer.cpp renderer/Renderer.hpp renderer/GBuffer.cpp renderer/GBuffer.hpp api/Instance.cpp renderer/PBR.cpp renderer/PBR.hpp api/Compute.cpp api/Compute.hpp)
 
 set(MANGO_VK
         vk/InstanceVK.cpp
@@ -51,7 +51,7 @@ set(MANGO_VK
         vk/CommandBufferVK.cpp
         vk/CommandBufferVK.hpp
         vk/DescSetVK.cpp
-        vk/DescSetVK.hpp)
+        vk/DescSetVK.hpp vk/ComputeVK.cpp vk/ComputeVK.hpp vk/ShaderVK.cpp vk/ShaderVK.hpp)
 
 add_definitions(-DMVK_CONFIG_FULL_IMAGE_VIEW_SWIZZLE=1)
 

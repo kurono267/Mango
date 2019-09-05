@@ -466,7 +466,8 @@ enum class MemoryType {
 enum class TextureType : unsigned {
 	Input = 0x1,
 	Output = 0x2,
-	DepthStencil = 0x4
+	DepthStencil = 0x4,
+	Storage = 0x8
 };
 
 TextureType operator |(TextureType lhs, TextureType rhs);

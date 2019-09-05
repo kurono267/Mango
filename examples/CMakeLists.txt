@@ -9,3 +9,6 @@ target_link_libraries(gltf mango)
 
 add_executable(renderer renderer/App.cpp renderer/App.hpp renderer/main.cpp)
 target_link_libraries(renderer mango)
+
+add_executable(compute compute/main.cpp)
+target_link_libraries(compute mango)

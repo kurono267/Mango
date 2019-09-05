@@ -19,9 +19,12 @@ public:
     void create() override;
 
     void setUniformBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage) override;
+    void setStorageBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage) override;
 
     void setTexture(const spTextureView &texture, const Sampler &sampler, size_t binding,
                     const ShaderStage &stage) override;
+	void setStorageTexture(const spTextureView &texture, const Sampler &sampler, size_t binding,
+			        const ShaderStage &stage) override;
 
     vk::DescriptorSet getSet(){return _descSet;}
     vk::DescriptorSetLayout getLayout(){return _descLayout;}
