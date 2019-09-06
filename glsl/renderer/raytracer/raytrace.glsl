@@ -122,7 +122,7 @@ RayHit intersect(const Ray ray, const vec3 v0, const vec3 v1, const vec3 v2) {
     }
     hit.tmin = dot(e2, qvec) * inv_det;
     hit.status = true;
-    hit.bc = vec3(u,v,1.0f-u-v);
+    hit.bc = vec3(1.0f-u-v,u,v);
     return hit;
 }
 
