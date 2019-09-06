@@ -11,6 +11,7 @@
 #include "api/default.hpp"
 #include "api/Types.hpp"
 #include "api/Device.hpp"
+#include "Uniform.hpp"
 
 namespace mango {
 
@@ -33,11 +34,11 @@ struct sVertex {
 	sVertex(const glm::vec3& pos_ = glm::vec3(0.0f),const glm::vec2& uv_ = glm::vec2(0.0f),const glm::vec3& normal_ = glm::vec3(0.0f));
 	sVertex(const float& px,const float& py,const float& pz,const float& u = 0.0f,const float& v = 0.0f,const float& nx = 0.0f,const float& ny = 0.0f,const float& nz = 0.0f);
 
-	/*alignas(16)*/ glm::vec3 pos;
-	/*alignas(16)*/ glm::vec3 normal;
-	/*alignas(16)*/ glm::vec2 uv;
-	glm::vec3 tangent = glm::vec3(0.0f);
-	glm::vec3 binormal = glm::vec3(0.0f);
+	alignas(16) glm::vec3 pos;
+	alignas(16) glm::vec3 normal;
+	alignas(16) glm::vec2 uv;
+	alignas(16) glm::vec3 tangent = glm::vec3(0.0f);
+	alignas(16) glm::vec3 binormal = glm::vec3(0.0f);
 
 	static VertexBinding bindingDesc(){
 		return VertexBinding(0,sizeof(sVertex));
@@ -71,6 +72,9 @@ class Mesh {
 		void unmapIndices();
 
 		BBox getBoundingBox();
+
+		Uniform getVertexBuffer();
+		Uniform getIndexBuffer();
 	protected:
 		spBuffer _vbHost;
 		spBuffer _vbDevice;

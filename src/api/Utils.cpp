@@ -284,3 +284,10 @@ TextureType mango::operator |(TextureType lhs, TextureType rhs)
 			static_cast<std::underlying_type<TextureType>::type>(rhs)
 	);
 }
+
+BufferType mango::operator |(BufferType lhs, BufferType rhs){
+	return static_cast<BufferType> (
+			static_cast<std::underlying_type<BufferType>::type>(lhs) |
+			static_cast<std::underlying_type<BufferType>::type>(rhs)
+	);
+}

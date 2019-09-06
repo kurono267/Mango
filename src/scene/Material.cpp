@@ -65,9 +65,9 @@ spDescSet Material::getDescSet() {
 		if(!_albedo)_albedo = createSinglePixelTexture(deviceInstance,glm::vec4(1.f));
 		_albedoView = _albedo->createTextureView();
 		_metallicRoughnessView = _metallicRoughness->createTextureView(ComponentMapping());
-		_descSet->setTexture(_albedoView,Sampler(),0,ShaderStage::Fragment);
-		_descSet->setTexture(_metallicRoughnessView,Sampler(),1,ShaderStage::Fragment);
-		_descSet->setUniformBuffer(_uniform,2,ShaderStage::Fragment);
+		_descSet->setTexture(_albedoView,Sampler(),0,ShaderStage::All); // TODO fix to support Fragment and compute shader stage
+		_descSet->setTexture(_metallicRoughnessView,Sampler(),1,ShaderStage::All);
+		_descSet->setUniformBuffer(_uniform,2,ShaderStage::All);
 		_descSet->create();
 	}
 	return _descSet;
@@ -82,9 +82,9 @@ spDescSet Material::generalDescSet(const std::weak_ptr<Device> &device) {
 	spTextureView mrView = metallicRoughness->createTextureView();
 	Uniform uniform;
 	uniform.create(deviceInstance,sizeof(glm::vec2));
-	descSet->setTexture(albedoView,Sampler(),0,ShaderStage::Fragment);
-	descSet->setTexture(mrView,Sampler(),1,ShaderStage::Fragment);
-	descSet->setUniformBuffer(uniform,2,ShaderStage::Fragment);
+	descSet->setTexture(albedoView,Sampler(),0,ShaderStage::All); // TODO fix to support Fragment and compute shader stage
+	descSet->setTexture(mrView,Sampler(),1,ShaderStage::All);
+	descSet->setUniformBuffer(uniform,2,ShaderStage::All);
 	descSet->create();
 	return descSet;
 }

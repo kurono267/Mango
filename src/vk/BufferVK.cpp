@@ -16,22 +16,18 @@ void BufferVK::create(const BufferType &type,const MemoryType& memory,const size
 					 _buffer,_memory);
 		if(data)set(data,size,_memory);
 	} else if(memory == MemoryType::DEVICE){
-		vk::BufferUsageFlagBits gpuUsage;
-		switch (type){
-			case BufferType::Vertex:
-				gpuUsage = vk::BufferUsageFlagBits::eVertexBuffer;
-				break;
-			case BufferType::Index:
-				gpuUsage = vk::BufferUsageFlagBits::eIndexBuffer;
-				break;
-			case BufferType::Uniform:
-				gpuUsage = vk::BufferUsageFlagBits::eUniformBuffer;
-				break;
-			case BufferType::Storage:
-				gpuUsage = vk::BufferUsageFlagBits::eStorageBuffer;
-				break;
-			default:
-				break;
+		vk::BufferUsageFlags gpuUsage;
+		if((uint32_t)type & (uint32_t)BufferType::Vertex){
+			gpuUsage |= vk::BufferUsageFlagBits::eVertexBuffer;
+		}
+		if((uint32_t)type & (uint32_t)BufferType::Index){
+			gpuUsage |= vk::BufferUsageFlagBits::eIndexBuffer;
+		}
+		if((uint32_t)type & (uint32_t)BufferType::Uniform){
+			gpuUsage |= vk::BufferUsageFlagBits::eUniformBuffer;
+		}
+		if((uint32_t)type & (uint32_t)BufferType::Storage) {
+			gpuUsage |= vk::BufferUsageFlagBits::eStorageBuffer;
 		}
 
 		createBuffer(size,

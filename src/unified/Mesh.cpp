@@ -13,12 +13,12 @@ void Mesh::create(const mango::spDevice &device, const std::vector<mango::sVerte
 	for(auto& vertex : vertices){
 		_bbox.expand(vertex.pos);
 	}
-    _vbHost = device->createBuffer(BufferType::Vertex,MemoryType::HOST,vertices.size()*sizeof(sVertex),(void*)vertices.data());
-    _vbDevice = device->createBuffer(BufferType::Vertex,MemoryType::DEVICE,vertices.size()*sizeof(sVertex));
+    _vbHost = device->createBuffer(BufferType::Vertex | BufferType::Storage,MemoryType::HOST,vertices.size()*sizeof(sVertex),(void*)vertices.data());
+    _vbDevice = device->createBuffer(BufferType::Vertex | BufferType::Storage,MemoryType::DEVICE,vertices.size()*sizeof(sVertex));
     _vbHost->copy(_vbDevice);
 
-	_ibHost = device->createBuffer(BufferType::Index,MemoryType::HOST,indices.size()*sizeof(uint32_t),(void*)indices.data());
-    _ibDevice = device->createBuffer(BufferType::Index,MemoryType::DEVICE,indices.size()*sizeof(uint32_t));
+	_ibHost = device->createBuffer(BufferType::Index | BufferType::Storage,MemoryType::HOST,indices.size()*sizeof(uint32_t),(void*)indices.data());
+    _ibDevice = device->createBuffer(BufferType::Index | BufferType::Storage,MemoryType::DEVICE,indices.size()*sizeof(uint32_t));
     _ibHost->copy(_ibDevice);
 	_indexCount = static_cast<uint32_t>(indices.size());
 }
@@ -62,6 +62,14 @@ uint32_t *Mesh::mapIndices() {
 
 void Mesh::unmapIndices() {
 	_ibHost->unmap();
+}
+
+Uniform Mesh::getVertexBuffer() {
+	return Uniform(_vbHost,_vbDevice);
+}
+
+Uniform Mesh::getIndexBuffer() {
+	return Uniform(_ibHost,_ibDevice);
 }
 
 spMesh mango::createQuad(const mango::spDevice &device){

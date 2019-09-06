@@ -31,6 +31,7 @@ class Raytracer {
 	private:
 		std::vector<spBVH> _trees;
 		std::vector<spSceneNode> _nodes;
+		std::vector<spDescSet> _nodeDescSets;
 
 		spTexture _pos;
 		spTexture _normal;

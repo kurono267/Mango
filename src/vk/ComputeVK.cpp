@@ -14,7 +14,7 @@ ComputeVK::ComputeVK(const std::string& filename, const std::vector<spDescSet>& 
 	init();
 }
 
-spSemaphore ComputeVK::run(const spSemaphore& waitForIt,const int sizeX, const int sizeY, const int sizeZ) {
+void ComputeVK::run(const spSemaphore& waitForIt,const spSemaphore& result,const int sizeX, const int sizeY, const int sizeZ) {
 	if(sizeX != _size.x || sizeY != _size.y || sizeZ != _size.z){ // Recreate command buffer when size changed
 		if(_commandBuffer){
 			_commandBuffer.reset(vk::CommandBufferResetFlagBits::eReleaseResources);
@@ -24,9 +24,10 @@ spSemaphore ComputeVK::run(const spSemaphore& waitForIt,const int sizeX, const i
 	}
 
 	auto waitVK = std::dynamic_pointer_cast<SemaphoreVK>(waitForIt);
+	auto resultVK = std::dynamic_pointer_cast<SemaphoreVK>(result);
 
 	vk::Semaphore waitSemaphores[] = {waitVK->getVK()};
-	vk::Semaphore signalSemaphores[] = {_semaphore->getVK()};
+	vk::Semaphore signalSemaphores[] = {resultVK->getVK()};
 	vk::PipelineStageFlags waitStages[] = {vk::PipelineStageFlagBits::eComputeShader|vk::PipelineStageFlagBits::eColorAttachmentOutput};
 
 	auto device = Instance::device<DeviceVK>();
@@ -39,8 +40,6 @@ spSemaphore ComputeVK::run(const spSemaphore& waitForIt,const int sizeX, const i
 	);
 
 	device->getComputeQueue().submit(submitInfo,nullptr);
-
-	return _semaphore;
 }
 
 void ComputeVK::initCommandBuffer(){
@@ -106,5 +105,4 @@ void ComputeVK::init() {
 
 	_pipeline = vk_device.createComputePipeline(nullptr,info);
 	_commandBuffer = nullptr;
-	_semaphore = std::dynamic_pointer_cast<SemaphoreVK>(device->createSemaphore());
 }

@@ -25,7 +25,7 @@ Renderer::Renderer(const spDevice& device,const glm::ivec2 &frameSize)
 	pipelineInfo.addShader(ShaderStage::Fragment, "../glsl/renderer/final.frag");
 
 	_frameDescSet = _device->createDescSet();
-	_frameDescSet->setTexture(_raytracer->getCameraDir()->createTextureView(),Sampler(),0,ShaderStage::Fragment);
+	_frameDescSet->setTexture(_raytracer->getAlbedo()->createTextureView(),Sampler(),0,ShaderStage::Fragment);
 	_frameDescSet->create();
 
 	pipelineInfo.setDescSet(_frameDescSet);
@@ -62,6 +62,7 @@ Renderer::Renderer(const spDevice& device,const glm::ivec2 &frameSize)
 
 void Renderer::init(const Scene& scene) {
 	_gBuffer->update(scene.rootNode);
+	_raytracer->buildTree(scene.rootNode);
 }
 
 void Renderer::render(const Scene& scene) {

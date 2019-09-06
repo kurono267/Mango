@@ -451,12 +451,14 @@ struct ComponentMapping {
 };
 
 enum class BufferType {
-	Uniform,
-	Storage,
-	Index,
-	Vertex,
-	CPU
+	Uniform = 0x01,
+	Storage = 0x02,
+	Index = 0x04,
+	Vertex = 0x08,
+	CPU = 0x10
 };
+
+BufferType operator |(BufferType lhs, BufferType rhs);
 
 enum class MemoryType {
 	HOST,

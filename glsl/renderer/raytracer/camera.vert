@@ -20,8 +20,12 @@ layout(location = 1) out vec3 endPos;
 void main() {
     gl_Position = vec4(inPosition,1.f);
 
-    vec4 begin = camera.world*vec4(0.f,0.f,0.f,1.f);
-    beginPos = begin.xyz/begin.w;
-    vec4 end = camera.invVP*vec4(inUV,1.f,1.f);
-    endPos = end.xyz/end.w;
+    vec4 origin = camera.world*vec4(0.f,0.f,0.f,1.f);
+    origin /= origin.w;
+
+    beginPos = origin.xyz;
+
+    vec4 endView = camera.invVP*vec4(inPosition.xy,1.f,1.f);
+    vec4 endWorld = camera.world*endView;
+    endPos = endWorld.xyz/endWorld.w;
 }

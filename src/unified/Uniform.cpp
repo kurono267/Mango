@@ -6,15 +6,15 @@
 
 namespace mango {
 
-Uniform::Uniform() : _is(false), _size(0), _data(nullptr) {}
+Uniform::Uniform() : _is(false), _size(0) {}
 
 Uniform::~Uniform(){}
 
 void Uniform::create(spDevice device,const size_t& size,const void* data){
     _size = size;
 
-    _cpu = device->createBuffer(BufferType::Uniform,MemoryType::HOST,size);
-    _gpu = device->createBuffer(BufferType::Uniform,MemoryType::DEVICE,size);
+    _cpu = device->createBuffer(BufferType::Uniform | BufferType::Storage,MemoryType::HOST,size);
+    _gpu = device->createBuffer(BufferType::Uniform | BufferType::Storage,MemoryType::DEVICE,size);
 
     _is = true;
 

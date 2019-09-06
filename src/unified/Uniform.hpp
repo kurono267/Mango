@@ -13,7 +13,8 @@ namespace mango {
 class Uniform {
     public:
         Uniform();
-        Uniform(const Uniform &u) : _gpu(u._gpu), _cpu(u._cpu), _is(u._is), _size(u._size), _data(u._data) {}
+        Uniform(const Uniform &u) : _gpu(u._gpu), _cpu(u._cpu), _is(u._is), _size(u._size) {}
+        Uniform(const spBuffer& cpu, const spBuffer& gpu) : _gpu(gpu), _cpu(cpu), _size(cpu->size()),_is(true) {}
 
         virtual ~Uniform();
 
@@ -24,7 +25,6 @@ class Uniform {
         size_t size() const;
 
         operator bool() { return _is; }
-
     protected:
         spBuffer _gpu; // GPU buffer
         spBuffer _cpu; // CPU staging buffer
@@ -32,7 +32,6 @@ class Uniform {
         bool _is = false;
 
         size_t _size;
-        void *_data;
 };
 
 }

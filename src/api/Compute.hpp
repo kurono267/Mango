@@ -14,7 +14,7 @@ class Compute {
 	public:
 		Compute(const std::string& filename, const std::vector<spDescSet>& descSets);
 
-		virtual spSemaphore run(const spSemaphore& waitForIt,const int sizeX, const int sizeY = 1, const int sizeZ = 1) = 0;
+		virtual void run(const spSemaphore& waitForIt,const spSemaphore& result,const int sizeX, const int sizeY = 1, const int sizeZ = 1) = 0;
 	protected:
 		virtual void init() = 0;
 	protected:

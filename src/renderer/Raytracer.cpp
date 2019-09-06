@@ -14,6 +14,8 @@ struct RayCameraData {
 Raytracer::Raytracer(const glm::ivec2 &size) {
 	auto device = Instance::device();
 
+	createCameraPipeline(size);
+
 	_albedo = device->createTexture(size.x,size.y,1,Format::R16G16B16A16Unorm, TextureType::Input | TextureType::Storage);
 	_normal = device->createTexture(size.x,size.y,1,Format::R16G16B16A16Unorm,TextureType::Input | TextureType::Storage);
 	_pos = device->createTexture(size.x,size.y,1,Format::R32G32B32A32Sfloat,TextureType::Input | TextureType::Storage);
@@ -26,18 +28,10 @@ Raytracer::Raytracer(const glm::ivec2 &size) {
 	_output->setStorageTexture(_material->createTextureView(),Sampler(),3,ShaderStage::Compute);
 	_output->create();
 
-	Uniform vbStorage;
-	vbStorage.create(device,64);
-	Uniform ibStorage;
-	ibStorage.create(device,64);
-
 	_input = device->createDescSet();
-	_input->setStorageBuffer(vbStorage,0,ShaderStage::Compute);
-	_input->setStorageBuffer(ibStorage,1,ShaderStage::Compute);
-
-	//_compute = device->createCompute("../glsl/renderer/raytracer/trace.glsl",);
-
-	createCameraPipeline(size);
+	_input->setStorageTexture(_cameraOrigin->createTextureView(),Sampler(),0,ShaderStage::Compute);
+	_input->setStorageTexture(_cameraDir->createTextureView(),Sampler(),1,ShaderStage::Compute);
+	_input->create();
 }
 
 void Raytracer::createCameraPipeline(const glm::ivec2& size) {
@@ -100,7 +94,8 @@ void Raytracer::createCameraPipeline(const glm::ivec2& size) {
 }
 
 void Raytracer::buildTree(const spSceneNode &sceneNode) {
-	sceneNode->run([this](const spSceneNode& node, bool& isStop){
+	auto device = Instance::device();
+	sceneNode->run([this,device](const spSceneNode& node, bool& isStop){
 		auto geometry = node->getGeometry();
 		if(!geometry)return;
 		auto mesh = geometry->getMesh();
@@ -108,19 +103,30 @@ void Raytracer::buildTree(const spSceneNode &sceneNode) {
 		spBVH bvh = std::make_shared<BVH>(mesh);
 		_trees.emplace_back(bvh);
 		_nodes.emplace_back(node);
+
+		spDescSet nodeDescSet = device->createDescSet();
+		nodeDescSet->setStorageBuffer(mesh->getVertexBuffer(),0,ShaderStage::Compute);
+		nodeDescSet->setStorageBuffer(mesh->getIndexBuffer(),1,ShaderStage::Compute);
+		nodeDescSet->setStorageBuffer(bvh->getBuffer(),2,ShaderStage::Compute);
+		nodeDescSet->create();
+
+		_nodeDescSets.emplace_back(nodeDescSet);
 	});
-	std::cout << "Raytracer::buildTree for scene" << std::endl;
+	std::cout << "Mesh count " << _nodes.size() << std::endl;
+
+	_compute = device->createCompute("../glsl/renderer/raytracer/raytrace.glsl",{_nodeDescSets[0],_input,_output,_nodes[0]->getGeometry()->getMaterial()->getDescSet()});
 }
 
 void Raytracer::render(const Scene& scene, const spSemaphore& wait, const spSemaphore& finish){
 	auto device = Instance::device();
 	auto cameraNode = scene.getCameraNode();
 	RayCameraData data;
-	data.world = cameraNode->getWorldTransform();
-	data.invVP = glm::inverse(cameraNode->getCamera()->getProj()*data.world);
+	data.world = glm::inverse(cameraNode->getWorldTransform());
+	data.invVP = glm::inverse(cameraNode->getCamera()->getProj());
 	_cameraUniform.set(sizeof(RayCameraData),&data);
 
-	device->submit(_cameraCommandBuffer,wait,finish);
+	device->submit(_cameraCommandBuffer,wait,_cameraSemaphore);
+	_compute->run(_cameraSemaphore,finish,_pos->width()/16,_pos->height()/16);
 }
 
 spTexture Raytracer::getPos() const {

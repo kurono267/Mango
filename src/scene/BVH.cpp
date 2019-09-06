@@ -71,6 +71,8 @@ BVH::BVH(const spMesh& mesh) {
 	recursiveLBVH(root,primitives,0,primitives.size()-1,0,0);
 
 	_nodes[rootId] = root;
+
+	_storageBuffer.create(Instance::device(),sizeof(BVHNode)*_nodes.size(),_nodes.data());
 }
 
 BVH::~BVH(){}
@@ -168,6 +170,10 @@ void BVH::recursiveLBVH(BVHNode& root, const std::vector<Prim>& primitives,uint3
 
     // Fill additional data to node
     root.data.split  = split;
+}
+
+Uniform BVH::getBuffer() {
+	return _storageBuffer;
 }
 
 

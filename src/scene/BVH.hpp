@@ -31,8 +31,6 @@ struct BVHNode {
 			int32_t isLeaf;
 		} data;
 	};
-
-	uint32_t isLeaf;
 };
 
 std::ostream &operator<<(std::ostream &os, const BVHNode &n);
@@ -58,6 +56,7 @@ class BVH {
 
 		size_t rootID();
 
+		Uniform getBuffer();
 	protected:
 		void recursiveLBVH(BVHNode &root, const std::vector<Prim> &primitives, uint32_t start, uint32_t end, int depth,
 						   uint mesh_id);
@@ -67,6 +66,7 @@ class BVH {
 		size_t rootId;
 		std::vector<BVHNode> _nodes;
 		size_t _maxDepth;
+		Uniform _storageBuffer;
 };
 
 typedef std::shared_ptr<BVH> spBVH;
