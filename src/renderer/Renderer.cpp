@@ -12,6 +12,7 @@ Renderer::Renderer(const spDevice& device,const glm::ivec2 &frameSize)
 	//_frame = _device->createTexture(_frameSize.x,_frameSize.y,1,Format::R8G8B8A8Srgb,TextureType::Input);
 	_gBuffer = std::make_shared<GBuffer>(_device,frameSize);
 	_pbr = std::make_shared<PBR>(_gBuffer,frameSize);
+	_raytracer = std::make_shared<Raytracer>(frameSize);
 	_renderPass = _device->getScreenRenderPass();
 
 	const auto& screenbuffers = _device->getScreenbuffers();
@@ -24,7 +25,7 @@ Renderer::Renderer(const spDevice& device,const glm::ivec2 &frameSize)
 	pipelineInfo.addShader(ShaderStage::Fragment, "../glsl/renderer/final.frag");
 
 	_frameDescSet = _device->createDescSet();
-	_frameDescSet->setTexture(_pbr->getLightResult()->createTextureView(),Sampler(),0,ShaderStage::Fragment);
+	_frameDescSet->setTexture(_raytracer->getCameraDir()->createTextureView(),Sampler(),0,ShaderStage::Fragment);
 	_frameDescSet->create();
 
 	pipelineInfo.setDescSet(_frameDescSet);
@@ -56,6 +57,7 @@ Renderer::Renderer(const spDevice& device,const glm::ivec2 &frameSize)
 	_renderFinish = device->createSemaphore();
 	_gbufferFinish = device->createSemaphore();
 	_pbrFinish = device->createSemaphore();
+	_raytracerFinish = device->createSemaphore();
 }
 
 void Renderer::init(const Scene& scene) {
@@ -67,8 +69,9 @@ void Renderer::render(const Scene& scene) {
 
 	_gBuffer->render(scene,_screenAvailable,_gbufferFinish);
 	_pbr->render(scene,_gbufferFinish,_pbrFinish);
+	_raytracer->render(scene,_pbrFinish,_raytracerFinish);
 
-	_device->submit(_frameCommandBuffers[imageIndex],_pbrFinish,_renderFinish);
+	_device->submit(_frameCommandBuffers[imageIndex],_raytracerFinish,_renderFinish);
 	_device->present(imageIndex,_renderFinish);
 }
 

@@ -9,6 +9,7 @@
 #include <scene/Scene.hpp>
 #include "GBuffer.hpp"
 #include "PBR.hpp"
+#include "Raytracer.hpp"
 
 namespace mango {
 
@@ -39,9 +40,11 @@ class Renderer {
 		spSemaphore _renderFinish;
 		spSemaphore _gbufferFinish;
 		spSemaphore _pbrFinish;
+		spSemaphore _raytracerFinish;
 
 		spGBuffer _gBuffer;
 		spPBR _pbr;
+		spRaytracer _raytracer;
 };
 
 }

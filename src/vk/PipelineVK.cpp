@@ -17,6 +17,7 @@ using namespace mango::vulkan;
 void RenderPassVK::create(const bool isPresent){
 	_attachmentsDesc.clear();
 	_attachmentsRef.clear();
+	bool hasDepth = false;
 	for(auto a : _attachments){
 		vk::AttachmentDescription desc;
 
@@ -40,18 +41,21 @@ void RenderPassVK::create(const bool isPresent){
 		if(a.depth){
 			_depthDesc = desc;
 			_depthRef = ref;
+			hasDepth = true;
 		} else {
 			_attachmentsDesc.push_back(desc);
 			_attachmentsRef.push_back(ref);
 		}
 	}
-	_attachmentsDesc.push_back(_depthDesc);
-	_attachmentsRef.push_back(_depthRef);
+	if(hasDepth) {
+		_attachmentsDesc.push_back(_depthDesc);
+		_attachmentsRef.push_back(_depthRef);
+	}
 
 	_subPass.setPipelineBindPoint(vk::PipelineBindPoint::eGraphics);
-	_subPass.setColorAttachmentCount(_attachmentsRef.size()-1);
+	_subPass.setColorAttachmentCount(hasDepth?_attachmentsRef.size()-1:_attachmentsRef.size());
 	_subPass.setPColorAttachments(_attachmentsRef.data());
-	_subPass.setPDepthStencilAttachment(&_depthRef);
+	if(hasDepth)_subPass.setPDepthStencilAttachment(&_depthRef);
 
 	_subPassDep[0].srcSubpass = VK_SUBPASS_EXTERNAL;
 	_subPassDep[0].dstSubpass = 0;

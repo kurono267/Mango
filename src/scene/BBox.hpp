@@ -44,10 +44,10 @@ struct BBox {
     BBox applyTransform(const glm::mat4& transform);
 
     union {
-        glm::vec3 bounds[2];
+        glm::vec4 bounds[2];
         struct {
-            glm::vec3 min;
-            glm::vec3 max;
+            glm::vec4 min;
+            glm::vec4 max;
         };
     };
 };

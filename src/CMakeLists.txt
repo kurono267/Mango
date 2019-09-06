@@ -44,7 +44,7 @@ set(MANGO_SRC
         api/Compute.hpp
         scene/BVH.cpp
         scene/BVH.hpp
-        )
+        renderer/Raytracer.cpp renderer/Raytracer.hpp)
 
 set(MANGO_VK
         vk/InstanceVK.cpp

@@ -14,35 +14,23 @@ bool App::init() {
 	Assets::init(device);
 	std::cout << device->deviceName() << std::endl;
 
-	_cameraNode = std::make_shared<SceneNode>(std::make_shared<Camera>(glm::radians(45.0f),(float)(1280)/(float)(720),1.f,10000.0f));
-	_cameraNode->setPos(glm::vec3(0.f,0.f,-1000.f));
+	_cameraNode = std::make_shared<SceneNode>(std::make_shared<Camera>(glm::radians(45.0f),(float)(1280)/(float)(720),0.1f,1000.0f));
+	_cameraNode->setPos(glm::vec3(0.f,0.f,-3.f));
 
 	_cameraOrbit = std::make_shared<SceneNode>();
 	_cameraOrbit->addChild(_cameraNode);
 
-	_scene.rootNode = Assets::loadModel("littlest_tokyo/scene.gltf");
+	_scene.rootNode = Assets::loadModel("bunny/scene.gltf");
 	BBox sceneBox = _scene.rootNode->boundingBox();
 	std::cout << sceneBox << std::endl;
 	auto center = (sceneBox.min+sceneBox.max)*0.5f;
-	//_scene.rootNode->setPos(-center);
+	_scene.rootNode->setPos(-center);
 	_scene.rootNode->addChild(_cameraOrbit);
 
 	auto screenBuffers = device->getScreenbuffers();
 	for (const auto &screen : screenBuffers) {
 		std::cout << screen->info() << std::endl;
 	}
-
-	// Test BVH
-	_scene.rootNode->run([](const spSceneNode& node, bool& isStop){
-		auto geometry = node->getGeometry();
-		if(!geometry)return;
-		auto mesh = geometry->getMesh();
-		if(!mesh)return;
-		spBVH bvh = std::make_shared<BVH>(mesh);
-		for(auto& bvhNode : bvh->nodes()){
-			std::cout << bvhNode;
-		}
-	});
 
 	_renderer = Renderer::make(device,glm::ivec2(1280,720));
 	_renderer->init(_scene);

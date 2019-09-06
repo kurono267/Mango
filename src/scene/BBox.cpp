@@ -15,8 +15,8 @@ void BBox::expand(const glm::vec3& _min,const glm::vec3& _max){
     expand(_max);
 }
 void BBox::expand(const glm::vec3& _p){
-    min = glm::min(_p,min);
-    max = glm::max(_p,max);
+    min = glm::min(glm::vec4(_p,1.f),min);
+    max = glm::max(glm::vec4(_p,1.f),max);
 }
 
 void BBox::expand(const BBox &box) {

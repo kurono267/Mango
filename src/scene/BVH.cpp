@@ -51,7 +51,7 @@ BVH::BVH(const spMesh& mesh) {
 		prim.id = i;
 
 		prim.center /= 3.f;
-		auto normCenter = (prim.center-meshBox.min)/(meshBox.max-meshBox.min);
+		auto normCenter = (prim.center-glm::vec3(meshBox.min))/glm::vec3(meshBox.max-meshBox.min);
 		prim.mortonCode = morton3D(normCenter);
 
 		primitives.push_back(prim);
@@ -75,11 +75,10 @@ BVH::BVH(const spMesh& mesh) {
 
 BVH::~BVH(){}
 
-std::ostream& operator<<(std::ostream& os, const BVHNode& n){
+std::ostream& mango::operator<<(std::ostream& os, const BVHNode& n){
 	os << "NODE" << std::endl;
 	os << "MIN:" << glm::to_string(n.box.min) << std::endl;
 	os << "MAX:" << glm::to_string(n.box.max) << std::endl;
-	if(n.isLeaf == 1.0f)os << "DEPTH:" << n.data.depth << std::endl;
 	return os;
 }
 
@@ -143,7 +142,7 @@ void BVH::recursiveLBVH(BVHNode& root, const std::vector<Prim>& primitives,uint3
 
     uint32_t size = end-start+1;
     if(size <= NODE_MAX_TRIANGLE){
-        root.isLeaf = true;
+        root.data.isLeaf = true;
         for(uint32_t i = 0;i<NODE_MAX_TRIANGLE;++i){
             if(i < size){
                 root.triIds[i] = primitives[start+i].id;
@@ -168,8 +167,7 @@ void BVH::recursiveLBVH(BVHNode& root, const std::vector<Prim>& primitives,uint3
     _nodes[root.data.right] = right;
 
     // Fill additional data to node
-    root.data.depth = depth;
-    root.split  = split;
+    root.data.split  = split;
 }
 
 
