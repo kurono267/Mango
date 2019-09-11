@@ -25,6 +25,8 @@ class TextureVK : public Texture {
 	    void transition(const vk::ImageLayout& newLayout);
 
         void setBuffer(const spBuffer& buffer, const glm::ivec2& size, const uint& mipLevel, const uint& layer, const uint& offsetBuffer);
+
+        vk::Image getImage();
 protected:
 		vk::Image _image;
 		vk::DeviceMemory _memory;

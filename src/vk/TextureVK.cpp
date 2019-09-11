@@ -230,6 +230,10 @@ void TextureVK::setBuffer(const spBuffer& buffer, const glm::ivec2& size, const 
     endSingle(vkDevice,_queue,_pool,commandBuffer);
 }
 
+vk::Image TextureVK::getImage() {
+	return _image;
+}
+
 vk::Sampler mango::vulkan::createSampler(const mango::Sampler &sampler) {
 	vk::SamplerCreateInfo createInfo;
 	createInfo.addressModeU = samplerAddressModeVK(sampler.addressModeU);

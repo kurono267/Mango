@@ -126,13 +126,13 @@ RayHit intersect(const Ray ray, const vec3 v0, const vec3 v1, const vec3 v2) {
     return hit;
 }
 
-RayHit trace(Ray ray){
+RayHit trace(Ray ray,float currDepth){
     // Check root, if not return
     RayHit hit = check(nodes[0],ray);
     if(!hit.status)return hit;
 
     hit.status = false;
-    hit.tmin   = MAX_DIST;
+    hit.tmin   = currDepth;
 
     int stack_nodes[MAX_STACK];
     int stack_top;
@@ -227,9 +227,11 @@ void main() {
     vec4 org = imageLoad(rayOrg,pixelCoord);
     vec4 dir = imageLoad(rayDir,pixelCoord);
 
+    float depth = imageLoad(outputPos,pixelCoord).w;
+
     Ray ray = createRay(vec3(org),vec3(dir));
 
-    RayHit hit = trace(ray);
+    RayHit hit = trace(ray,depth);
     vec4 pos = vec4(0.f);
     vec4 normal = vec4(0.f);
     vec4 albedo = vec4(0.f);
@@ -237,13 +239,13 @@ void main() {
     if(hit.status){
         Point p = postIntersect(hit,ray);
         normal = vec4(p.normal,1.f);
-        pos = vec4(p.pos,1.f);
+        pos = vec4(p.pos,hit.tmin);
         albedo = texture(materialAlbedo,p.uv);
         material = texture(materialData,p.uv);
-    }
 
-    imageStore(outputPos,pixelCoord,pos);
-    imageStore(outputNormal,pixelCoord,normal);
-    imageStore(outputAlbedo,pixelCoord,albedo);
-    imageStore(outputMaterial,pixelCoord,material);
+        imageStore(outputPos,pixelCoord,pos);
+        imageStore(outputNormal,pixelCoord,normal);
+        imageStore(outputAlbedo,pixelCoord,albedo);
+        imageStore(outputMaterial,pixelCoord,material);
+    }
 }

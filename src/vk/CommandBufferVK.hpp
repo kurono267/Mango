@@ -23,13 +23,19 @@ class CommandBufferVK : public CommandBuffer {
 		void setClearColor(int attachment, const glm::vec4 &color) final;
 		void setClearDepthStencil(int attachment, float depth, float stencil) final;
 
+		void clearTexture(spTexture& texture,const glm::vec4& color) final;
+
 		void begin() final;
 		void beginRenderPass(const spRenderPass &renderPass, const spFramebuffer &framebuffer, const RenderArea &area) final;
 		void bindPipeline(const spPipeline &pipeline) final;
+		void bindCompute(const spCompute& compute) final;
+		void dispatch(const size_t& sizeX, const size_t& sizeY, const size_t& sizeZ) final;
 
 		void bindDescriptorSet(const spPipeline &pipeline, const std::vector<spDescSet> &descSets) override;
-
 		void bindDescriptorSet(const spPipeline &pipeline, const spDescSet &descSet) override;
+
+		void bindDescriptorSet(const spCompute &compute, const std::vector<spDescSet> &descSets) final;
+		void bindDescriptorSet(const spCompute &compute, const spDescSet &descSet) final;
 
 		void bindVertexBuffer(const spBuffer& buffer, uint32_t offset = 0) final;
 		void bindIndexBuffer(const spBuffer& buffer,uint32_t offset = 0) final;

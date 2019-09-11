@@ -7,6 +7,8 @@
 #include "PipelineVK.hpp"
 #include "BufferVK.hpp"
 #include "DescSetVK.hpp"
+#include "ComputeVK.hpp"
+#include "TextureVK.hpp"
 
 namespace mango::vulkan {
 
@@ -108,7 +110,6 @@ vk::CommandBuffer CommandBufferVK::getVK(){
 }
 
 void CommandBufferVK::bindDescriptorSet(const spPipeline &pipeline, const std::vector<spDescSet> &descSets) {
-	// TODO made check of pipeline type in future
 	auto internalPipeline = std::dynamic_pointer_cast<PipelineVK>(pipeline);
 	_descSets.clear();
 	for(auto d : descSets){
@@ -124,6 +125,39 @@ void CommandBufferVK::bindDescriptorSet(const spPipeline &pipeline, const spDesc
 	_descSets[0] = std::dynamic_pointer_cast<DescSetVK>(descSet)->getSet();
 	_cmd.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, internalPipeline->getLayout(), 0,
 							static_cast<uint32_t>(_descSets.size()), _descSets.data(), 0, nullptr);
+}
+
+void CommandBufferVK::bindCompute(const spCompute &compute) {
+	auto computeVK = std::dynamic_pointer_cast<ComputeVK>(compute);
+	_cmd.bindPipeline(vk::PipelineBindPoint::eCompute,computeVK->getPipeline());
+}
+
+void CommandBufferVK::dispatch(const size_t &sizeX, const size_t &sizeY, const size_t &sizeZ) {
+	_cmd.dispatch(sizeX,sizeY,sizeZ);
+}
+
+void CommandBufferVK::bindDescriptorSet(const spCompute &compute, const std::vector<spDescSet> &descSets) {
+	auto internalPipeline = std::dynamic_pointer_cast<ComputeVK>(compute);
+	_descSets.clear();
+	for(auto d : descSets){
+		_descSets.push_back(std::dynamic_pointer_cast<DescSetVK>(d)->getSet());
+	}
+	_cmd.bindDescriptorSets(vk::PipelineBindPoint::eCompute, internalPipeline->getLayout(), 0,
+							static_cast<uint32_t>(_descSets.size()), _descSets.data(), 0, nullptr);
+}
+
+void CommandBufferVK::bindDescriptorSet(const spCompute &compute, const spDescSet &descSet) {
+	auto internalPipeline = std::dynamic_pointer_cast<ComputeVK>(compute);
+	_descSets.resize(1);
+	_descSets[0] = std::dynamic_pointer_cast<DescSetVK>(descSet)->getSet();
+	_cmd.bindDescriptorSets(vk::PipelineBindPoint::eCompute, internalPipeline->getLayout(), 0,
+							static_cast<uint32_t>(_descSets.size()), _descSets.data(), 0, nullptr);
+}
+
+void CommandBufferVK::clearTexture(spTexture &texture, const glm::vec4 &color) {
+	auto internalTexture = std::dynamic_pointer_cast<TextureVK>(texture);
+	vk::ImageSubresourceRange imageSubresourceRange(vk::ImageAspectFlagBits::eColor,0,texture->mipLevels(),0,1);
+	_cmd.clearColorImage(internalTexture->getImage(),vk::ImageLayout::eGeneral,vk::ClearColorValue(std::array<float,4>{color.x,color.y,color.z,color.w}),imageSubresourceRange);
 }
 
 }

@@ -6,6 +6,8 @@
 
 using namespace mango;
 
+const int rtGroupSize = 16;
+
 struct RayCameraData {
 	glm::mat4 world;
 	glm::mat4 invVP;
@@ -114,7 +116,24 @@ void Raytracer::buildTree(const spSceneNode &sceneNode) {
 	});
 	std::cout << "Mesh count " << _nodes.size() << std::endl;
 
+	std::vector<spDescSet> selectDescSets = {_nodeDescSets[0],_input,_output,_nodes[0]->getGeometry()->getMaterial()->getDescSet()};
+
 	_compute = device->createCompute("../glsl/renderer/raytracer/raytrace.glsl",{_nodeDescSets[0],_input,_output,_nodes[0]->getGeometry()->getMaterial()->getDescSet()});
+
+	_commandBuffer = device->createCommandBuffer();
+	_commandBuffer->begin();
+	_commandBuffer->bindCompute(_compute);
+	_commandBuffer->clearTexture(_pos,glm::vec4(0.f,0.f,0.f,1000.f));
+	_commandBuffer->clearTexture(_normal,glm::vec4(0.f));
+	_commandBuffer->clearTexture(_albedo,glm::vec4(0.f));
+	_commandBuffer->clearTexture(_material,glm::vec4(0.f));
+	for(int i = 0;i<_nodeDescSets.size();++i){
+		selectDescSets[0] = _nodeDescSets[i];
+		selectDescSets[3] = _nodes[i]->getGeometry()->getMaterial()->getDescSet();
+		_commandBuffer->bindDescriptorSet(_compute,selectDescSets);
+		_commandBuffer->dispatch(_pos->width()/rtGroupSize,_pos->height()/rtGroupSize,1);
+	}
+	_commandBuffer->end();
 }
 
 void Raytracer::render(const Scene& scene, const spSemaphore& wait, const spSemaphore& finish){
@@ -126,7 +145,7 @@ void Raytracer::render(const Scene& scene, const spSemaphore& wait, const spSema
 	_cameraUniform.set(sizeof(RayCameraData),&data);
 
 	device->submit(_cameraCommandBuffer,wait,_cameraSemaphore);
-	_compute->run(_cameraSemaphore,finish,_pos->width()/16,_pos->height()/16);
+	device->submit(_commandBuffer,_cameraSemaphore,finish);
 }
 
 spTexture Raytracer::getPos() const {
