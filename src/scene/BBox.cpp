@@ -11,8 +11,8 @@ BBox::BBox() : min(std::numeric_limits<float>::infinity()), max(-std::numeric_li
 BBox::BBox(const BBox& a) : min(a.min), max(a.max) {}
 
 void BBox::expand(const glm::vec3& _min,const glm::vec3& _max){
-    expand(_min);
-    expand(_max);
+    if(isfinite(_min.x) && isfinite(_min.y) && isfinite(_min.z))expand(_min);
+	if(isfinite(_max.x) && isfinite(_max.y) && isfinite(_max.z))expand(_max);
 }
 void BBox::expand(const glm::vec3& _p){
     min = glm::min(glm::vec4(_p,1.f),min);

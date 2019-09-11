@@ -154,6 +154,10 @@ spSceneNode recursiveLoadNodes(const spDevice& device,std::vector<spMaterial>& m
 			const tinygltf::Buffer &posBuffer = tfModel.buffers[posBufferView.buffer];
 			const float *positions = reinterpret_cast<const float *>(&posBuffer.data[posBufferView.byteOffset +
 																					 posAccess.byteOffset]);
+			int posStride = posAccess.ByteStride(posBufferView);
+			std::cout << "posStride " << posStride << std::endl;
+			std::cout << "posBufferView.byteOffset " << posBufferView.byteOffset << std::endl;
+			std::cout << "posAccess.byteOffset " << posAccess.byteOffset << std::endl;
 			for (size_t i = 0; i < posAccess.count; ++i) {
 				vertices[i].pos = glm::vec3(positions[i * 3 + 0], positions[i * 3 + 1], positions[i * 3 + 2]);
 			}
@@ -161,6 +165,10 @@ spSceneNode recursiveLoadNodes(const spDevice& device,std::vector<spMaterial>& m
 			// Get normal data from mesh
 			const tinygltf::Accessor &normalAccess = tfModel.accessors[tfPrim.attributes["NORMAL"]];
 			const tinygltf::BufferView &normalBufferView = tfModel.bufferViews[normalAccess.bufferView];
+			int normalStride = normalAccess.ByteStride(normalBufferView);
+			std::cout << "normalStride " << normalStride << std::endl;
+			std::cout << "normalBufferView.byteOffset " << normalBufferView.byteOffset << std::endl;
+			std::cout << "normalAccess.byteOffset " << normalAccess.byteOffset << std::endl;
 			if (normalAccess.count) {
 				const tinygltf::Buffer &normalBuffer = tfModel.buffers[posBufferView.buffer];
 				const float *normals = reinterpret_cast<const float *>(&normalBuffer.data[normalBufferView.byteOffset +
@@ -172,6 +180,9 @@ spSceneNode recursiveLoadNodes(const spDevice& device,std::vector<spMaterial>& m
 			// Get uv data from mesh
 			const tinygltf::Accessor &uvAccess = tfModel.accessors[tfPrim.attributes["TEXCOORD_0"]];
 			const tinygltf::BufferView &uvBufferView = tfModel.bufferViews[uvAccess.bufferView];
+
+			int uvStride = uvAccess.ByteStride(uvBufferView);
+			std::cout << "uvStride " << uvStride << std::endl;
 			if (uvAccess.count) {
 				const tinygltf::Buffer &uvBuffer = tfModel.buffers[uvBufferView.buffer];
 				const float *uvs = reinterpret_cast<const float *>(&uvBuffer.data[uvBufferView.byteOffset +
@@ -184,12 +195,39 @@ spSceneNode recursiveLoadNodes(const spDevice& device,std::vector<spMaterial>& m
 			std::vector<uint32_t> indices;
 			const tinygltf::Accessor &indicesAccess = tfModel.accessors[tfPrim.indices];
 			const tinygltf::BufferView &indicesBufferView = tfModel.bufferViews[indicesAccess.bufferView];
+			int indexSize = tinygltf::GetComponentSizeInBytes(indicesAccess.componentType);
+
 			indices.resize(indicesAccess.count);
 			const tinygltf::Buffer &indicesBuffer = tfModel.buffers[indicesBufferView.buffer];
-			const uint32_t *tfIndices = reinterpret_cast<const uint32_t *>(&indicesBuffer.data[
-					indicesBufferView.byteOffset + indicesAccess.byteOffset]);
 			for (int i = 0; i < indicesAccess.count; ++i) {
-				indices[i] = tfIndices[i];
+				uint32_t index = 0;
+				switch (indicesAccess.componentType) {
+					case TINYGLTF_COMPONENT_TYPE_BYTE:
+					case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
+						index = (uint32_t)*(
+								unsigned char *)(indicesBuffer.data.data() +
+												indicesBufferView.byteOffset +
+												indicesAccess.byteOffset +
+												 (i * indexSize));
+						break;
+					case TINYGLTF_COMPONENT_TYPE_SHORT:
+					case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
+						index = (uint32_t)*(
+								unsigned short *)(indicesBuffer.data.data() +
+												  indicesBufferView.byteOffset +
+												  indicesAccess.byteOffset +
+												  (i * indexSize));
+						break;
+					case TINYGLTF_COMPONENT_TYPE_INT:
+					case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
+						index = (uint32_t)*(
+								unsigned int *)(indicesBuffer.data.data() +
+												indicesBufferView.byteOffset +
+												indicesAccess.byteOffset +
+												(i * indexSize));
+						break;
+				}
+				indices[i] = index;
 			}
 			spMesh mesh = std::make_shared<Mesh>();
 			mesh->create(device,vertices,indices);
@@ -270,12 +308,16 @@ spSceneNode Assets::loadModel(const std::string &filename) {
 	std::cout << "loadModel " << filename << std::endl;
 	if(!warn.empty())std::cout << "Warnings! " << warn << std::endl;
 
-	auto tfRootNode = tfModel.nodes[0];
-
 	auto path = fs::path(filename).remove_filename();
-	spSceneNode node = recursiveLoadNodes(instance._device,instance._materials,path,tfRootNode,tfModel);
+	spSceneNode rootNode = std::make_shared<SceneNode>();
+	for(int i = 0;i<tfModel.nodes.size();++i) {
+		auto tfRootNode = tfModel.nodes[i];
+
+		spSceneNode node = recursiveLoadNodes(instance._device, instance._materials, path, tfRootNode, tfModel);
+		rootNode->addChild(node);
+	}
 
 	std::cout << "Finish Loading " << std::endl;
 
-	return node;
+	return rootNode;
 }

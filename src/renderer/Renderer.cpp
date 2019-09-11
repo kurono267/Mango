@@ -26,6 +26,7 @@ Renderer::Renderer(const spDevice& device,const glm::ivec2 &frameSize)
 
 	_frameDescSet = _device->createDescSet();
 	_frameDescSet->setTexture(_raytracer->getAlbedo()->createTextureView(),Sampler(),0,ShaderStage::Fragment);
+	//_frameDescSet->setTexture(_pbr->getLightResult()->createTextureView(),Sampler(),0,ShaderStage::Fragment);
 	_frameDescSet->create();
 
 	pipelineInfo.setDescSet(_frameDescSet);

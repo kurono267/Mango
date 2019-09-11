@@ -20,7 +20,7 @@ bool App::init() {
 	_cameraOrbit = std::make_shared<SceneNode>();
 	_cameraOrbit->addChild(_cameraNode);
 
-	_scene.rootNode = Assets::loadModel("bunny/scene.gltf");
+	_scene.rootNode = Assets::loadModel("sphere/scene.gltf");
 	BBox sceneBox = _scene.rootNode->boundingBox();
 	std::cout << sceneBox << std::endl;
 	auto center = (sceneBox.min+sceneBox.max)*0.5f;
