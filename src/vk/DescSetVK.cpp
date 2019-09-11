@@ -91,14 +91,16 @@ void DescSetVK::setStorageBuffer(const Uniform &buffer, size_t binding, const Sh
 }
 
 void DescSetVK::setStorageTexture(const spTextureView &texture, const Sampler &sampler, size_t binding, const ShaderStage &stage) {
-	auto internalTexture = std::dynamic_pointer_cast<TextureViewVK>(texture);
-	_samplerBinds.emplace_back(internalTexture->getView(),createSampler(sampler),binding,shaderStageVK(stage),vk::DescriptorType::eStorageImage,vk::ImageLayout::eGeneral);
+	auto internalTextureView = std::dynamic_pointer_cast<TextureViewVK>(texture);
+	//auto internalTexture = std::dynamic_pointer_cast<TextureVK>(texture->getTexture());
+	_samplerBinds.emplace_back(internalTextureView->getView(),createSampler(sampler),binding,shaderStageVK(stage),vk::DescriptorType::eStorageImage,vk::ImageLayout::eGeneral);
 }
 
 void DescSetVK::setTexture(const spTextureView &texture, const Sampler &sampler, size_t binding,
                            const ShaderStage &stage){
-    auto internalTexture = std::dynamic_pointer_cast<TextureViewVK>(texture);
-    _samplerBinds.emplace_back(internalTexture->getView(),createSampler(sampler),binding,shaderStageVK(stage),vk::DescriptorType::eCombinedImageSampler,vk::ImageLayout::eShaderReadOnlyOptimal);
+    auto internalTextureView = std::dynamic_pointer_cast<TextureViewVK>(texture);
+    auto internalTexture = std::dynamic_pointer_cast<TextureVK>(texture->getTexture());
+    _samplerBinds.emplace_back(internalTextureView->getView(),createSampler(sampler),binding,shaderStageVK(stage),vk::DescriptorType::eCombinedImageSampler,internalTexture->getImageLayout());
 }
 
     DescSetVK::UBOBinding::UBOBinding(const Uniform &_buffer, size_t _binding, const vk::ShaderStageFlags &_stage,
