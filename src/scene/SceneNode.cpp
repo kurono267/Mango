@@ -99,7 +99,7 @@ void SceneNode::setRotation(const glm::vec3& euler) {
 }
 
 void SceneNode::setScale(const glm::vec3& scale) {
-	SceneTransform::setRotation(scale);
+	SceneTransform::setScale(scale);
 	updateDescSet();
 }
 

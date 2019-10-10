@@ -25,8 +25,8 @@ Renderer::Renderer(const spDevice& device,const glm::ivec2 &frameSize)
 	pipelineInfo.addShader(ShaderStage::Fragment, "../glsl/renderer/final.frag");
 
 	_frameDescSet = _device->createDescSet();
-	_frameDescSet->setTexture(_raytracer->getAlbedo()->createTextureView(),Sampler(),0,ShaderStage::Fragment);
-	//_frameDescSet->setTexture(_pbr->getLightResult()->createTextureView(),Sampler(),0,ShaderStage::Fragment);
+	//_frameDescSet->setTexture(_raytracer->getAlbedo()->createTextureView(),Sampler(),0,ShaderStage::Fragment);
+	_frameDescSet->setTexture(_pbr->getLightResult()->createTextureView(),Sampler(),0,ShaderStage::Fragment);
 	_frameDescSet->create();
 
 	pipelineInfo.setDescSet(_frameDescSet);
@@ -34,7 +34,7 @@ Renderer::Renderer(const spDevice& device,const glm::ivec2 &frameSize)
 
 	_framePipeline = _device->createPipeline(pipelineInfo);
 
-	_quadMesh = createQuad(_device);
+	_quadMesh = createQuad();
 
 	_frameCommandBuffers.resize(screenbuffers.size());
 	for(int i = 0;i<screenbuffers.size();++i){

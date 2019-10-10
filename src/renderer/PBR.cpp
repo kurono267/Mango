@@ -43,7 +43,7 @@ PBR::PBR(const spGBuffer &gbuffer, const glm::ivec2& size) : _gBuffer(gbuffer) {
 
 	_pipeline = device->createPipeline(pipelineInfo);
 
-	_quad = createQuad(device);
+	_quad = createQuad();
 
 	_commandBuffer = device->createCommandBuffer();
 	_commandBuffer->begin();

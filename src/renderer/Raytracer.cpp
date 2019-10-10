@@ -72,7 +72,7 @@ void Raytracer::createCameraPipeline(const glm::ivec2& size) {
 
 	_cameraPipeline = device->createPipeline(pipelineInfo);
 
-	_quad = createQuad(device);
+	_quad = createQuad();
 
 	_cameraCommandBuffer = device->createCommandBuffer();
 	_cameraCommandBuffer->begin();

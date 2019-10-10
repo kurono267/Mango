@@ -72,16 +72,55 @@ Uniform Mesh::getIndexBuffer() {
 	return Uniform(_ibHost,_ibDevice);
 }
 
-spMesh mango::createQuad(const mango::spDevice &device){
+void Mesh::genNormals() {
+	sVertex* vertices = mapVertices();
+	uint32_t* indices = mapIndices();
+	std::unordered_map<uint32_t,std::pair<glm::vec3,float>> normals;
+	for(int i = 0;i<indicesCount();i+=3){
+		sVertex& v0 = vertices[indices[i]];
+		sVertex& v1 = vertices[indices[i+1]];
+		sVertex& v2 = vertices[indices[i+2]];
+
+		glm::vec3 normal = glm::normalize(glm::cross(v2.pos-v0.pos,v1.pos-v0.pos));
+		for(int v = 0;v<3;++v){
+			auto normalItr = normals.find(indices[i]);
+			if(normalItr == normals.end()){
+				normals.emplace(indices[i],std::pair<glm::vec3,float>(normal,1.f));
+			} else {
+				glm::vec3& currNormal = normalItr->second.first;
+				float& countNormals = normalItr->second.second;
+				currNormal = (currNormal*countNormals+normal)/(countNormals+1.f);
+				countNormals++;
+			}
+		}
+	}
+
+	for(int i = 0;i<indicesCount();i++) {
+		vertices[indices[i]].normal = normals[indices[i]].first;
+	}
+	unmapVertices();
+	unmapIndices();
+
+	_vbHost->copy(_vbDevice);
+	_ibHost->copy(_ibDevice);
+}
+
+spMesh mango::createQuad(){
+	auto device = Instance::device();
+
 	std::vector<sVertex> vdata = {
 			sVertex(-1.0, 1.0, 0.0f, // Pos
-					0.0f, 0.0f), 	 // Texcoord
+					0.0f, 0.0f,
+					0.f,0.f,1.f), 	 // Texcoord
 			sVertex(-1.0, -1.0, 0.0f,// Pos
-					0.0f, 1.0f),     // Texcoord
+					0.0f, 1.0f,
+					0.f,0.f,1.f),     // Texcoord
 			sVertex(1.0, -1.0, 0.0f, // Pos
-					1.0, 1.0),       // Texcoord
+					1.0, 1.0,
+					0.f,0.f,1.f),       // Texcoord
 			sVertex(1.0, 1.0, 0.0f,  // Pos
-					1.0, 0.0f)};     // Texcoord
+					1.0, 0.0f,
+					0.f,0.f,1.f)};     // Texcoord
 
 	std::vector<uint32_t> idata = {0,1,2,/*First*/2,3,0/*Second triangle*/};
 
@@ -90,7 +129,9 @@ spMesh mango::createQuad(const mango::spDevice &device){
 	return mesh;
 }
 
-spMesh mango::createCube(const mango::spDevice& device){
+spMesh mango::createCube(){
+	auto device = Instance::device();
+
 	std::vector<sVertex> vdata(24);
 
 	// front
@@ -141,6 +182,54 @@ spMesh mango::createCube(const mango::spDevice& device){
 
 	auto mesh = std::make_shared<Mesh>();
 	mesh->create(device,vdata,idata);
+	return mesh;
+}
+
+spMesh mango::createSphere(const int segments) {
+	auto device = Instance::device();
+
+	std::vector<sVertex> vertices;
+	for(int y = 0;y<=segments;++y){
+		for(int x = 0;x<=segments;++x){
+			glm::vec3 pos;
+			float angle0 = M_PI/2.f-((float)y/(float)segments)*M_PI;
+			float angle1 = ((float)x/(float)segments)*2.f*M_PI;
+
+			pos.x = cos(angle0)*cos(angle1);
+			pos.y = cos(angle0)*sin(angle1);
+			pos.z = sin(angle0);
+
+			sVertex v;
+			v.pos = pos;
+			v.normal = glm::normalize(pos);
+			v.uv = glm::vec2(x/segments,y/segments);
+			vertices.push_back(v);
+		}
+	}
+
+	std::vector<uint32_t> indices;
+	for(int y = 0;y<segments;++y){
+		uint32_t k1 = y * (segments + 1);     // beginning of current stack
+		uint32_t k2 = k1 + segments + 1;      // beginning of next stack
+		for(int x = 0;x<segments;++x){
+			if(y != 0) {
+				indices.push_back(k1+x);
+				indices.push_back(k2+x);
+				indices.push_back(k1 +x+ 1);
+			}
+
+			// k1+1 => k2 => k2+1
+			if(y != (segments-1)){
+				indices.push_back(k1 +x+ 1);
+				indices.push_back(k2+x);
+				indices.push_back(k2 +x+ 1);
+			}
+		}
+	}
+
+	auto mesh = std::make_shared<Mesh>();
+	mesh->create(device,vertices,indices);
+	//mesh->genNormals();
 	return mesh;
 }
 

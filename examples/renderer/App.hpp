@@ -25,6 +25,8 @@ public:
     bool onMouse(const GLFWMouse& mouse) final;
     bool onExit() final;
 protected:
+	spSceneNode createTestScene();
+
     spSceneNode _cameraNode;
     spSceneNode _cameraOrbit;
 

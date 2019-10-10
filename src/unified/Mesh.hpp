@@ -75,6 +75,8 @@ class Mesh {
 
 		Uniform getVertexBuffer();
 		Uniform getIndexBuffer();
+
+		void genNormals(); // TODO need improve
 	protected:
 		spBuffer _vbHost;
 		spBuffer _vbDevice;
@@ -86,8 +88,9 @@ class Mesh {
 
 typedef std::shared_ptr<Mesh> spMesh;
 
-spMesh createQuad(const mango::spDevice &device);
-spMesh createCube(const mango::spDevice& device);
+spMesh createQuad();
+spMesh createCube();
+spMesh createSphere(const int segments);
 
 };
 

@@ -20,12 +20,17 @@ bool App::init() {
 	_cameraOrbit = std::make_shared<SceneNode>();
 	_cameraOrbit->addChild(_cameraNode);
 
-	_scene.rootNode = Assets::loadModel("sphere/scene.gltf");
+	//_scene.rootNode = std::make_shared<SceneNode>();
+
+	_scene.rootNode = Assets::loadModel("bunny/scene.gltf");
 	BBox sceneBox = _scene.rootNode->boundingBox();
-	std::cout << sceneBox << std::endl;
+	//std::cout << sceneBox << std::endl;
 	auto center = (sceneBox.min+sceneBox.max)*0.5f;
 	_scene.rootNode->setPos(-center);
 	_scene.rootNode->addChild(_cameraOrbit);
+
+	spSceneNode testScene = createTestScene();
+	_scene.rootNode->addChild(testScene);
 
 	auto screenBuffers = device->getScreenbuffers();
 	for (const auto &screen : screenBuffers) {
@@ -36,6 +41,28 @@ bool App::init() {
 	_renderer->init(_scene);
 
     return true;
+}
+
+spSceneNode App::createTestScene(){
+	auto device = Instance::device();
+
+	spSceneNode rootNode = std::make_shared<SceneNode>();
+
+	spMaterial planeMaterial = std::make_shared<Material>(device);
+	planeMaterial->setAlbedo(glm::vec4(1.f));
+	planeMaterial->setMetallicFactor(0.1f);
+	planeMaterial->setRoughnessFactor(0.01f);
+	spGeometry plane = Geometry::make(createQuad(),planeMaterial);
+	spSceneNode planeNode = std::make_shared<SceneNode>(plane);
+	planeNode->setScale(glm::vec3(10.f,10.f,1.f));
+	rootNode->addChild(planeNode);
+
+	spMesh sphereMesh = createSphere(64);
+	spGeometry sphere = Geometry::make(sphereMesh,planeMaterial);
+	spSceneNode sphereNode = std::make_shared<SceneNode>(sphere);
+	rootNode->addChild(sphereNode);
+
+	return rootNode;
 }
 
 bool App::draw() {
