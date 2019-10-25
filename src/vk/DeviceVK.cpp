@@ -285,7 +285,7 @@ void DeviceVK::createScreen(){
 		framebuffer->attachment(view);
 		framebuffer->depth(extent.width,extent.height);
 
-		auto depthTexture = std::dynamic_pointer_cast<TextureVK>(framebuffer->getDepthView()->getTexture());
+		auto depthTexture = std::dynamic_pointer_cast<TextureVK>(framebuffer->getDepthTexture());
 		depthTexture->transition(vk::ImageLayout::eDepthStencilAttachmentOptimal);
 
 		framebuffer->create(extent.width,extent.height,_screenRenderPass->getVK());

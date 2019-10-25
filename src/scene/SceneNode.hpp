@@ -19,7 +19,7 @@ struct NodeData {
 	glm::mat4 world;
 };
 
-class SceneNode : public SceneTransform, public std::enable_shared_from_this<SceneNode> {
+class SceneNode : public SceneTransform,public std::enable_shared_from_this<SceneNode> {
 	typedef std::shared_ptr<SceneNode> ptr;
 	public:
 		SceneNode();
@@ -31,7 +31,7 @@ class SceneNode : public SceneTransform, public std::enable_shared_from_this<Sce
 		void addChild(const ptr& child);
 		std::vector<ptr>& getChilds();
 
-		ptr getParent();
+		SceneNode* getParent();
 
 		void setCamera(const spCamera& camera);
 		void setGeometry(const spGeometry& geometry);
@@ -59,7 +59,7 @@ class SceneNode : public SceneTransform, public std::enable_shared_from_this<Sce
 		void updateDescSet();
 
 		std::vector<ptr> _childs;
-		mutable ptr _parent;
+		mutable SceneNode* _parent;
 
 		spCamera _camera;
 		spGeometry _geometry;

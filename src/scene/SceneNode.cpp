@@ -38,14 +38,14 @@ SceneNode::~SceneNode(){
 
 void SceneNode::addChild(const SceneNode::ptr &child) {
 	_childs.push_back(child);
-	child->_parent = shared_from_this();
+	child->_parent = this;
 }
 
 std::vector<SceneNode::ptr> &SceneNode::getChilds() {
 	return _childs;
 }
 
-SceneNode::ptr SceneNode::getParent() {
+SceneNode* SceneNode::getParent() {
 	return _parent;
 }
 
@@ -104,7 +104,7 @@ void SceneNode::setScale(const glm::vec3& scale) {
 }
 
 void SceneNode::updateDescSet(){
-	if(!_descSet)createDescSet();
+	if(!_descSet && _geometry)createDescSet();
 	if(_descSet){
 		_nodeData.world = getWorldTransform();
 		_uniform.set(sizeof(NodeData),&_nodeData);

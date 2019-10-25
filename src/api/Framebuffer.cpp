@@ -25,6 +25,10 @@ spTextureView Framebuffer::getDepthView(){
 	return _depthView;
 }
 
+spTexture Framebuffer::getDepthTexture() {
+	return _depthBuffer;
+}
+
 glm::ivec2 Framebuffer::getSize(const int attachment){
 	auto texture = _attachments[attachment]->getTexture();
 	return glm::ivec2(texture->width(),texture->height());
@@ -35,7 +39,8 @@ std::string Framebuffer::info(){
 	stream << "Framebuffer Info" << std::endl;
 	stream << "Attachmenets " << _attachments.size() << std::endl;
 	for(const auto& a : _attachments){
-		stream << "width " << a->getTexture()->width() << " height " << a->getTexture()->height() << to_string(a->getTexture()->format()) << std::endl;
+		auto tex = a->getTexture();
+		stream << "width " << tex->width() << " height " << tex->height() << to_string(tex->format()) << std::endl;
 	}
 	return stream.str();
 }

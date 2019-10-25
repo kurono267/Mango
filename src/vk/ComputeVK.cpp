@@ -14,6 +14,12 @@ ComputeVK::ComputeVK(const std::string& filename, const std::vector<spDescSet>& 
 	init();
 }
 
+ComputeVK::~ComputeVK() {
+	auto device = Instance::device<DeviceVK>();
+	if(_pipeline)device->getDevice().destroyPipeline(_pipeline);
+	if(_pipelineLayout)device->getDevice().destroyPipelineLayout(_pipelineLayout);
+}
+
 void ComputeVK::init() {
 	std::cout << "ComputeVK::init" << std::endl;
 	auto device = Instance::device<DeviceVK>();
@@ -49,6 +55,7 @@ void ComputeVK::init() {
 	);
 
 	_pipeline = vk_device.createComputePipeline(nullptr,info);
+	vk_device.destroyShaderModule(shaderStageInfo.module);
 }
 
 vk::Pipeline ComputeVK::getPipeline() {

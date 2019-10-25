@@ -7,6 +7,7 @@
 using namespace mango::vulkan;
 
 void BufferVK::create(const BufferType &type,const MemoryType& memory,const size_t &size,void* data) {
+	std::cout << "BufferVK::create" << std::endl;
 	_size = size;
 	if(memory == MemoryType::HOST){
 		createBuffer(size,

@@ -51,6 +51,7 @@ class TextureViewVK : public TextureView {
 };
 
 typedef std::shared_ptr<TextureVK> spTextureVK;
+typedef std::shared_ptr<TextureViewVK> spTextureViewVK;
 
 vk::Sampler createSampler(const Sampler& sampler);
 

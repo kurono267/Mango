@@ -20,9 +20,9 @@ class TextureView {
 		TextureView() = default;
 		TextureView(const spTexture& texture) : _texture(texture) {}
 
-		spTexture getTexture() const {return _texture;}
+		spTexture getTexture() const {return _texture.lock();}
 	private:
-		spTexture _texture;
+		std::weak_ptr<Texture> _texture;
 };
 
 struct Sampler {

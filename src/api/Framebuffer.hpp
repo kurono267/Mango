@@ -22,6 +22,7 @@ class Framebuffer {
 		glm::ivec2 getSize(const int attachment = 0);
 
 		spTextureView getDepthView();
+		spTexture getDepthTexture();
 
 		std::string info();
 

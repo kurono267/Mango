@@ -38,7 +38,7 @@ void DescSetVK::create(){
 
     std::unordered_map<int,int> typesDesc;
     // Add Layout binding for UBO
-    for(auto u : _uboBinds){
+    for(const auto& u : _uboBinds){
         layoutBinds.push_back(vk::DescriptorSetLayoutBinding(u.binding,u.descType,1,u.stage));
         poolSizes.push_back(vk::DescriptorPoolSize(u.descType,1));
         if(typesDesc.find((int)u.descType) == typesDesc.end()){
@@ -47,7 +47,7 @@ void DescSetVK::create(){
             typesDesc[(int)u.descType] += 1;
         }
     }
-    for(auto s : _samplerBinds) {
+    for(const auto& s : _samplerBinds) {
         layoutBinds.push_back(
                 vk::DescriptorSetLayoutBinding(s.binding, s.descType, 1, s.stage));
         poolSizes.push_back(vk::DescriptorPoolSize(s.descType, 1));
@@ -76,7 +76,7 @@ void DescSetVK::create(){
     }
     _descImageInfos.resize(_samplerBinds.size());
     for(auto s : _samplerBinds){
-        _descImageInfos.push_back(vk::DescriptorImageInfo(s.sampler, s.imageView, s.layout));
+        _descImageInfos.push_back(vk::DescriptorImageInfo(s.sampler, s.textureView->getView(), s.layout));
         descWrites.push_back(vk::WriteDescriptorSet(_descSet,s.binding,0,1,s.descType,&_descImageInfos[_descImageInfos.size()-1],nullptr,nullptr));
     }
     vk_device.updateDescriptorSets(descWrites,nullptr);
@@ -92,15 +92,14 @@ void DescSetVK::setStorageBuffer(const Uniform &buffer, size_t binding, const Sh
 
 void DescSetVK::setStorageTexture(const spTextureView &texture, const Sampler &sampler, size_t binding, const ShaderStage &stage) {
 	auto internalTextureView = std::dynamic_pointer_cast<TextureViewVK>(texture);
-	//auto internalTexture = std::dynamic_pointer_cast<TextureVK>(texture->getTexture());
-	_samplerBinds.emplace_back(internalTextureView->getView(),createSampler(sampler),binding,shaderStageVK(stage),vk::DescriptorType::eStorageImage,vk::ImageLayout::eGeneral);
+	_samplerBinds.emplace_back(internalTextureView,createSampler(sampler),binding,shaderStageVK(stage),vk::DescriptorType::eStorageImage,vk::ImageLayout::eGeneral);
 }
 
 void DescSetVK::setTexture(const spTextureView &texture, const Sampler &sampler, size_t binding,
                            const ShaderStage &stage){
     auto internalTextureView = std::dynamic_pointer_cast<TextureViewVK>(texture);
     auto internalTexture = std::dynamic_pointer_cast<TextureVK>(texture->getTexture());
-    _samplerBinds.emplace_back(internalTextureView->getView(),createSampler(sampler),binding,shaderStageVK(stage),vk::DescriptorType::eCombinedImageSampler,internalTexture->getImageLayout());
+    _samplerBinds.emplace_back(internalTextureView,createSampler(sampler),binding,shaderStageVK(stage),vk::DescriptorType::eCombinedImageSampler,internalTexture->getImageLayout());
 }
 
     DescSetVK::UBOBinding::UBOBinding(const Uniform &_buffer, size_t _binding, const vk::ShaderStageFlags &_stage,
@@ -108,10 +107,10 @@ void DescSetVK::setTexture(const spTextureView &texture, const Sampler &sampler,
   : buffer(_buffer),binding(_binding),stage(_stage),descType(_descType)
   {}
 
-DescSetVK::SamplerBinding::SamplerBinding(const vk::ImageView &_imageView, const vk::Sampler &_sampler,
+DescSetVK::SamplerBinding::SamplerBinding(const spTextureViewVK& _textureView, const vk::Sampler &_sampler,
                                           size_t _binding, const vk::ShaderStageFlags &_stage,
                                           const vk::DescriptorType &_descType, const vk::ImageLayout &_layout)
-  : imageView(_imageView), sampler(_sampler), binding(_binding), stage(_stage), descType(_descType), layout(_layout)
+  : textureView(_textureView), sampler(_sampler), binding(_binding), stage(_stage), descType(_descType), layout(_layout)
   {}
 
 }

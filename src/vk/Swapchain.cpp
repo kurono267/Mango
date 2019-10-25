@@ -99,22 +99,11 @@ void Swapchain::create(const vk::SurfaceKHR& surface,const glm::ivec2& size,
 		auto tex = std::make_shared<TextureVK>();
 		tex->create(extent.width,extent.height,1,formatVK2Mango(surfaceFormat.format),TextureType::Output,i);
 		tex->transition(vk::ImageLayout::ePresentSrcKHR);
+		_images.push_back(tex);
 		_imageViews.push_back(tex->createTextureView());
 	}
 	_imageFormat = surfaceFormat.format;
 	_extent = extent;
-
-	//createImageViews(device);
-}
-
-void Swapchain::createImageViews(const vk::Device& device){
-	_imageViews.resize(_images.size());
-	std::cout << "images size " << _images.size() << std::endl;
-
-	for (uint i = 0; i < _images.size(); i++) {
-		spTextureVK tex = std::dynamic_pointer_cast<TextureVK>(_images[i]);
-		_imageViews[i] = tex->createTextureView();
-	}
 }
 
 Swapchain::~Swapchain() {

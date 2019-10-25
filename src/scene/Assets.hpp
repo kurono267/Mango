@@ -28,7 +28,7 @@ class Assets {
 		static const std::vector<spMaterial>& getMaterials();
 
 		/// Free texture cache
-		static void freeTextureCache();
+		static void freeCache();
 	private:
 		Assets() = default;
 		~Assets() = default;

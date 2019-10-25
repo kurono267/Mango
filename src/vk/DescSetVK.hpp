@@ -8,6 +8,7 @@
 #include "api/DescSet.hpp"
 #include "default.hpp"
 #include "DeviceVK.hpp"
+#include "TextureVK.hpp"
 
 namespace mango::vulkan {
 
@@ -44,9 +45,9 @@ private:
         vk::DescriptorType   descType;
     };
     struct SamplerBinding {
-        SamplerBinding(const vk::ImageView& _imageView, const vk::Sampler& _sampler, size_t _binding,
+        SamplerBinding(const spTextureViewVK& _textureView, const vk::Sampler& _sampler, size_t _binding,
                 const vk::ShaderStageFlags& _stage, const vk::DescriptorType& _descType, const vk::ImageLayout& _layout);
-        vk::ImageView imageView;
+		spTextureViewVK textureView;
         vk::Sampler   sampler;
         size_t    binding;
         vk::ShaderStageFlags stage;

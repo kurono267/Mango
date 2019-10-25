@@ -21,10 +21,10 @@ class Raytracer {
 
 		void render(const Scene& scene, const spSemaphore& wait, const spSemaphore& finish);
 
-		spTextureView getPos() const;
-		spTextureView getNormal() const;
-		spTextureView getAlbedo() const;
-		spTextureView getMaterial() const;
+		spTexture getPos() const;
+		spTexture getNormal() const;
+		spTexture getAlbedo() const;
+		spTexture getMaterial() const;
 		// Only for testing
 		spTexture getCameraOrigin() const;
 		spTexture getCameraDir() const;
@@ -33,10 +33,10 @@ class Raytracer {
 		std::vector<spSceneNode> _nodes;
 		std::vector<spDescSet> _nodeDescSets;
 
-		spTextureView _pos;
-		spTextureView _normal;
-		spTextureView _albedo;
-		spTextureView _material;
+		spTexture _pos;
+		spTexture _normal;
+		spTexture _albedo;
+		spTexture _material;
 
 		spCompute _compute;
 		spCommandBuffer _commandBuffer;

@@ -43,7 +43,7 @@ void MainApp::run(){
 	}
 	_app->onExit();
 	_app.reset();
-	Assets::freeTextureCache();
+	Assets::freeCache();
 	Instance::release();
 }
 

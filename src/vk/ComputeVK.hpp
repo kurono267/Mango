@@ -14,6 +14,7 @@ namespace mango::vulkan {
 class ComputeVK : public mango::Compute {
 	public:
 		ComputeVK(const std::string& filename, const std::vector<spDescSet>& descSets);
+		virtual ~ComputeVK();
 
 		vk::Pipeline getPipeline();
 		vk::PipelineLayout getLayout();

@@ -125,9 +125,10 @@ const std::vector<spMaterial>& Assets::getMaterials(){
 	return instance._materials;
 }
 
-void Assets::freeTextureCache() {
+void Assets::freeCache() {
 	Assets& instance = Assets::get();
 	instance._textureCache.clear();
+	instance._materials.clear();
 }
 
 Assets &Assets::get() {

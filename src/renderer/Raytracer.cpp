@@ -18,21 +18,16 @@ Raytracer::Raytracer(const glm::ivec2 &size) {
 
 	createCameraPipeline(size);
 
-	auto albedoTex = device->createTexture(size.x,size.y,1,Format::R16G16B16A16Unorm, TextureType::Input | TextureType::Storage);
-	auto normalTex = device->createTexture(size.x,size.y,1,Format::R16G16B16A16Unorm,TextureType::Input | TextureType::Storage);
-	auto posTex = device->createTexture(size.x,size.y,1,Format::R32G32B32A32Sfloat,TextureType::Input | TextureType::Storage);
-	auto matTex = device->createTexture(size.x,size.y,1,Format::R16G16B16A16Sfloat,TextureType::Input | TextureType::Storage);
-
-	_albedo = albedoTex->createTextureView();
-	_normal = normalTex->createTextureView();
-	_pos = posTex->createTextureView();
-	_material = matTex->createTextureView();
+	_albedo = device->createTexture(size.x,size.y,1,Format::R16G16B16A16Unorm, TextureType::Input | TextureType::Storage);
+	_normal = device->createTexture(size.x,size.y,1,Format::R16G16B16A16Unorm,TextureType::Input | TextureType::Storage);
+	_pos = device->createTexture(size.x,size.y,1,Format::R32G32B32A32Sfloat,TextureType::Input | TextureType::Storage);
+	_material = device->createTexture(size.x,size.y,1,Format::R16G16B16A16Sfloat,TextureType::Input | TextureType::Storage);
 
 	_output = device->createDescSet();
-	_output->setStorageTexture(_albedo,Sampler(),0,ShaderStage::Compute);
-	_output->setStorageTexture(_normal,Sampler(),1,ShaderStage::Compute);
-	_output->setStorageTexture(_pos,Sampler(),2,ShaderStage::Compute);
-	_output->setStorageTexture(_material,Sampler(),3,ShaderStage::Compute);
+	_output->setStorageTexture(_albedo->createTextureView(),Sampler(),0,ShaderStage::Compute);
+	_output->setStorageTexture(_normal->createTextureView(),Sampler(),1,ShaderStage::Compute);
+	_output->setStorageTexture(_pos->createTextureView(),Sampler(),2,ShaderStage::Compute);
+	_output->setStorageTexture(_material->createTextureView(),Sampler(),3,ShaderStage::Compute);
 	_output->create();
 
 	_input = device->createDescSet();
@@ -128,15 +123,15 @@ void Raytracer::buildTree(const spSceneNode &sceneNode) {
 	_commandBuffer = device->createCommandBuffer();
 	_commandBuffer->begin();
 	_commandBuffer->bindCompute(_compute);
-	_commandBuffer->clearTexture(_pos->getTexture(),glm::vec4(0.f,0.f,0.f,1000.f));
-	_commandBuffer->clearTexture(_normal->getTexture(),glm::vec4(0.f));
-	_commandBuffer->clearTexture(_albedo->getTexture(),glm::vec4(0.f));
-	_commandBuffer->clearTexture(_material->getTexture(),glm::vec4(0.f));
+	_commandBuffer->clearTexture(_pos,glm::vec4(0.f,0.f,0.f,1000.f));
+	_commandBuffer->clearTexture(_normal,glm::vec4(0.f));
+	_commandBuffer->clearTexture(_albedo,glm::vec4(0.f));
+	_commandBuffer->clearTexture(_material,glm::vec4(0.f));
 	for(int i = 0;i<_nodeDescSets.size();++i){
 		selectDescSets[0] = _nodeDescSets[i];
 		selectDescSets[3] = _nodes[i]->getGeometry()->getMaterial()->getDescSet();
 		_commandBuffer->bindDescriptorSet(_compute,selectDescSets);
-		_commandBuffer->dispatch(_pos->getTexture()->width()/rtGroupSize,_pos->getTexture()->height()/rtGroupSize,1);
+		_commandBuffer->dispatch(_pos->width()/rtGroupSize,_pos->height()/rtGroupSize,1);
 	}
 	_commandBuffer->end();
 }
@@ -153,19 +148,19 @@ void Raytracer::render(const Scene& scene, const spSemaphore& wait, const spSema
 	device->submit(_commandBuffer,_cameraSemaphore,finish);
 }
 
-spTextureView Raytracer::getPos() const {
+spTexture Raytracer::getPos() const {
 	return _pos;
 }
 
-spTextureView Raytracer::getNormal() const {
+spTexture Raytracer::getNormal() const {
 	return _normal;
 }
 
-spTextureView Raytracer::getAlbedo() const {
+spTexture Raytracer::getAlbedo() const {
 	return _albedo;
 }
 
-spTextureView Raytracer::getMaterial() const {
+spTexture Raytracer::getMaterial() const {
 	return _material;
 }
 
