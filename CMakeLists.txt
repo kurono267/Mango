@@ -24,4 +24,3 @@ link_directories($ENV{VULKAN_SDK}/lib/)
 
 add_subdirectory(src)
 add_subdirectory(examples)
-add_subdirectory(editor)
