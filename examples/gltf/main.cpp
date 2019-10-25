@@ -6,10 +6,9 @@
 
 int main(){
     spMainApp main = MainApp::instance();
-    spBaseApp app = std::make_shared<App>(main);
 
     main->create("GLTF",1280,720);
-    main->setBaseApp(app);
+    main->createApplication<App>();
 
     main->run();
 

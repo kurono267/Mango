@@ -1,4 +1,6 @@
 #include "MainApp.hpp"
+#include "api/Instance.hpp"
+#include "scene/Assets.hpp"
 
 using namespace mango;
 
@@ -11,10 +13,6 @@ GLFWMouse::GLFWMouse(const int _button,const int _action,const int _mods) : call
 GLFWMouse::GLFWMouse(const double _x,const double _y) : callState(onMousePosition), x(_x), y(_y),action(0),mods(0),button(0) {}
 
 MainApp::MainApp() : _isRun(true), _window(nullptr) {}
-
-void MainApp::setBaseApp(spBaseApp app){
-	_app = app;
-}
 
 void MainApp::exit(){
 	_isRun = false;
@@ -45,6 +43,8 @@ void MainApp::run(){
 	}
 	_app->onExit();
 	_app.reset();
+	Assets::freeTextureCache();
+	Instance::release();
 }
 
 glm::ivec2 MainApp::wndSize(){

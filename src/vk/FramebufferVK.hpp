@@ -6,6 +6,7 @@
 #define MANGO_FRAMEBUFFERVK_HPP
 
 #include <api/Framebuffer.hpp>
+#include "DeviceVK.hpp"
 #include "default.hpp"
 
 namespace mango::vulkan {
@@ -21,6 +22,7 @@ class FramebufferVK : public Framebuffer {
 		vk::Framebuffer getVK();
 	protected:
 		vk::Framebuffer _framebuffer;
+		std::weak_ptr<DeviceVK> _deviceVk;
 };
 
 typedef std::shared_ptr<FramebufferVK> spFramebufferVK;

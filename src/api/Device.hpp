@@ -43,6 +43,8 @@ class Device {
 	public:
 		Device() = default;
 		virtual ~Device() = default;
+
+		virtual void release() = 0;
 		/// Get Device Name
 		/// @return device name
 		virtual std::string deviceName() = 0;

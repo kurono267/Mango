@@ -154,7 +154,7 @@ void CommandBufferVK::bindDescriptorSet(const spCompute &compute, const spDescSe
 							static_cast<uint32_t>(_descSets.size()), _descSets.data(), 0, nullptr);
 }
 
-void CommandBufferVK::clearTexture(spTexture &texture, const glm::vec4 &color) {
+void CommandBufferVK::clearTexture(const spTexture &texture, const glm::vec4 &color) {
 	auto internalTexture = std::dynamic_pointer_cast<TextureVK>(texture);
 	vk::ImageSubresourceRange imageSubresourceRange(vk::ImageAspectFlagBits::eColor,0,texture->mipLevels(),0,1);
 	_cmd.clearColorImage(internalTexture->getImage(),vk::ImageLayout::eGeneral,vk::ClearColorValue(std::array<float,4>{color.x,color.y,color.z,color.w}),imageSubresourceRange);

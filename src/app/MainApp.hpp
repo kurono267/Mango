@@ -44,7 +44,10 @@ class MainApp : public std::enable_shared_from_this<MainApp> {
 			std::cout << "MainApp Destructor" << std::endl;
 		}
 
-		void setBaseApp(spBaseApp app);
+		template<typename T>
+		void createApplication() {
+			_app = std::make_unique<T>(shared_from_this());
+		}
 
 		const GLFWKey glfwKeyState() const;
 		const GLFWMouse glfwMouseState() const;
@@ -102,7 +105,7 @@ class MainApp : public std::enable_shared_from_this<MainApp> {
 			app->resize(width,height);
 		}
 
-		spBaseApp _app;
+		std::unique_ptr<BaseApp> _app;
 		// Current statements
 		GLFWKey   _lastKey;
 		GLFWMouse _lastMouse;

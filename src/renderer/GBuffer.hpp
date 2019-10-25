@@ -20,10 +20,10 @@ class GBuffer {
 
 		void render(const Scene& sceneNode, const spSemaphore& wait, const spSemaphore& finish);
 
-		spTexture getAlbedo() const;
-		spTexture getNormal() const;
-		spTexture getPos() const;
-		spTexture getMaterial() const;
+		spTextureView getAlbedo() const;
+		spTextureView getNormal() const;
+		spTextureView getPos() const;
+		spTextureView getMaterial() const;
 	protected:
 		spDevice _device;
 
@@ -36,10 +36,10 @@ class GBuffer {
 		spRenderPass _renderPass;
 
 		spFramebuffer _framebuffer;
-		spTexture _albedo; // RGBA16Unorm
-		spTexture _normal; // RGBA16Unorm RGB normal
-		spTexture _pos; // RGBA32Sfloat RGB pos
-		spTexture _material; // RGBA16Sfloat RGBA roughness, metallic
+		spTextureView _albedo; // RGBA16Unorm
+		spTextureView _normal; // RGBA16Unorm RGB normal
+		spTextureView _pos; // RGBA32Sfloat RGB pos
+		spTextureView _material; // RGBA16Sfloat RGBA roughness, metallic
 };
 
 typedef std::shared_ptr<GBuffer> spGBuffer;

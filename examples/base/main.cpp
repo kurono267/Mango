@@ -12,11 +12,10 @@ class TestApp : public BaseApp {
 		bool init() final {
 			auto mainWnd = mainApp.lock();
 
-			_instance = std::make_unique<vulkan::InstanceVK>();
-			_instance->init("Test",mainWnd->window(),mainWnd->wndSize());
+			Instance::init<vulkan::InstanceVK>("Test",mainWnd->window(),mainWnd->wndSize());
 
-			auto device = _instance->device();
-			std::cout << device->device_name() << std::endl;
+			auto device = Instance::device();
+			std::cout << device->deviceName() << std::endl;
 
 			glm::vec4 colorValue(0.5f,0.5f,1.0f,1.0f);
 			_color.create(device,sizeof(glm::vec4),&colorValue);
@@ -40,7 +39,7 @@ class TestApp : public BaseApp {
 
 			_main = device->createPipeline(rp);
 
-			_quad = createQuad(device);
+			_quad = createQuad();
 
 			auto screenBuffers = device->getScreenbuffers();
 			for(const auto& screen : screenBuffers){
@@ -69,7 +68,7 @@ class TestApp : public BaseApp {
 			return true;
 		}
 		bool draw() final {
-			auto device = _instance->device();
+			auto device = Instance::device();
 			auto imageIndex = device->nextScreen(_screenAvailable);
 
 			device->submit(_cmdScreen[imageIndex],_screenAvailable,_renderFinish);
@@ -88,11 +87,10 @@ class TestApp : public BaseApp {
 			return true;
 		}
 		bool onExit() final {
+			Instance::device()->waitIdle();
 			return true;
 		}
 	protected:
-		std::unique_ptr<Instance> _instance;
-
 		spPipeline _main;
 		std::vector<spCommandBuffer> _cmdScreen;
 		spMesh _quad;
@@ -107,10 +105,9 @@ class TestApp : public BaseApp {
 
 int main(){
 	spMainApp main = MainApp::instance();
-	spBaseApp app = std::make_shared<TestApp>(main);
 
 	main->create("Base",1280,720);
-	main->setBaseApp(app);
+	main->createApplication<TestApp>();
 
 	main->run();
 

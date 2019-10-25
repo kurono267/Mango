@@ -28,8 +28,8 @@ void FramebufferVK::create(const int width, const int height, const vk::RenderPa
 		height, // Height
 		1 // Layers
 	);
-	auto device_vk = Instance::device<DeviceVK>();
-	_framebuffer = device_vk->getDevice().createFramebuffer(framebufferInfo);
+	_deviceVk = Instance::device<DeviceVK>();
+	_framebuffer = _deviceVk.lock()->getDevice().createFramebuffer(framebufferInfo);
 }
 
 vk::Framebuffer FramebufferVK::getVK(){
@@ -43,7 +43,6 @@ FramebufferVK::FramebufferVK() {
 FramebufferVK::~FramebufferVK() {
 	std::cout << "~FramebufferVK" << std::endl;
 	if(_framebuffer){
-		auto device_vk = Instance::device<DeviceVK>();
-		device_vk->getDevice().destroyFramebuffer(_framebuffer);
+		_deviceVk.lock()->getDevice().destroyFramebuffer(_framebuffer);
 	}
 }

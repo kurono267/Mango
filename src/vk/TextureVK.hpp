@@ -34,6 +34,7 @@ protected:
 		vk::CommandPool _pool;
 		vk::Queue _queue;
 		vk::ImageLayout _layout;
+		bool _isOwned;
 };
 
 class TextureViewVK : public TextureView {

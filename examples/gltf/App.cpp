@@ -59,7 +59,7 @@ bool App::init() {
     PipelineInfo rp;
     rp.viewport(Viewport(glm::vec2(0), mainWnd->wndSize()));
     rp.scissor(glm::ivec2(0), mainWnd->wndSize());
-    rp.rasterizer(PolygonMode::Fill,CullMode::Front);
+    rp.rasterizer(PolygonMode::Fill,CullMode::Back);
     rp.addShader(ShaderStage::Vertex, "../glsl/gltf.vert");
     rp.addShader(ShaderStage::Fragment, "../glsl/gltf.frag");
 	std::vector<spDescSet> descSets(2);
@@ -70,7 +70,7 @@ bool App::init() {
 
     _main = device->createPipeline(rp);
 
-    _cube = createCube(device);
+    _cube = createCube();
 
     auto screenBuffers = device->getScreenbuffers();
     for (const auto &screen : screenBuffers) {

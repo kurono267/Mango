@@ -25,11 +25,13 @@ const std::vector<const char*> validationLayers = {
     "VK_LAYER_LUNARG_parameter_validation"
 };
 
-class DeviceVK : public Device {
+class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
 	friend class InstanceVK;
 	public:
 		DeviceVK() = default;
 		~DeviceVK() override;
+
+		void release() final;
 
 		std::string deviceName() final;
 
@@ -90,7 +92,7 @@ private:
 		vk::CommandPool    _pool;
 		vk::CommandPool    _computePool;
 
-		Swapchain          _swapchain;
+		std::unique_ptr<Swapchain> _swapchain;
 
 		glm::ivec2         _size;
 };
@@ -100,6 +102,7 @@ typedef std::shared_ptr<DeviceVK> spDeviceVK;
 class SemaphoreVK : public mango::Semaphore {
 	public:
 		SemaphoreVK();
+		~SemaphoreVK();
 
 		vk::Semaphore getVK();
 	protected:

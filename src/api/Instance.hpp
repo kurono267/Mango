@@ -17,6 +17,8 @@ class InstanceAPI {
 
 		virtual void init(const std::string& title, GLFWwindow* window,const glm::ivec2& size) = 0;
 		virtual spDevice device() = 0;
+
+		virtual void release() = 0;
 };
 
 class Instance {
@@ -35,6 +37,11 @@ class Instance {
 		static std::shared_ptr<T> device(){
 			auto& that = get();
 			return std::dynamic_pointer_cast<T>(that._impl->device());
+		}
+
+		static void release(){
+			auto& that = get();
+			that._impl->release();
 		}
 	private:
 		Instance() = default;

@@ -22,7 +22,7 @@ class Swapchain {
 		~Swapchain();
 
 		void create(const vk::SurfaceKHR& surface,const glm::ivec2& size,const uint32_t queueFamilyIndices[2]);
-		void release();
+		void release(const spDevice& device);
 
 		vk::SwapchainKHR getSwapchain() const ;
 		vk::Format    getFormat() const ;

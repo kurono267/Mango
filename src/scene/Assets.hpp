@@ -38,7 +38,6 @@ class Assets {
 		static Assets& get();
 	private:
 		std::unordered_map<std::string,spTexture> _textureCache;
-		std::unordered_map<std::string,spSceneNode> _modelCache;
 		std::vector<spMaterial> _materials;
 		spDevice _device;
 };

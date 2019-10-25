@@ -21,11 +21,10 @@ void App::updateCameraUniform(const spSceneNode& cameraNode) {
 bool App::init() {
     auto mainWnd = mainApp.lock();
 
-    _instance = std::make_unique<vulkan::InstanceVK>();
-    _instance->init("Cube", mainWnd->window(), mainWnd->wndSize());
+    Instance::init<vulkan::InstanceVK>("Cube", mainWnd->window(), mainWnd->wndSize());
 
-    auto device = _instance->device();
-    std::cout << device->device_name() << std::endl;
+    auto device = Instance::device();
+    std::cout << device->deviceName() << std::endl;
 
     // Create scene with camera only
     _cameraNode = std::make_shared<SceneNode>(std::make_shared<Camera>(glm::radians(45.0f),(float)(1280)/(float)(720),0.1f,1000.0f));
@@ -55,7 +54,7 @@ bool App::init() {
 
     _main = device->createPipeline(rp);
 
-    _cube = createCube(device);
+    _cube = createCube();
 
     auto screenBuffers = device->getScreenbuffers();
     for (const auto &screen : screenBuffers) {
@@ -89,7 +88,7 @@ bool App::draw() {
     auto currFrameTime = std::chrono::steady_clock::now();
     _dt = std::chrono::duration_cast<std::chrono::duration<float> >(currFrameTime-_prevFrameTime).count();
 
-    auto device = _instance->device();
+    auto device = Instance::device();
     auto imageIndex = device->nextScreen(_screenAvailable);
 
     device->submit(_cmdScreen[imageIndex],_screenAvailable,_renderFinish);
@@ -132,7 +131,7 @@ bool App::onMouse(const GLFWMouse& mouse) {
     return true;
 }
 bool App::onExit() {
-	_instance->device()->waitIdle();
+	Instance::device()->waitIdle();
     return true;
 }
 

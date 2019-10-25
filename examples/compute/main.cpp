@@ -49,7 +49,7 @@ class TestApp : public BaseApp {
 
 			_main = device->createPipeline(rp);
 
-			_quad = createQuad(device);
+			_quad = createQuad();
 
 			auto screenBuffers = device->getScreenbuffers();
 			for(const auto& screen : screenBuffers){
@@ -72,8 +72,16 @@ class TestApp : public BaseApp {
 				_cmdScreen[i]->end();
 			}
 
+			_computeCommandBuffer = device->createCommandBuffer();
+			_computeCommandBuffer->begin();
+			_computeCommandBuffer->bindCompute(_compute);
+			_computeCommandBuffer->bindDescriptorSet(_compute,_computeSet);
+			_computeCommandBuffer->dispatch(_computeTexture->width()/16,_computeTexture->height()/16,1);
+			_computeCommandBuffer->end();
+
 			_screenAvailable = device->createSemaphore();
 			_renderFinish = device->createSemaphore();
+			_computeSemaphore = device->createSemaphore();
 
 			return true;
 		}
@@ -81,9 +89,8 @@ class TestApp : public BaseApp {
 			auto device = Instance::device();
 			auto imageIndex = device->nextScreen(_screenAvailable);
 
-			spSemaphore semaphore = _compute->run(_screenAvailable,_computeTexture->width()/16,_computeTexture->height()/16);
-
-			device->submit(_cmdScreen[imageIndex],semaphore,_renderFinish);
+			device->submit(_computeCommandBuffer,_screenAvailable,_computeSemaphore);
+			device->submit(_cmdScreen[imageIndex],_computeSemaphore,_renderFinish);
 			device->present(imageIndex,_renderFinish);
 
 			return true;
@@ -110,21 +117,22 @@ class TestApp : public BaseApp {
 		spTexture _computeTexture;
 
 		spCompute _compute;
+		spCommandBuffer _computeCommandBuffer;
 
 		Uniform _color;
 		spDescSet _descSet;
 		spDescSet _computeSet;
 
 		spSemaphore _screenAvailable;
+		spSemaphore _computeSemaphore;
 		spSemaphore _renderFinish;
 };
 
 int main(){
 	spMainApp main = MainApp::instance();
-	spBaseApp app = std::make_shared<TestApp>(main);
 
 	main->create("Base",1280,720);
-	main->setBaseApp(app);
+	main->createApplication<TestApp>();
 
 	main->run();
 

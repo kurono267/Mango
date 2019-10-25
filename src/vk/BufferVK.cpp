@@ -80,8 +80,8 @@ BufferVK::~BufferVK() {
 	std::cout << "~BufferVK" << std::endl;
 	auto impDevice = Instance::device<DeviceVK>();
 	auto vkDevice = impDevice->getDevice();
-	vkDevice.freeMemory(_memory);
-	vkDevice.destroyBuffer(_buffer);
+	if(_memory)vkDevice.freeMemory(_memory);
+	if(_buffer)vkDevice.destroyBuffer(_buffer);
 }
 
 vk::Buffer BufferVK::getVKBuffer() {

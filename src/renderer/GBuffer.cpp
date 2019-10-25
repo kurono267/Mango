@@ -15,25 +15,30 @@ struct CameraData {
 
 GBuffer::GBuffer(const spDevice &device, const glm::ivec2& size) : _device(device) {
 	std::cout << "GBuffer create" << std::endl;
-	_albedo = _device->createTexture(size.x,size.y,1,Format::R16G16B16A16Unorm, TextureType::Input | TextureType::Output);
-	_normal = _device->createTexture(size.x,size.y,1,Format::R16G16B16A16Unorm,TextureType::Input | TextureType::Output);
-	_pos = _device->createTexture(size.x,size.y,1,Format::R32G32B32A32Sfloat,TextureType::Input | TextureType::Output);
-	_material = _device->createTexture(size.x,size.y,1,Format::R16G16B16A16Sfloat,TextureType::Input | TextureType::Output);
+	auto albedoTex = _device->createTexture(size.x,size.y,1,Format::R16G16B16A16Unorm, TextureType::Input | TextureType::Output);
+	auto normalTex = _device->createTexture(size.x,size.y,1,Format::R16G16B16A16Unorm,TextureType::Input | TextureType::Output);
+	auto posTex = _device->createTexture(size.x,size.y,1,Format::R32G32B32A32Sfloat,TextureType::Input | TextureType::Output);
+	auto matTex = _device->createTexture(size.x,size.y,1,Format::R16G16B16A16Sfloat,TextureType::Input | TextureType::Output);
 	std::cout << "GBuffer create finish" << std::endl;
 
+	_albedo = albedoTex->createTextureView();
+	_normal = normalTex->createTextureView();
+	_pos = posTex->createTextureView();
+	_material = matTex->createTextureView();
+
 	_renderPass = _device->createRenderPass();
-	_renderPass->addAttachment(Attachment(_normal->format(),false,0));
-	_renderPass->addAttachment(Attachment(_pos->format(),false,1));
-	_renderPass->addAttachment(Attachment(_albedo->format(),false,2));
-	_renderPass->addAttachment(Attachment(_material->format(),false,3));
+	_renderPass->addAttachment(Attachment(normalTex->format(),false,0));
+	_renderPass->addAttachment(Attachment(posTex->format(),false,1));
+	_renderPass->addAttachment(Attachment(albedoTex->format(),false,2));
+	_renderPass->addAttachment(Attachment(matTex->format(),false,3));
 	_renderPass->addAttachment(Attachment(_device->getDepthFormat(),true,4));
 	_renderPass->create();
 
 	_framebuffer = _device->createFramebuffer();
-	_framebuffer->attachment(_normal->createTextureView());
-	_framebuffer->attachment(_pos->createTextureView());
-	_framebuffer->attachment(_albedo->createTextureView());
-	_framebuffer->attachment(_material->createTextureView());
+	_framebuffer->attachment(_normal);
+	_framebuffer->attachment(_pos);
+	_framebuffer->attachment(_albedo);
+	_framebuffer->attachment(_material);
 	_framebuffer->depth(size.x,size.y);
 	_framebuffer->create(size.x,size.y,_renderPass);
 
@@ -114,18 +119,18 @@ void GBuffer::render(const Scene &scene, const spSemaphore& wait, const spSemaph
 	_device->submit(_commandBuffer,wait,finish);
 }
 
-spTexture GBuffer::getAlbedo() const {
+spTextureView GBuffer::getAlbedo() const {
 	return _albedo;
 }
 
-spTexture GBuffer::getNormal() const {
+spTextureView GBuffer::getNormal() const {
 	return _normal;
 }
 
-spTexture GBuffer::getPos() const {
+spTextureView GBuffer::getPos() const {
 	return _pos;
 }
 
-spTexture GBuffer::getMaterial() const {
+spTextureView GBuffer::getMaterial() const {
 	return _material;
 }

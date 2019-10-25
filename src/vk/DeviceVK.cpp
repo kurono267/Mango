@@ -64,9 +64,16 @@ QueueFamilyIndices queueFamilies(const vk::PhysicalDevice& device,const vk::Surf
 
 DeviceVK::~DeviceVK(){
 	std::cout << "~DeviceVK" << std::endl;
-	_swapchain.release();
 	_device.destroyCommandPool(_pool);
 	_device.destroy();
+}
+
+void DeviceVK::release() {
+	std::cout << "DeviceVK::release" << std::endl;
+	_screenbuffers.clear();
+	_screenRenderPass = nullptr;
+
+	_swapchain.reset();
 }
 
 void DeviceVK::create(const vk::Instance& instance,const vk::SurfaceKHR& surface,const glm::ivec2& size){
@@ -82,7 +89,8 @@ void DeviceVK::create(const vk::Instance& instance,const vk::SurfaceKHR& surface
 	vk::CommandPoolCreateInfo poolComputeInfo(vk::CommandPoolCreateFlagBits::eResetCommandBuffer,queueFamily.computeFamily);
 	_computePool = _device.createCommandPool(poolComputeInfo);
 
-	_swapchain.create(_surface,size,familyIndices);
+	_swapchain = std::make_unique<Swapchain>();
+	_swapchain->create(_surface,size,familyIndices);
 
 	createScreen();
 }
@@ -263,12 +271,12 @@ mango::Format DeviceVK::getDepthFormat() {
 
 void DeviceVK::createScreen(){
 	_screenRenderPass = std::make_shared<RenderPassVK>();
-	_screenRenderPass->addAttachment(Attachment(formatVK2Mango(_swapchain.getFormat()),false,0));
+	_screenRenderPass->addAttachment(Attachment(formatVK2Mango(_swapchain->getFormat()),false,0));
 	_screenRenderPass->addAttachment(Attachment(getDepthFormat(),true,1));
 	_screenRenderPass->create(true);
 
-	auto imageViews = _swapchain.getImageViews();
-	auto extent = _swapchain.getExtent();
+	auto imageViews = _swapchain->getImageViews();
+	auto extent = _swapchain->getExtent();
 
 	for(const auto& view : imageViews){
 		spFramebufferVK framebuffer = std::dynamic_pointer_cast<FramebufferVK>(createFramebuffer());
@@ -323,7 +331,7 @@ void DeviceVK::submit(const mango::spCommandBuffer& cmd, const mango::spSemaphor
 }
 
 void DeviceVK::present(uint32_t screen, const mango::spSemaphore& signal){
-	vk::SwapchainKHR swapChains[] = {_swapchain.getSwapchain()};
+	vk::SwapchainKHR swapChains[] = {_swapchain->getSwapchain()};
 
 	vk::Semaphore signalSemaphores[] = {std::dynamic_pointer_cast<SemaphoreVK>(signal)->getVK()};
 
@@ -339,7 +347,7 @@ void DeviceVK::present(uint32_t screen, const mango::spSemaphore& signal){
 uint32_t DeviceVK::nextScreen(const mango::spSemaphore& signal){
 	vk::Semaphore signalSemaphores = std::dynamic_pointer_cast<SemaphoreVK>(signal)->getVK();
 
-	return _device.acquireNextImageKHR(_swapchain.getSwapchain(),std::numeric_limits<uint64_t>::max(),signalSemaphores,nullptr).value;
+	return _device.acquireNextImageKHR(_swapchain->getSwapchain(),std::numeric_limits<uint64_t>::max(),signalSemaphores,nullptr).value;
 }
 
 mango::spDescSet DeviceVK::createDescSet() {
@@ -361,6 +369,11 @@ vk::Queue DeviceVK::getComputeQueue() {
 
 SemaphoreVK::SemaphoreVK() {
 	_semaphore = Instance::device<DeviceVK>()->getDevice().createSemaphore(vk::SemaphoreCreateInfo());
+}
+
+SemaphoreVK::~SemaphoreVK() {
+	std::cout << "~SemaphoreVK" << std::endl;
+	Instance::device<DeviceVK>()->getDevice().destroySemaphore(_semaphore);
 }
 
 vk::Semaphore SemaphoreVK::getVK(){

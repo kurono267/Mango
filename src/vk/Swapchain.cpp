@@ -117,18 +117,10 @@ void Swapchain::createImageViews(const vk::Device& device){
 	}
 }
 
-void Swapchain::release(){
-	std::cout << "Swapchain release" << std::endl;
-	auto device = Instance::device<DeviceVK>();
-	for (uint i = 0; i < _imageViews.size(); ++i) {
-		auto view = std::dynamic_pointer_cast<TextureViewVK>(_imageViews[i]);
-		device->getDevice().destroyImageView(view->getView());
-	}
-	device->getDevice().destroySwapchainKHR(_swapchain);
-}
-
 Swapchain::~Swapchain() {
 	std::cout << "~Swapchain" << std::endl;
+	spDeviceVK deviceVK = Instance::device<DeviceVK>();
+	deviceVK->getDevice().destroySwapchainKHR(_swapchain);
 }
 
 vk::SwapchainKHR Swapchain::getSwapchain() const {return _swapchain;}

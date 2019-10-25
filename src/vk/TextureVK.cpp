@@ -8,7 +8,7 @@
 using namespace mango::vulkan;
 
 TextureViewVK::~TextureViewVK(){
-
+	Instance::device<DeviceVK>()->getDevice().destroyImageView(_view);
 }
 
 vk::ImageView TextureViewVK::getView(){
@@ -16,7 +16,13 @@ vk::ImageView TextureViewVK::getView(){
 }
 
 TextureVK::~TextureVK() {
-
+	std::cout << "~TextureVK" << std::endl;
+	if(_isOwned){
+		Instance::device<DeviceVK>()->getDevice().destroyImage(_image);
+		if(_memory){
+			Instance::device<DeviceVK>()->getDevice().free(_memory);
+		}
+	}
 }
 
 void TextureVK::create(const int width,const int height,const int miplevels,const Format& format,const mango::TextureType &type, const vk::Image& image){
@@ -30,6 +36,7 @@ void TextureVK::create(const int width,const int height,const int miplevels,cons
     _format = format;
     _mipLevels = miplevels;
     _type = type;
+	_isOwned = false;
 }
 
 void TextureVK::create(const int width, const int height,const int miplevels , const Format& format, const mango::TextureType &type) {
@@ -40,6 +47,7 @@ void TextureVK::create(const int width, const int height,const int miplevels , c
 	_mipLevels = miplevels;
 	_type = type;
 	_format = format;
+	_isOwned = true;
 
 	vk::ImageUsageFlags usage = (vk::ImageUsageFlags)0;
 	vk::ImageLayout layout = vk::ImageLayout::ePreinitialized;

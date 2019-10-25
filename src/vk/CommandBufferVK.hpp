@@ -23,7 +23,7 @@ class CommandBufferVK : public CommandBuffer {
 		void setClearColor(int attachment, const glm::vec4 &color) final;
 		void setClearDepthStencil(int attachment, float depth, float stencil) final;
 
-		void clearTexture(spTexture& texture,const glm::vec4& color) final;
+		void clearTexture(const spTexture& texture,const glm::vec4& color) final;
 
 		void begin() final;
 		void beginRenderPass(const spRenderPass &renderPass, const spFramebuffer &framebuffer, const RenderArea &area) final;

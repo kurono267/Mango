@@ -9,25 +9,26 @@ using namespace mango;
 
 PBR::PBR(const spGBuffer &gbuffer, const glm::ivec2& size) : _gBuffer(gbuffer) {
 	auto device = Instance::device();
-	_lightResult = device->createTexture(size.x,size.y,1,Format::R32G32B32A32Sfloat,TextureType::Input | TextureType::Output);
+	auto lightResultTex = device->createTexture(size.x,size.y,1,Format::R32G32B32A32Sfloat,TextureType::Input | TextureType::Output);
+	_lightResult = lightResultTex->createTextureView();
 
 	_renderPass = device->createRenderPass();
-	_renderPass->addAttachment(Attachment(_lightResult->format(),false,0));
+	_renderPass->addAttachment(Attachment(lightResultTex->format(),false,0));
 	_renderPass->addAttachment(Attachment(device->getDepthFormat(),true,1));
 	_renderPass->create();
 
 	_framebuffer = device->createFramebuffer();
-	_framebuffer->attachment(_lightResult->createTextureView());
+	_framebuffer->attachment(_lightResult);
 	_framebuffer->depth(size.x,size.y);
 	_framebuffer->create(size.x,size.y,_renderPass);
 
 	_uniform.create(device,sizeof(glm::vec3));
 
 	_descSet = device->createDescSet();
-	_descSet->setTexture(_gBuffer->getPos()->createTextureView(),Sampler(),0,ShaderStage::Fragment);
-	_descSet->setTexture(_gBuffer->getNormal()->createTextureView(),Sampler(),1,ShaderStage::Fragment);
-	_descSet->setTexture(_gBuffer->getAlbedo()->createTextureView(),Sampler(),2,ShaderStage::Fragment);
-	_descSet->setTexture(_gBuffer->getMaterial()->createTextureView(),Sampler(),3,ShaderStage::Fragment);
+	_descSet->setTexture(_gBuffer->getPos(),Sampler(),0,ShaderStage::Fragment);
+	_descSet->setTexture(_gBuffer->getNormal(),Sampler(),1,ShaderStage::Fragment);
+	_descSet->setTexture(_gBuffer->getAlbedo(),Sampler(),2,ShaderStage::Fragment);
+	_descSet->setTexture(_gBuffer->getMaterial(),Sampler(),3,ShaderStage::Fragment);
 	_descSet->setUniformBuffer(_uniform,4,ShaderStage::Fragment);
 	_descSet->create();
 
@@ -69,6 +70,6 @@ void PBR::render(const Scene &scene, const spSemaphore &wait, const spSemaphore 
 	Instance::device()->submit(_commandBuffer,wait,finish);
 }
 
-spTexture PBR::getLightResult() {
+spTextureView PBR::getLightResult() {
 	return _lightResult;
 }

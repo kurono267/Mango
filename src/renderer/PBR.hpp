@@ -15,9 +15,9 @@ class PBR {
 
 		void render(const Scene &scene,const spSemaphore& wait, const spSemaphore& finish);
 
-		spTexture getLightResult();
+		spTextureView getLightResult();
 	protected:
-		spTexture _lightResult;
+		spTextureView _lightResult;
 		spGBuffer _gBuffer;
 
 		spPipeline _pipeline;

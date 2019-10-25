@@ -17,6 +17,8 @@ class InstanceVK : public InstanceAPI {
 
 		void init(const std::string& title, GLFWwindow* window,const glm::ivec2& size) final;
 		spDevice device() final;
+
+		void release() final;
 	protected:
 		void createInstance();
 
