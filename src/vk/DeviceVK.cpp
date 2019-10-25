@@ -65,6 +65,7 @@ QueueFamilyIndices queueFamilies(const vk::PhysicalDevice& device,const vk::Surf
 DeviceVK::~DeviceVK(){
 	std::cout << "~DeviceVK" << std::endl;
 	_device.destroyCommandPool(_pool);
+	_device.destroyCommandPool(_computePool);
 	_device.destroy();
 }
 

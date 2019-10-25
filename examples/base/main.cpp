@@ -20,12 +20,12 @@ class TestApp : public BaseApp {
 			glm::vec4 colorValue(0.5f,0.5f,1.0f,1.0f);
 			_color.create(device,sizeof(glm::vec4),&colorValue);
 
-            _texture = checkboardTexture(device,1280,720,100);
-            auto texView = _texture->createTextureView();
+            auto texture = checkboardTexture(device,1280,720,100);
+            _textureView = texture->createTextureView();
 
 			_descSet = device->createDescSet();
 			_descSet->setUniformBuffer(_color,0,ShaderStage::Fragment);
-			_descSet->setTexture(texView,Sampler(),1,ShaderStage::Fragment);
+			_descSet->setTexture(_textureView,Sampler(),1,ShaderStage::Fragment);
             _descSet->create();
 
 			PipelineInfo rp;
@@ -94,7 +94,7 @@ class TestApp : public BaseApp {
 		spPipeline _main;
 		std::vector<spCommandBuffer> _cmdScreen;
 		spMesh _quad;
-		spTexture _texture;
+		spTextureView _textureView;
 
 		Uniform _color;
 		spDescSet _descSet;

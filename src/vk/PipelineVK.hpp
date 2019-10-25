@@ -16,7 +16,7 @@ namespace mango::vulkan {
 class RenderPassVK : public RenderPass {
 	public:
 		RenderPassVK() = default;
-		virtual ~RenderPassVK() = default;
+		virtual ~RenderPassVK();
 
 		virtual void create(const bool isPresent = false) final;
 
@@ -66,8 +66,6 @@ class PipelineVK : public mango::Pipeline {
 		std::shared_ptr<RenderPassVK> _renderPass;
 		vk::Pipeline                _pipeline;
 		vk::PipelineLayout          _pLayout;
-
-		std::vector<vk::ShaderModule> _shaderModules;
 };
 
 };

@@ -89,6 +89,11 @@ vk::RenderPass RenderPassVK::getVK(){
 	return _renderPass;
 }
 
+RenderPassVK::~RenderPassVK() {
+	auto device = Instance::device<DeviceVK>();
+	device->getDevice().destroyRenderPass(_renderPass);
+}
+
 PipelineVK::PipelineVK(const mango::PipelineInfo &rp) : Pipeline(rp) {
 	setRenderPass(_renderPattern.getRenderPass());
 	for(const auto& shaderPair : _renderPattern.getShaders()){
@@ -100,6 +105,9 @@ PipelineVK::PipelineVK(const mango::PipelineInfo &rp) : Pipeline(rp) {
 
 PipelineVK::~PipelineVK() {
 	std::cout << "~PipelineVK" << std::endl;
+	auto device = Instance::device<DeviceVK>();
+	if(_pipeline)device->getDevice().destroyPipeline(_pipeline);
+	if(_pLayout)device->getDevice().destroyPipelineLayout(_pLayout);
 }
 
 void PipelineVK::addShader(const mango::ShaderStage &type, const std::string &filename) {
@@ -108,7 +116,6 @@ void PipelineVK::addShader(const mango::ShaderStage &type, const std::string &fi
 		return;
 	}
 
-	_shaderModules.push_back(*shaderModule);
 	vk::PipelineShaderStageCreateInfo shaderStageInfo(
 		vk::PipelineShaderStageCreateFlags(),
 		shaderStageVK(type),
@@ -190,6 +197,10 @@ void PipelineVK::create() {
 		_renderPass->getVK(),0);
 
 	_pipeline = vk_device.createGraphicsPipelines(nullptr,pipelineInfo)[0];
+
+	for(const auto& shader : _shaders){
+		vk_device.destroyShaderModule(shader.module);
+	}
 }
 
 vk::Pipeline PipelineVK::getVK(){
