@@ -98,13 +98,7 @@ class TestApp : public BaseApp {
 		bool update() final {
 			return true;
 		}
-		
-		bool onKey(const GLFWKey& key) final {
-			return true;
-		}
-		bool onMouse(const GLFWMouse& mouse) final {
-			return true;
-		}
+
 		bool onExit() final {
 			Instance::device()->waitIdle();
 			return true;

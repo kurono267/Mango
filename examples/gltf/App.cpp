@@ -114,16 +114,11 @@ bool App::init() {
 }
 
 bool App::draw() {
-    auto currFrameTime = std::chrono::steady_clock::now();
-    _dt = std::chrono::duration_cast<std::chrono::duration<float> >(currFrameTime-_prevFrameTime).count();
-
     auto device = Instance::device();
     auto imageIndex = device->nextScreen(_screenAvailable);
 
     device->submit(_cmdScreen[imageIndex],_screenAvailable,_renderFinish);
     device->present(imageIndex,_renderFinish);
-
-    _prevFrameTime = currFrameTime;
 
     return true;
 }
@@ -133,30 +128,11 @@ bool App::update() {
     return true;
 }
 
-bool App::onKey(const GLFWKey& key) {
-    return true;
-}
-bool App::onMouse(const GLFWMouse& mouse) {
-    if(mouse.callState == GLFWMouse::onMouseButton){
-        if(mouse.button == GLFW_MOUSE_BUTTON_1){
-            if(mouse.action == GLFW_PRESS){
-                _isPressed = true;
-                _isFirst = true;
-            } else _isPressed = false;
-        }
-    } else if (mouse.callState == GLFWMouse::onMousePosition){
-        if(_isPressed){
-            if(!_isFirst){
-                glm::vec2 dp = glm::vec2(mouse.x,mouse.y)-_prev_mouse;
-				glm::vec3 eulerAngles = _cameraOrbit->rotationEuler();
-				eulerAngles.y += dp.x*_dt;
-				eulerAngles.x += dp.y*_dt;
-				_cameraOrbit->setRotation(eulerAngles);
-            }
-            _prev_mouse = glm::vec2(mouse.x,mouse.y);
-            _isFirst = false;
-        }
-    }
+bool App::onTouch(const glm::vec2& coord, const glm::vec2& deltacoord) {
+	glm::vec3 eulerAngles = _cameraOrbit->rotationEuler();
+	eulerAngles.y += deltacoord.x;
+	eulerAngles.x += deltacoord.y;
+	_cameraOrbit->setRotation(eulerAngles);
     return true;
 }
 bool App::onExit() {

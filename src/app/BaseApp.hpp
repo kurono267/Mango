@@ -6,7 +6,7 @@
 namespace mango {
 
 class MainApp;
-struct GLFWKey;
+struct KeyData;
 struct GLFWMouse;
 typedef std::shared_ptr<MainApp> spMainApp;
 
@@ -19,10 +19,16 @@ class BaseApp {
 		virtual bool draw() = 0;
 		virtual bool update() = 0;
 		
-		virtual bool onKey(const GLFWKey& key){
+		virtual bool onKey(const KeyData& key){
 			return true;
 		}
-		virtual bool onMouse(const GLFWMouse& mouse){
+		virtual bool onTouch(const glm::vec2& coord, const glm::vec2& deltacoord){
+			return true;
+		}
+		virtual bool onTouchDown(const glm::vec2& coord){
+			return true;
+		}
+		virtual bool onMouseRight(const glm::vec2& coord){
 			return true;
 		}
 		virtual bool onScroll(const glm::vec2& offset){

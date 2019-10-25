@@ -4,15 +4,15 @@
 
 using namespace mango;
 
-GLFWKey::GLFWKey() : key(0), scancode(0), action(0), mods(0) {}
-GLFWKey::GLFWKey(int _key,int _scancode,int _action,int _mods) : key(_key), scancode(_scancode), action(_action), mods(_mods) {}
+KeyData::KeyData() : key(0), scancode(0), action(0), mods(0) {}
+KeyData::KeyData(int _key, int _scancode, int _action, int _mods) : key(_key), scancode(_scancode), action(_action), mods(_mods) {}
 
 GLFWMouse::GLFWMouse() : callState(noState), button(0),action(0),mods(0), x(0.0), y(0.0) {}
 
 GLFWMouse::GLFWMouse(const int _button,const int _action,const int _mods) : callState(onMouseButton), button(_button), action(_action), mods(_mods),x(0),y(0) {}
 GLFWMouse::GLFWMouse(const double _x,const double _y) : callState(onMousePosition), x(_x), y(_y),action(0),mods(0),button(0) {}
 
-MainApp::MainApp() : _isRun(true), _window(nullptr) {}
+MainApp::MainApp() : _isRun(true), _window(nullptr),_isLeftBtn(false) {}
 
 void MainApp::exit(){
 	_isRun = false;
@@ -35,6 +35,10 @@ void MainApp::run(){
 	_app->mainApp = shared_from_this();
 	_app->init();
 	while(_isRun){
+		auto currFrameTime = std::chrono::steady_clock::now();
+		_dt = std::chrono::duration_cast<std::chrono::duration<float> >(currFrameTime-_prevFrameTime).count();
+		_prevFrameTime = currFrameTime;
+
 		_app->update();
 		_app->draw();
 		glfwPollEvents();
@@ -83,10 +87,10 @@ void MainApp::vsync(bool on){
 	else glfwSwapInterval(0);
 }
 
-const GLFWKey MainApp::glfwKeyState() const {
+const KeyData MainApp::glfwKeyState() const {
 	return _lastKey;
 }
 
-const GLFWMouse MainApp::glfwMouseState() const {
-	return _lastMouse;
+float MainApp::getFrameTime() {
+	return _dt;
 }

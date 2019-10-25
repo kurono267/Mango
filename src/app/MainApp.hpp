@@ -8,11 +8,11 @@
 
 namespace mango {
 
-struct GLFWKey {
-	GLFWKey();
-	GLFWKey(int _key,int _scancode,int _action,int _mods);
-	GLFWKey(const GLFWKey& state) = default;
-	virtual ~GLFWKey() = default;
+struct KeyData {
+	KeyData();
+	KeyData(int _key, int _scancode, int _action, int _mods);
+	KeyData(const KeyData& state) = default;
+	virtual ~KeyData() = default;
 
 	int key; int scancode; int action; int mods;
 };
@@ -49,8 +49,7 @@ class MainApp : public std::enable_shared_from_this<MainApp> {
 			_app = std::make_unique<T>(shared_from_this());
 		}
 
-		const GLFWKey glfwKeyState() const;
-		const GLFWMouse glfwMouseState() const;
+		const KeyData glfwKeyState() const;
 
 		void exit();
 		// Create window and setup
@@ -62,6 +61,8 @@ class MainApp : public std::enable_shared_from_this<MainApp> {
 		void run();
 		void resize(const int width,const int height);
 		bool is();
+
+		float getFrameTime();
 
 		GLFWwindow* window();
 
@@ -78,20 +79,34 @@ class MainApp : public std::enable_shared_from_this<MainApp> {
 
 		static void __glfwOnKey(GLFWwindow* window, int key, int scancode, int action, int mods){
 			ptr& app = instance();
-			app->_lastKey = GLFWKey(key,scancode,action,mods);
+			app->_lastKey = KeyData(key, scancode, action, mods);
 			app->_app->onKey(app->glfwKeyState());
 		}
 
 		static void __glfwOnMouseBtn(GLFWwindow* window, int button, int action, int mods){
 			ptr& app = instance();
-			app->_lastMouse = GLFWMouse(button,action, mods);
-			app->_app->onMouse(app->glfwMouseState());
+			double x; double y;
+			glfwGetCursorPos(app->window(),&x,&y);
+			glm::vec2 currPoint(x,y);
+			if(button == GLFW_MOUSE_BUTTON_1) {
+				if(action == GLFW_PRESS) {
+					app->_app->onTouchDown(currPoint);
+					app->_isLeftBtn = true;
+				} else {
+					app->_isLeftBtn = false;
+				}
+			}
+			app->_prevCoord = currPoint;
 		}
 
 		static void __glfwOnMousePos(GLFWwindow* window, double x, double y){
 			ptr& app = instance();
-			app->_lastMouse = GLFWMouse(x,y);
-			app->_app->onMouse(app->glfwMouseState());
+			glm::vec2 currPoint(x,y);
+			if(app->_isLeftBtn){
+				auto deltaCoord = currPoint-app->_prevCoord;
+				app->_app->onTouch(currPoint,deltaCoord*app->_dt);
+			}
+			app->_prevCoord = currPoint;
 		}
 
 		static void __glfwOnScroll(GLFWwindow* window, double x, double y){
@@ -107,8 +122,12 @@ class MainApp : public std::enable_shared_from_this<MainApp> {
 
 		std::unique_ptr<BaseApp> _app;
 		// Current statements
-		GLFWKey   _lastKey;
-		GLFWMouse _lastMouse;
+		KeyData   _lastKey;
+
+		float _dt;
+		std::chrono::steady_clock::time_point _prevFrameTime;
+		glm::vec2 _prevCoord;
+		bool _isLeftBtn;
 
 		std::string _title;
 

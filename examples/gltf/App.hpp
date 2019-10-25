@@ -20,8 +20,8 @@ public:
     bool draw() final;
     bool update() final;
 
-    bool onKey(const GLFWKey& key) final;
-    bool onMouse(const GLFWMouse& mouse) final;
+    bool onTouch(const glm::vec2& coord, const glm::vec2& deltacoord) final;
+
     bool onExit() final;
 protected:
     spPipeline _main;
@@ -34,13 +34,6 @@ protected:
     spSceneNode _scene;
     Uniform _cameraUniform;
     Uniform _nodeUniform;
-
-    // For camera rotate
-    bool _isPressed = false;
-    bool _isFirst = false;
-    glm::vec2 _prev_mouse;
-    float _dt;
-    std::chrono::steady_clock::time_point _prevFrameTime;
 
     spDescSet _descSet;
 
