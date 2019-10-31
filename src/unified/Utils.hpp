@@ -13,6 +13,8 @@ spTexture checkboardTexture(spDevice device,uint32_t width, uint32_t height, uin
 spTexture createSinglePixelTexture(spDevice device, float value);
 spTexture createSinglePixelTexture(spDevice device, const glm::vec4& value);
 
+spTexture createRandomTexture2D(const int width, const int height);
+
 }
 
 #endif //MANGO_UTILS_HPP
