@@ -23,7 +23,7 @@ float perlinNoise2DOctave(vec2 coord,float amp, vec2 freq){
         for(int xs = 0;xs<2;++xs){
             vec2 gradient = texelFetch(noiseTex,ivec2(floor(pixelCoord+vec2(xs,ys))),0).xy;
             vec2 distance = localCoord-vec2(xs,ys);
-            interpCoords[ys*2+xs] = dot(distance,gradient);
+            interpCoords[ys*2+xs] = dot(distance,gradient)*0.5f+0.5f;
         }
     }
 
@@ -38,16 +38,19 @@ float perlinNoise2DOctave(vec2 coord,float amp, vec2 freq){
 
 float perlinNoise2D(vec2 coord,float amp, vec2 freq, float presistance, int octaves){
     float perlin = 0.f;
+    float norm = amp;
     for(int i = 0;i<octaves;++i){
         perlin += perlinNoise2DOctave(coord,amp,freq);
         freq *= 2;
         amp *= presistance;
+        norm += amp;
     }
+    perlin /= norm;
     return perlin;
 }
 
 void main() {
-    float perlin = perlinNoise2D(uv,1.f,vec2(0.02f,0.02f),0.5f,8);
+    float perlin = perlinNoise2D(uv,0.3f,vec2(0.20f,0.02f),0.01f,8);
 
     fragColor = vec4(perlin,perlin,perlin,1.f);
 }
