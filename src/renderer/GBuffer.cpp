@@ -21,22 +21,13 @@ GBuffer::GBuffer(const spDevice &device, const glm::ivec2& size) : _device(devic
 	_material = _device->createTexture(size.x,size.y,1,Format::R16G16B16A16Sfloat,TextureType::Input | TextureType::Output);
 	std::cout << "GBuffer create finish" << std::endl;
 
-
-	_renderPass = _device->createRenderPass();
-	_renderPass->addAttachment(Attachment(_normal->format(),false,0));
-	_renderPass->addAttachment(Attachment(_pos->format(),false,1));
-	_renderPass->addAttachment(Attachment(_albedo->format(),false,2));
-	_renderPass->addAttachment(Attachment(_material->format(),false,3));
-	_renderPass->addAttachment(Attachment(_device->getDepthFormat(),true,4));
-	_renderPass->create();
-
-	_framebuffer = _device->createFramebuffer();
-	_framebuffer->attachment(_normal->createTextureView());
-	_framebuffer->attachment(_pos->createTextureView());
-	_framebuffer->attachment(_albedo->createTextureView());
-	_framebuffer->attachment(_material->createTextureView());
-	_framebuffer->depth(size.x,size.y);
-	_framebuffer->create(size.x,size.y,_renderPass);
+	_renderTarget = RenderTarget::make(size);
+	_renderTarget->attach(_normal->createTextureView());
+	_renderTarget->attach(_pos->createTextureView());
+	_renderTarget->attach(_albedo->createTextureView());
+	_renderTarget->attach(_material->createTextureView());
+	_renderTarget->attachDepth();
+	_renderTarget->finish();
 
 	_cameraUniform.create(_device,sizeof(CameraData));
 
@@ -51,7 +42,7 @@ GBuffer::GBuffer(const spDevice &device, const glm::ivec2& size) : _device(devic
 	_descSets[2] = SceneNode::generalDescSet();
 
 	PipelineInfo pipelineInfo;
-	pipelineInfo.setRenderPass(_renderPass);
+	pipelineInfo.setRenderPass(_renderTarget->renderPass());
 	pipelineInfo.viewport(Viewport(glm::vec2(0), size));
 	pipelineInfo.scissor(glm::ivec2(0), size);
 	pipelineInfo.rasterizer(PolygonMode::Fill, CullMode::FrontAndBack);
@@ -75,8 +66,8 @@ void GBuffer::update(const spSceneNode &scene) {
 	_commandBuffer->setClearColor(3, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
 	_commandBuffer->setClearDepthStencil(4, 1.0f, 0.0f);
 
-	_commandBuffer->beginRenderPass(_pipeline->info().getRenderPass(), _framebuffer,
-								   RenderArea(_framebuffer->getSize(), glm::ivec2(0)));
+	_commandBuffer->beginRenderPass(_renderTarget->renderPass(), _renderTarget->framebuffer(),
+								   RenderArea(_renderTarget->framebuffer()->getSize(), glm::ivec2(0)));
 	_commandBuffer->bindPipeline(_pipeline);
 
 	uint32_t matId = 0;

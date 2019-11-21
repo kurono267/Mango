@@ -13,21 +13,24 @@ namespace mango {
 
 class Framebuffer {
 	public:
-		Framebuffer() {}
+		Framebuffer(const glm::ivec2& size) : _size(size) {}
+		Framebuffer(const int width, const int height) : _size(width,height) {}
 		virtual ~Framebuffer() = default;
 
 		void attachment(const spTextureView& imageView);
-		void depth(const int width,const int height); // Create Depth Buffer
+		void depth(); // Create Depth Buffer
 
-		glm::ivec2 getSize(const int attachment = 0);
+		glm::ivec2 getSize();
+		glm::ivec2 getAttachmentSize(const int id = 0);
 
 		spTextureView getDepthView();
 		spTexture getDepthTexture();
 
 		std::string info();
 
-		virtual void create(const int width,const int height,const spRenderPass& renderPass) = 0;
+		virtual void finish(const spRenderPass& renderPass) = 0;
 	protected:
+		glm::ivec2 _size;
 		std::vector<spTextureView> _attachments;
 		spTexture _depthBuffer;
 		spTextureView _depthView;

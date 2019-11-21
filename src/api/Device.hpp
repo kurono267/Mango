@@ -59,7 +59,8 @@ class Device {
 		virtual spDescSet createDescSet() = 0;
 		virtual spCommandBuffer createCommandBuffer() = 0;
 		virtual spSemaphore createSemaphore() = 0;
-		virtual spFramebuffer createFramebuffer() = 0;
+		virtual spFramebuffer createFramebuffer(const glm::ivec2& size) = 0;
+		virtual spFramebuffer createFramebuffer(const int width, const int height) = 0;
 		virtual spCompute createCompute(const std::string& filename, const std::vector<spDescSet>& descSets) = 0;
 
 		virtual spTexture createTexture(int width,int height,

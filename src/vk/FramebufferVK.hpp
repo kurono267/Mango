@@ -13,11 +13,11 @@ namespace mango::vulkan {
 
 class FramebufferVK : public Framebuffer {
 	public:
-		FramebufferVK();
+		FramebufferVK(const glm::ivec2& size);
+		FramebufferVK(const int width, const int height);
 		virtual ~FramebufferVK() final;
 
-		void create(const int width, const int height, const spRenderPass& renderPass) final;
-		void create(const int width, const int height, const vk::RenderPass& renderPass);
+		void finish(const spRenderPass& renderPass) final;
 
 		vk::Framebuffer getVK();
 	protected:

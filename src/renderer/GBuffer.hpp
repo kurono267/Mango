@@ -9,6 +9,7 @@
 #include <scene/SceneNode.hpp>
 #include <scene/Scene.hpp>
 #include <unified/Uniform.hpp>
+#include <unified/RenderTarget.hpp>
 
 namespace mango {
 
@@ -33,9 +34,8 @@ class GBuffer {
 
 		spCommandBuffer _commandBuffer;
 		spPipeline _pipeline;
-		spRenderPass _renderPass;
 
-		spFramebuffer _framebuffer;
+		spRenderTarget _renderTarget;
 		spTexture _albedo; // RGBA16Unorm
 		spTexture _normal; // RGBA16Unorm RGB normal
 		spTexture _pos; // RGBA32Sfloat RGB pos

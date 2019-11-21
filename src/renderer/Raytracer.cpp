@@ -48,10 +48,10 @@ void Raytracer::createCameraPipeline(const glm::ivec2& size) {
 	_cameraRenderPass->addAttachment(Attachment(_cameraDir->format(),false,1));
 	_cameraRenderPass->create();
 
-	_cameraFramebuffer = device->createFramebuffer();
+	_cameraFramebuffer = device->createFramebuffer(size);
 	_cameraFramebuffer->attachment(_cameraOrigin->createTextureView());
 	_cameraFramebuffer->attachment(_cameraDir->createTextureView());
-	_cameraFramebuffer->create(size.x,size.y,_cameraRenderPass);
+	_cameraFramebuffer->finish(_cameraRenderPass);
 
 	_cameraUniform.create(device,sizeof(RayCameraData));
 

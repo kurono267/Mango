@@ -237,8 +237,12 @@ mango::spTexture DeviceVK::createTexture(int width, int height, int miplevels, c
 	return texture;
 }
 
-mango::spFramebuffer DeviceVK::createFramebuffer(){
-	return std::make_shared<FramebufferVK>();
+spFramebuffer DeviceVK::createFramebuffer(const glm::ivec2& size) {
+	return std::make_shared<FramebufferVK>(size);
+}
+
+spFramebuffer DeviceVK::createFramebuffer(const int width, const int height) {
+	return std::make_shared<FramebufferVK>(width,height);
 }
 
 mango::spCommandBuffer DeviceVK::createCommandBuffer(){
@@ -280,15 +284,15 @@ void DeviceVK::createScreen(){
 	auto extent = _swapchain->getExtent();
 
 	for(const auto& view : imageViews){
-		spFramebufferVK framebuffer = std::dynamic_pointer_cast<FramebufferVK>(createFramebuffer());
+		spFramebufferVK framebuffer = std::dynamic_pointer_cast<FramebufferVK>(createFramebuffer(extent.width,extent.height));
 
 		framebuffer->attachment(view);
-		framebuffer->depth(extent.width,extent.height);
+		framebuffer->depth();
 
 		auto depthTexture = std::dynamic_pointer_cast<TextureVK>(framebuffer->getDepthTexture());
 		depthTexture->transition(vk::ImageLayout::eDepthStencilAttachmentOptimal);
 
-		framebuffer->create(extent.width,extent.height,_screenRenderPass->getVK());
+		framebuffer->finish(_screenRenderPass);
 
 		_screenbuffers.push_back(framebuffer);
 	}

@@ -13,10 +13,10 @@ void Framebuffer::attachment(const spTextureView &imageView) {
 	_attachments.push_back(imageView);
 }
 
-void Framebuffer::depth(const int width, const int height) {
+void Framebuffer::depth() {
 	auto device = Instance::device();
 	auto depthFormat = device->getDepthFormat();
-	_depthBuffer = device->createTexture(width,height,1,depthFormat,TextureType::DepthStencil);
+	_depthBuffer = device->createTexture(_size.x,_size.y,1,depthFormat,TextureType::DepthStencil);
 	_depthView = _depthBuffer->createTextureView();
 	_attachments.push_back(_depthView);
 }
@@ -29,8 +29,12 @@ spTexture Framebuffer::getDepthTexture() {
 	return _depthBuffer;
 }
 
-glm::ivec2 Framebuffer::getSize(const int attachment){
-	auto texture = _attachments[attachment]->getTexture();
+glm::ivec2 Framebuffer::getSize(){
+	return _size;
+}
+
+glm::ivec2 Framebuffer::getAttachmentSize(const int id) {
+	auto texture = _attachments[id]->getTexture();
 	return glm::ivec2(texture->width(),texture->height());
 }
 

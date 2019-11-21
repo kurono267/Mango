@@ -17,10 +17,10 @@ PBR::PBR(const spGBuffer &gbuffer, const glm::ivec2& size) : _gBuffer(gbuffer) {
 	_renderPass->addAttachment(Attachment(device->getDepthFormat(),true,1));
 	_renderPass->create();
 
-	_framebuffer = device->createFramebuffer();
+	_framebuffer = device->createFramebuffer(size);
 	_framebuffer->attachment(lightResultView);
-	_framebuffer->depth(size.x,size.y);
-	_framebuffer->create(size.x,size.y,_renderPass);
+	_framebuffer->depth();
+	_framebuffer->finish(_renderPass);
 
 	_uniform.create(device,sizeof(glm::vec3));
 

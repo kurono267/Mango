@@ -9,24 +9,21 @@
 
 using namespace mango::vulkan;
 
-void FramebufferVK::create(const int width, const int height, const mango::spRenderPass& renderPass) {
-	auto renderPass_vk = std::dynamic_pointer_cast<RenderPassVK>(renderPass);
-	create(width,height,renderPass_vk->getVK());
-}
+void FramebufferVK::finish(const mango::spRenderPass& renderPass) {
+	auto renderPassVK = std::dynamic_pointer_cast<RenderPassVK>(renderPass);
 
-void FramebufferVK::create(const int width, const int height, const vk::RenderPass& renderPass){
 	std::vector<vk::ImageView> views;
 	for(auto v : _attachments){
 		auto v_vk = std::dynamic_pointer_cast<TextureViewVK>(v);
 		views.push_back(v_vk->getView());
 	}
 	vk::FramebufferCreateInfo framebufferInfo = vk::FramebufferCreateInfo(
-		vk::FramebufferCreateFlags(), // Default
-		renderPass, // Current render pass
-		views.size(), views.data(), // Attachments
-		width, // Width
-		height, // Height
-		1 // Layers
+			vk::FramebufferCreateFlags(), // Default
+			renderPassVK->getVK(), // Current render pass
+			views.size(), views.data(), // Attachments
+			_size.x, // Width
+			_size.y, // Height
+			1 // Layers
 	);
 	_deviceVk = Instance::device<DeviceVK>();
 	_framebuffer = _deviceVk.lock()->getDevice().createFramebuffer(framebufferInfo);
@@ -36,7 +33,12 @@ vk::Framebuffer FramebufferVK::getVK(){
 	return _framebuffer;
 }
 
-FramebufferVK::FramebufferVK() {
+FramebufferVK::FramebufferVK(const glm::ivec2& size) : Framebuffer(size) {
+
+}
+
+FramebufferVK::FramebufferVK(const int width, const int height) :
+	Framebuffer(width,height) {
 
 }
 
