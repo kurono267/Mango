@@ -63,8 +63,9 @@ PBR::PBR(const spGBuffer &gbuffer, const glm::ivec2& size) : _gBuffer(gbuffer) {
 
 void PBR::render(const Scene &scene, const spSemaphore &wait, const spSemaphore &finish) {
 	spSceneNode cameraNode = scene.getCameraNode();
-	glm::vec3 cameraPos = glm::vec3(cameraNode->getWorldTransform()*glm::vec4(0.f,0.f,0.f,1.f));
-	//std::cout << "CameraPos " << glm::to_string(cameraPos) << std::endl;
+	glm::mat4 cameraTransform = glm::inverse(cameraNode->getWorldTransform());
+	glm::vec3 cameraPos = glm::vec3(cameraTransform*glm::vec4(0.f,0.f,0.f,1.f));
+	std::cout << "CameraPos " << glm::to_string(cameraPos) << std::endl;
 	_uniform.set(sizeof(glm::vec3),&cameraPos);
 
 	Instance::device()->submit(_commandBuffer,wait,finish);

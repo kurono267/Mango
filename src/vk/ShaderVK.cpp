@@ -2,7 +2,7 @@
 // Created by kurono267 on 2019-09-05.
 //
 
-#include <libshaderc/shaderc.hpp>
+#include <shaderc/shaderc.hpp>
 #include <filesystem>
 #include <iostream>
 #include <unordered_set>

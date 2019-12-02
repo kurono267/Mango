@@ -9,16 +9,20 @@ using namespace mango::vulkan;
 
 vk::SurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& availableFormats) {
 	if (availableFormats.size() == 1 && availableFormats[0].format == vk::Format::eUndefined) {
-		return {vk::Format::eB8G8R8A8Unorm, vk::ColorSpaceKHR::eSrgbNonlinear};
+		VkSurfaceFormatKHR formatSurface;
+		formatSurface.format = (VkFormat)vk::Format::eB8G8R8A8Unorm;
+		formatSurface.colorSpace = (VkColorSpaceKHR)vk::ColorSpaceKHR::eSrgbNonlinear;
+		return formatSurface;
 	}
 
 	std::cout << "Available swap surface format" << std::endl;
 	for (const auto& availableFormat : availableFormats) {
 		std::cout << mango::to_string(formatVK2Mango(availableFormat.format)) << std::endl;
+		std::cout << vk::to_string(availableFormat.colorSpace) << std::endl;
 	}
 	for (const auto& availableFormat : availableFormats) {
-		if (availableFormat.format == vk::Format::eR16G16B16A16Sfloat/* && availableFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear*/) { // TODO Crossplatform support wide channels swapchain
-		//	std::cout << vk::to_string(availableFormat.colorSpace) << std::endl;
+		if (availableFormat.format == vk::Format::eR16G16B16A16Sfloat && availableFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) { // TODO Crossplatform support wide channels swapchain
+			std::cout << vk::to_string(availableFormat.colorSpace) << std::endl;
 		//if (availableFormat.format == vk::Format::eB8G8R8A8Srgb && availableFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
 			return availableFormat;
 		}

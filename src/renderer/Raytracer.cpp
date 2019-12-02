@@ -18,7 +18,7 @@ Raytracer::Raytracer(const glm::ivec2 &size) {
 
 	createCameraPipeline(size);
 
-	_albedo = device->createTexture(size.x,size.y,1,Format::R16G16B16A16Unorm, TextureType::Input | TextureType::Storage);
+	_albedo = device->createTexture(size.x,size.y,1,Format::R16G16B16A16Sfloat, TextureType::Input | TextureType::Storage);
 	_normal = device->createTexture(size.x,size.y,1,Format::R16G16B16A16Unorm,TextureType::Input | TextureType::Storage);
 	_pos = device->createTexture(size.x,size.y,1,Format::R32G32B32A32Sfloat,TextureType::Input | TextureType::Storage);
 	_material = device->createTexture(size.x,size.y,1,Format::R16G16B16A16Sfloat,TextureType::Input | TextureType::Storage);

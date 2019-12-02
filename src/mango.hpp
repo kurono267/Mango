@@ -23,6 +23,7 @@
 #include <unified/Uniform.hpp>
 #include <unified/Utils.hpp>
 #include <unified/Image.hpp>
+#include <unified/RenderTarget.hpp>
 
 #include <scene/Camera.hpp>
 #include <scene/SceneNode.hpp>

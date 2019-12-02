@@ -36,11 +36,11 @@ class Material {
 	protected:
 		spTexture _albedo;
 		union {
-			float _roughnessFactor;
-			float _metallicFactor;
 			struct {
-				glm::vec2 _factors;
+				float _roughnessFactor;
+				float _metallicFactor;
 			};
+			glm::vec2 _factors;
 		};
 		spTexture _metallicRoughness;
 

@@ -136,6 +136,7 @@ std::vector<const char*> InstanceVK::getRequiredExtensions() {
 	for (unsigned int i = 0; i < glfwExtensionCount; i++) {
 		extensions.push_back(glfwExtensions[i]);
 	}
+	extensions.push_back(VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
 
 	if (enableValidationLayers) {
 		extensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);

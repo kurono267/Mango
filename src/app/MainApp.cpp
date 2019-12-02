@@ -7,11 +7,6 @@ using namespace mango;
 KeyData::KeyData() : key(0), scancode(0), action(0), mods(0) {}
 KeyData::KeyData(int _key, int _scancode, int _action, int _mods) : key(_key), scancode(_scancode), action(_action), mods(_mods) {}
 
-GLFWMouse::GLFWMouse() : callState(noState), button(0),action(0),mods(0), x(0.0), y(0.0) {}
-
-GLFWMouse::GLFWMouse(const int _button,const int _action,const int _mods) : callState(onMouseButton), button(_button), action(_action), mods(_mods),x(0),y(0) {}
-GLFWMouse::GLFWMouse(const double _x,const double _y) : callState(onMousePosition), x(_x), y(_y),action(0),mods(0),button(0) {}
-
 MainApp::MainApp() : _isRun(true), _window(nullptr),_isLeftBtn(false) {}
 
 void MainApp::exit(){

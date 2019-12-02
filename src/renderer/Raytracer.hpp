@@ -38,6 +38,9 @@ class Raytracer {
 		spTexture _albedo;
 		spTexture _material;
 
+		spTexture _cameraOrigin;
+		spTexture _cameraDir;
+
 		spCompute _compute;
 		spCommandBuffer _commandBuffer;
 		spDescSet _output;
@@ -53,8 +56,6 @@ class Raytracer {
 		spFramebuffer _cameraFramebuffer;
 		spDescSet _cameraDescSet;
 		spMesh _quadMesh;
-		spTexture _cameraOrigin;
-		spTexture _cameraDir;
 		Uniform _cameraUniform;
 		spCommandBuffer _cameraCommandBuffer;
 		spSemaphore _cameraSemaphore;

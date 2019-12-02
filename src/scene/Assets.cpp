@@ -70,7 +70,7 @@ spTexture loadTexture(const spDevice& device,const std::string& filename){
 				break;
 			case 3:
 			case 4:
-				format = Format::R8G8B8A8Srgb;
+				format = Format::R8G8B8A8Unorm;
 				break;
 			default:
 				format = Format::Undefined;
@@ -249,10 +249,12 @@ spSceneNode recursiveLoadNodes(const spDevice& device,std::vector<spMaterial>& m
 			}
 			auto roughnessFactorItr = tfMaterial.values.find("roughnessFactor");
 			if (roughnessFactorItr != tfMaterial.values.end()) {
+				std::cout << "Roughness Factor " << roughnessFactorItr->second.Factor() << std::endl;
 				mat->setRoughnessFactor(roughnessFactorItr->second.Factor());
 			}
 			auto metallicFactorItr = tfMaterial.values.find("metallicFactor");
 			if (metallicFactorItr != tfMaterial.values.end()) {
+				std::cout << "Metallic Factor " << metallicFactorItr->second.Factor() << std::endl;
 				mat->setMetallicFactor(metallicFactorItr->second.Factor());
 			}
 			auto metallicRoughnessTextureItr = tfMaterial.values.find("metallicRoughnessTexture");

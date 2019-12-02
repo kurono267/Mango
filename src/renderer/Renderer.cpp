@@ -10,6 +10,7 @@ using namespace mango;
 Renderer::Renderer(const spDevice& device,const glm::ivec2 &frameSize)
 	: _device(device), _frameSize(frameSize) {
 	//_frame = _device->createTexture(_frameSize.x,_frameSize.y,1,Format::R8G8B8A8Srgb,TextureType::Input);
+	std::cout << "FRAMESIZE:" << _frameSize.x << "," << _frameSize.y << std::endl;
 	_gBuffer = std::make_shared<GBuffer>(_device,frameSize);
 	_pbr = std::make_shared<PBR>(_gBuffer,frameSize);
 	_raytracer = std::make_shared<Raytracer>(frameSize);
@@ -24,7 +25,7 @@ Renderer::Renderer(const spDevice& device,const glm::ivec2 &frameSize)
 	pipelineInfo.addShader(ShaderStage::Fragment, "../glsl/renderer/final.frag");
 
 	_frameDescSet = _device->createDescSet();
-	//_frameDescSet->setTexture(_raytracer->getAlbedo(),Sampler(),0,ShaderStage::Fragment);
+	//_frameDescSet->setTexture(_raytracer->getAlbedo()->createTextureView(),Sampler(),0,ShaderStage::Fragment);
 	_frameDescSet->setTexture(_pbr->getLightResult()->createTextureView(),Sampler(),0,ShaderStage::Fragment);
 	_frameDescSet->create();
 

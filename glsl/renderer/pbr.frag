@@ -20,13 +20,13 @@ layout(location = 0) out vec4 fragColor;
 void main() {
     vec3 pos = texture(posTex,uv).xyz;
     vec3 normal = normalize(texture(normalTex,uv).xyz*2.0f-1.0f);
-    vec3 lightDir = normalize(vec3(0.0f,0.5f,1.f));
+    vec3 lightDir = normalize(vec3(1.0f,-1.0f,1.f));
     vec3 wo = normalize(camera.pos-pos);
 
     vec2 rm = texture(material,uv).rg;
     vec3 albedo = texture(albedoTex,uv).rgb;
 
-    vec3 f = light(lightDir,wo,normal,rm.y,rm.x,albedo);
+    vec3 f = light(lightDir,wo,normal,rm.y,rm.x,albedo)*3.0f;
 
-    fragColor = vec4(/*f*10.f*/f,1.f);//vec4(vec3(uv,0.0), 1.0);
+    fragColor = vec4(f,1.f);//vec4(vec3(uv,0.0), 1.0);
 }

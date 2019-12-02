@@ -82,6 +82,7 @@ void GBuffer::update(const spSceneNode &scene) {
 		if(!material || !mesh)return;
 		descSets[1] = material->getDescSet();
 		descSets[2] = node->getDescSet();
+		std::cout << "R:" << material->getRoughnessFactor() << std::endl;
 
 		glm::mat4 transform = node->getWorldTransform();
 

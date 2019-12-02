@@ -23,16 +23,16 @@ struct Node {
 };
 
 // Vertex Buffer
-layout (set=0,binding=0) buffer vertexData {
-    Vertex vertexes[];
+layout (set=0,binding=0,std430) buffer vertexData {
+    readonly Vertex vertexes[];
 };
 // Index Buffer
-layout (set=0,binding=1) buffer indexData {
-    uint indexes[];
+layout (set=0,binding=1,std430) buffer indexData {
+    readonly uint indexes[];
 };
 
-layout (set=0,binding = 2) buffer nodeData {
-    Node nodes[];
+layout (set=0,binding = 2,std430) buffer nodeData {
+    readonly Node nodes[];
 };
 
 layout (set=1,binding = 0, rgba32f) uniform image2D rayOrg;

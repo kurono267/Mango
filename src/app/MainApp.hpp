@@ -17,22 +17,6 @@ struct KeyData {
 	int key; int scancode; int action; int mods;
 };
 
-struct GLFWMouse {
-	GLFWMouse();
-	GLFWMouse(const int _button,const int _action,const int _mods);
-	GLFWMouse(const double _x,const double _y);
-	GLFWMouse(const GLFWMouse& state) = default;
-	virtual ~GLFWMouse() = default;
-
-	static const int noState = 0x0000;
-	static const int onMouseButton = 0x0001;
-	static const int onMousePosition = 0x0010;
-
-	int callState;
-	int button; int action; int mods; // Mouse BTN
-	double x; double y; // Mouse Position
-};
-
 //class BaseApp;
 
 class MainApp : public std::enable_shared_from_this<MainApp> {
@@ -117,6 +101,7 @@ class MainApp : public std::enable_shared_from_this<MainApp> {
 
 		static void __glfwOnResize(GLFWwindow* window, int width, int height){
 			ptr& app = instance();
+			std::cout << "resize" << std::endl;
 			app->resize(width,height);
 		}
 
