@@ -32,11 +32,6 @@ bool App::init() {
 	spSceneNode testScene = createTestScene();
 	_scene.rootNode->addChild(testScene);
 
-	auto screenBuffers = device->getScreenbuffers();
-	for (const auto &screen : screenBuffers) {
-		std::cout << screen->info() << std::endl;
-	}
-
 	_renderer = Renderer::make(device,glm::ivec2(1280,720));
 	_renderer->init(_scene);
 

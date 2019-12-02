@@ -13,6 +13,7 @@
 #include "FramebufferVK.hpp"
 #include "DescSetVK.hpp"
 #include "ComputeVK.hpp"
+#include <unified/RenderTarget.hpp>
 
 using namespace mango::vulkan;
 using namespace mango;
@@ -71,8 +72,7 @@ DeviceVK::~DeviceVK(){
 
 void DeviceVK::release() {
 	std::cout << "DeviceVK::release" << std::endl;
-	_screenbuffers.clear();
-	_screenRenderPass = nullptr;
+	_screenRenderTargets.clear();
 
 	_swapchain.reset();
 }
@@ -275,10 +275,10 @@ mango::Format DeviceVK::getDepthFormat() {
 }
 
 void DeviceVK::createScreen(){
-	_screenRenderPass = std::make_shared<RenderPassVK>();
-	_screenRenderPass->addAttachment(Attachment(formatVK2Mango(_swapchain->getFormat()),false,0));
-	_screenRenderPass->addAttachment(Attachment(getDepthFormat(),true,1));
-	_screenRenderPass->create(true);
+	auto screenRenderPass = std::make_shared<RenderPassVK>();
+	screenRenderPass->addAttachment(Attachment(formatVK2Mango(_swapchain->getFormat()),false,0));
+	screenRenderPass->addAttachment(Attachment(getDepthFormat(),true,1));
+	screenRenderPass->create(true);
 
 	auto imageViews = _swapchain->getImageViews();
 	auto extent = _swapchain->getExtent();
@@ -292,18 +292,14 @@ void DeviceVK::createScreen(){
 		auto depthTexture = std::dynamic_pointer_cast<TextureVK>(framebuffer->getDepthTexture());
 		depthTexture->transition(vk::ImageLayout::eDepthStencilAttachmentOptimal);
 
-		framebuffer->finish(_screenRenderPass);
+		framebuffer->finish(screenRenderPass);
 
-		_screenbuffers.push_back(framebuffer);
+		_screenRenderTargets.push_back(std::make_shared<RenderTarget>(framebuffer,screenRenderPass));
 	}
 }
 
-mango::spRenderPass DeviceVK::getScreenRenderPass(){
-	return std::dynamic_pointer_cast<mango::RenderPass>(_screenRenderPass);
-}
-
-std::vector<mango::spFramebuffer> DeviceVK::getScreenbuffers(){
-	return _screenbuffers;
+std::vector<spRenderTarget> DeviceVK::getScreenRenderTargets(){
+	return _screenRenderTargets;
 }
 
 mango::spSemaphore DeviceVK::createSemaphore(){
@@ -370,6 +366,10 @@ vk::CommandPool DeviceVK::getComputeCommandPool() {
 
 vk::Queue DeviceVK::getComputeQueue() {
 	return _computeQueue;
+}
+
+glm::ivec2 DeviceVK::getScreenSize(){
+	return _size;
 }
 
 SemaphoreVK::SemaphoreVK() {

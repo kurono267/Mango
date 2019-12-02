@@ -56,12 +56,13 @@ class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
 		spCommandBuffer createCommandBuffer() final;
 		spSemaphore createSemaphore() final;
 
+		glm::ivec2 getScreenSize() final;
+
 		spCompute createCompute(const std::string& filename, const std::vector<spDescSet>& descSets) final;
 
 		Format getDepthFormat() final;
 
-		std::vector<spFramebuffer> getScreenbuffers() final;
-		spRenderPass getScreenRenderPass() final;
+		std::vector<spRenderTarget> getScreenRenderTargets() final;
 
 		void submit(const spCommandBuffer& cmd, const spSemaphore& waitForIt, const spSemaphore& result) final;
 		void present(uint32_t screen, const spSemaphore& signal) final;
@@ -87,8 +88,7 @@ private:
 		vk::Queue          _computeQueue;
 		vk::SurfaceKHR     _surface;
 
-		std::shared_ptr<RenderPassVK> _screenRenderPass;
-		std::vector<spFramebuffer> _screenbuffers;
+		std::vector<spRenderTarget> _screenRenderTargets;
 
 		vk::CommandPool    _pool;
 		vk::CommandPool    _computePool;

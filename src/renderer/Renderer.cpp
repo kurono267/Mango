@@ -13,13 +13,12 @@ Renderer::Renderer(const spDevice& device,const glm::ivec2 &frameSize)
 	_gBuffer = std::make_shared<GBuffer>(_device,frameSize);
 	_pbr = std::make_shared<PBR>(_gBuffer,frameSize);
 	_raytracer = std::make_shared<Raytracer>(frameSize);
-	_renderPass = _device->getScreenRenderPass();
-
-	const auto& screenbuffers = _device->getScreenbuffers();
+	auto screenSize = _device->getScreenSize();
+	_renderTargets = _device->getScreenRenderTargets();
 
 	PipelineInfo pipelineInfo;
-	pipelineInfo.viewport(Viewport(glm::vec2(0), screenbuffers[0]->getSize()));
-	pipelineInfo.scissor(glm::ivec2(0), screenbuffers[0]->getSize());
+	pipelineInfo.viewport(Viewport(glm::vec2(0), screenSize));
+	pipelineInfo.scissor(glm::ivec2(0), screenSize);
 	pipelineInfo.rasterizer(PolygonMode::Fill, CullMode::FrontAndBack);
 	pipelineInfo.addShader(ShaderStage::Vertex, "../glsl/renderer/final.vert");
 	pipelineInfo.addShader(ShaderStage::Fragment, "../glsl/renderer/final.frag");
@@ -30,14 +29,14 @@ Renderer::Renderer(const spDevice& device,const glm::ivec2 &frameSize)
 	_frameDescSet->create();
 
 	pipelineInfo.setDescSet(_frameDescSet);
-	pipelineInfo.setRenderPass(_renderPass);
+	pipelineInfo.setRenderPass(_renderTargets[0]->renderPass());
 
 	_framePipeline = _device->createPipeline(pipelineInfo);
 
 	_quadMesh = createQuad();
 
-	_frameCommandBuffers.resize(screenbuffers.size());
-	for(int i = 0;i<screenbuffers.size();++i){
+	_frameCommandBuffers.resize(_renderTargets.size());
+	for(int i = 0;i<_renderTargets.size();++i){
 		_frameCommandBuffers[i] = _device->createCommandBuffer();
 		auto commandBuffer = _frameCommandBuffers[i];
 		commandBuffer->begin();
@@ -45,7 +44,7 @@ Renderer::Renderer(const spDevice& device,const glm::ivec2 &frameSize)
 		commandBuffer->setClearColor(0,glm::vec4(0.0f,1.0f,0.0f,1.0f));
 		commandBuffer->setClearDepthStencil(1,1.0f,0.0f);
 
-		commandBuffer->beginRenderPass(_renderPass,screenbuffers[i],RenderArea(screenbuffers[i]->getSize(),glm::ivec2(0)));
+		commandBuffer->beginRenderPass(_renderTargets[i]->renderPass(),_renderTargets[i]->framebuffer(),RenderArea(screenSize,glm::ivec2(0)));
 		commandBuffer->bindPipeline(_framePipeline);
 		commandBuffer->bindDescriptorSet(_framePipeline,_frameDescSet);
 		_quadMesh->draw(commandBuffer);

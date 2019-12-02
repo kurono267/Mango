@@ -33,7 +33,7 @@ class Renderer {
 		spDescSet _frameDescSet;
 		spPipeline _framePipeline;
 		spMesh _quadMesh;
-		spRenderPass _renderPass;
+		std::vector<spRenderTarget> _renderTargets;
 		std::vector<spCommandBuffer> _frameCommandBuffers;
 
 		spSemaphore _screenAvailable;

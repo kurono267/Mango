@@ -18,6 +18,7 @@ class RenderTarget {
 	public:
 		RenderTarget(const glm::ivec2& size);
 		RenderTarget(const int width, const int height);
+		RenderTarget(const spFramebuffer& framebuffer, const spRenderPass& renderPass);
 
 		void attach(const spTextureView& view);
 		void attachDepth();
@@ -30,6 +31,7 @@ class RenderTarget {
 		spFramebuffer _framebuffer;
 		spRenderPass _renderPass;
 		int _lastAttachment;
+		bool _isFinished;
 };
 
 typedef std::shared_ptr<RenderTarget> spRenderTarget;

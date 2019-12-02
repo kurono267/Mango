@@ -20,6 +20,7 @@ class Framebuffer;
 class CommandBuffer;
 class DescSet;
 class Compute;
+class RenderTarget;
 
 // Semaphore empty class
 class Semaphore {
@@ -37,6 +38,7 @@ typedef std::shared_ptr<CommandBuffer> spCommandBuffer;
 typedef std::shared_ptr<Semaphore> spSemaphore;
 typedef std::shared_ptr<DescSet> spDescSet;
 typedef std::shared_ptr<Compute> spCompute;
+typedef std::shared_ptr<RenderTarget> spRenderTarget;
 
 /// Abstract Device API
 class Device {
@@ -66,12 +68,11 @@ class Device {
 		virtual spTexture createTexture(int width,int height,
 										int miplevels, const Format& format,const TextureType& type) = 0;
 
-		/// Get Screen framebuffers
-		/// @return screen framebuffers
-		virtual std::vector<spFramebuffer> getScreenbuffers() = 0;
-		/// Get Screen render pass
-		/// @return screen render pass
-		virtual spRenderPass getScreenRenderPass() = 0;
+		virtual glm::ivec2 getScreenSize() = 0;
+
+		/// Get Screen render targets
+		/// @return vector of screen render target
+		virtual std::vector<spRenderTarget> getScreenRenderTargets() = 0;
 
 		/// Submit command buffer
 		/// @param cmd command buffer
