@@ -19,6 +19,7 @@ ImageBasedLight::ImageBasedLight() : _cubemapSize(1024) {
 ImageBasedLight::ImageBasedLight(const spTexture &image, const int cubemapSize) : _image(image),_cubemapSize(cubemapSize) {
 	init();
 	convert2cubemap();
+	filter();
 }
 
 void ImageBasedLight::init() {
@@ -98,6 +99,89 @@ void ImageBasedLight::convert2cubemap() {
 	device->waitIdle();
 }
 
+struct FilterConsts {
+	int face;
+	float rough;
+};
+
+void ImageBasedLight::filter() {
+	auto device = Instance::device();
+
+	_filterTexture = device->createTexture();
+	_filterTexture->createCubeMap(_cubemapSize,_cubemapSize,log2(_cubemapSize),Format::R16G16B16A16Sfloat,TextureType::Input | TextureType::Output);
+	_filterTextureView = _filterTexture->createTextureViewCubeMap();
+
+	std::cout << "FilterTexture lod count " << _filterTexture->mipLevels() << std::endl;
+
+	const int roughLevels = _filterTexture->mipLevels();
+	_filterFrameBuffers.resize(roughLevels*6);
+	for(int m = 0;m<roughLevels;++m){
+		int mipsize = _cubemapSize >> m;
+		for(int i = 0;i<6;++i){
+			_filterFrameBuffers[m*6+i] = device->createFramebuffer(mipsize,mipsize);
+			_filterFrameBuffers[m*6+i]->attachment(_filterTexture->createTextureView(ComponentMapping(),i,1,m,1));
+			_filterFrameBuffers[m*6+i]->depth();
+			_filterFrameBuffers[m*6+i]->finish(_cubeRenderPass);
+		}
+	}
+
+	_postDescSet = device->createDescSet();
+	_postDescSet->setUniformBuffer(_cubeMatrices,0,ShaderStage::Vertex);
+	_postDescSet->setTexture(_cubeTextureView,Sampler(),1,ShaderStage::Fragment);
+	_postDescSet->create();
+
+	PipelineInfo pipelineInfo;
+	pipelineInfo.dynamicScissor();
+	pipelineInfo.dynamicViewport();
+	pipelineInfo.constant(0,sizeof(FilterConsts),ShaderStage::AllGraphics);
+	pipelineInfo.rasterizer(PolygonMode::Fill,CullMode::Front);
+	pipelineInfo.setRenderPass(_cubeRenderPass);
+	pipelineInfo.addShader(ShaderStage::Vertex,"../glsl/renderer/cubemap_filter.vert");
+	pipelineInfo.addShader(ShaderStage::Fragment,"../glsl/renderer/cubemap_filter.frag");
+	pipelineInfo.setDescSet(_postDescSet);
+
+	_filterPipeline = device->createPipeline(pipelineInfo);
+
+	_cubeMapPipeline = device->createPipeline(pipelineInfo);
+
+	_filterCommands = device->createCommandBuffer();
+
+	_filterCommands->begin();
+
+	_filterCommands->setClearColor(0,glm::vec4(0,0,0,1.f));
+	_filterCommands->setClearDepthStencil(1);
+
+	FilterConsts consts;
+
+	for(int m = 0;m<roughLevels;++m) {
+		int mipsize = _cubemapSize >> m;
+		for (int face = 0; face < 6; ++face) {
+			_filterCommands->beginRenderPass(_cubeRenderPass, _filterFrameBuffers[m*6+face],
+											 RenderArea(glm::ivec2(_cubemapSize), glm::ivec2(0)));
+
+			_filterCommands->bindPipeline(_filterPipeline);
+			_filterCommands->setViewport(glm::ivec2(mipsize));
+			_filterCommands->setScissor(glm::ivec2(mipsize));
+
+			_filterCommands->bindDescriptorSet(_filterPipeline, _postDescSet);
+
+			consts.face = face;
+			consts.rough = (float)(m)/((float)roughLevels-1.0f);
+			_filterCommands->pushConstants(_filterPipeline, 0, sizeof(FilterConsts), ShaderStage::Vertex, &consts);
+
+			_cubeMesh->draw(_filterCommands);
+
+			_filterCommands->endRenderPass();
+		}
+	}
+
+	_filterCommands->end();
+
+	spSemaphore semaphore = device->createSemaphore();
+	device->submit(_filterCommands, nullptr,semaphore);
+	device->waitIdle();
+}
+
 void ImageBasedLight::setImage(const spTexture &image) {
 	_image = image;
 	convert2cubemap();
@@ -113,6 +197,14 @@ spTexture ImageBasedLight::getCubeMap() {
 
 spTextureView ImageBasedLight::getCubeMapView() {
 	return _cubeTextureView;
+}
+
+spTexture ImageBasedLight::getFilter() {
+	return _filterTexture;
+}
+
+spTextureView ImageBasedLight::getFilterView() {
+	return _filterTextureView;
 }
 
 }

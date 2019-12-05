@@ -44,6 +44,7 @@ class CommandBuffer {
 		virtual void end() = 0;
 
 		virtual void setViewport(const glm::ivec2& size, const glm::ivec2& offset = glm::ivec2(0)) = 0;
+		virtual void setScissor(const glm::ivec2& size, const glm::ivec2& offset = glm::ivec2(0)) = 0;
 };
 
 typedef std::shared_ptr<CommandBuffer> spCommandBuffer;

@@ -22,25 +22,38 @@ class ImageBasedLight {
 
 		spTexture getCubeMap();
 		spTextureView getCubeMapView();
+
+		spTexture getFilter();
+		spTextureView getFilterView();
 	protected:
 		void convert2cubemap();
+		void filter();
 		void init();
 	protected:
 		spTexture _image;
 		int _cubemapSize;
 
 		Uniform _cubeMatrices;
+		spMesh _cubeMesh;
 
 		spTexture _cubeTexture;
 		spTextureView _cubeTextureView;
-		spMesh _cubeMesh;
+
+		spTexture _filterTexture;
+		spTextureView _filterTextureView;
 
 		spRenderPass _cubeRenderPass;
 		spFramebuffer _cubeFrameBuffers[6];
+		std::vector<spFramebuffer> _filterFrameBuffers;
 
 		spCommandBuffer _cubeMapCommands;
 		spPipeline _cubeMapPipeline;
 		spDescSet _cubeMapDescSet;
+
+		spCommandBuffer _filterCommands;
+		spPipeline _filterPipeline;
+		spDescSet _postDescSet;
+
 };
 
 typedef std::shared_ptr<ImageBasedLight> spImageBasedLight;

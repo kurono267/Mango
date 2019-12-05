@@ -41,12 +41,15 @@ bool App::init() {
 
     _ibl = std::make_shared<ImageBasedLight>(Assets::loadTexture("textures/IBL/neuer_zollhof_8k.hdr"),2048);
 
-	_texture = _ibl->getCubeMap();
-	auto texView = _ibl->getCubeMapView();
+	_texture = _ibl->getFilter();
+	auto texView = _ibl->getFilterView();
+
+	Sampler sampler;
+	sampler.maxLod = _texture->mipLevels();
 
 	_descSet = device->createDescSet();
 	_descSet->setUniformBuffer(_cameraUniform, 0, ShaderStage::Vertex);
-	_descSet->setTexture(texView, Sampler(), 1, ShaderStage::Fragment);
+	_descSet->setTexture(texView, sampler, 1, ShaderStage::Fragment);
 	_descSet->create();
 
 	auto screenRTs = device->getScreenRenderTargets();

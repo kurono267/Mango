@@ -89,6 +89,11 @@ void CommandBufferVK::setViewport(const glm::ivec2& size, const glm::ivec2& offs
 	_cmd.setViewport(0,1,&viewport);
 }
 
+void CommandBufferVK::setScissor(const glm::ivec2& size, const glm::ivec2& offset) {
+	vk::Rect2D rect(vk::Offset2D(offset.x,offset.y),vk::Extent2D(size.x,size.y));
+	_cmd.setScissor(0,1,&rect);
+}
+
 void CommandBufferVK::create(){
 	auto device = Instance::device<DeviceVK>();
 	vk::CommandBufferAllocateInfo allocInfo(device->getCommandPool(),vk::CommandBufferLevel::ePrimary, 1);
