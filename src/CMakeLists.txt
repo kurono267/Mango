@@ -48,7 +48,8 @@ set(MANGO_SRC
         renderer/Raytracer.hpp
         unified/RenderTarget.cpp
         unified/RenderTarget.hpp
-        )
+        scene/ImageBasedLight.cpp
+        scene/ImageBasedLight.hpp)
 
 set(MANGO_VK
         vk/InstanceVK.cpp

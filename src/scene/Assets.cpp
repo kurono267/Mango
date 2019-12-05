@@ -31,13 +31,24 @@ spTexture loadTexture(const spDevice& device,const std::string& filename){
 				format = Format::R32G32Sfloat;
 				break;
 			case 3:
-				format = Format::R32G32B32Sfloat;
-				break;
 			case 4:
 				format = Format::R32G32B32A32Sfloat;
 				break;
 			default:
 				format = Format::Undefined;
+		}
+		if(comp == 3){
+			float* pixels = new float[4*width*height];
+			for(int y = 0;y<height;++y){
+				for(int x = 0;x<width;++x){
+					for(int c = 0;c<3;++c){
+						pixels[(y*width+x)*4+c] = ((float*)data)[(y*width+x)*3+c];
+					}
+					pixels[(y*width+x)*4+3] = 1.f;
+				}
+			}
+			data = pixels;
+			comp = 4;
 		}
 	} else if(is16Bit){
 		data = (void*)stbi_load_16(filename.c_str(),&width,&height,&comp,0);

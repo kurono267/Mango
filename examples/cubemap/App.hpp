@@ -7,6 +7,7 @@
 
 #define MANGO_VULKAN
 #include <mango.hpp>
+#include <scene/ImageBasedLight.hpp>
 #include "scene/Camera.hpp"
 
 using namespace mango;
@@ -26,6 +27,7 @@ protected:
     spPipeline _main;
     std::vector<spCommandBuffer> _cmdScreen;
     spMesh _cube;
+    spImageBasedLight _ibl;
     spTexture _texture;
 
     spSceneNode _cameraNode;

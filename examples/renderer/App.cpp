@@ -14,7 +14,7 @@ bool App::init() {
 	Assets::init(device);
 	std::cout << device->deviceName() << std::endl;
 
-	_cameraNode = std::make_shared<SceneNode>(std::make_shared<Camera>(glm::radians(45.0f),(float)(1280)/(float)(720),0.1f,1000.0f));
+	_cameraNode = std::make_shared<SceneNode>(std::make_shared<Camera>(glm::radians(45.0f),(float)(1280)/(float)(720),0.1f,10000.0f));
 	_cameraNode->setPos(glm::vec3(0.f,0.f,-3.f));
 
 	_cameraOrbit = std::make_shared<SceneNode>();
@@ -32,7 +32,7 @@ bool App::init() {
 	spSceneNode testScene = createTestScene();
 	_scene.rootNode->addChild(testScene);
 
-	_renderer = Renderer::make(device,glm::ivec2(1280,720));
+	_renderer = Renderer::make(device,mainWnd->wndSize());
 	_renderer->init(_scene);
 
     return true;

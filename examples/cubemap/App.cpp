@@ -24,6 +24,7 @@ bool App::init() {
     Instance::init<vulkan::InstanceVK>("CubeMap", mainWnd->window(), mainWnd->wndSize());
 
     auto device = Instance::device();
+    Assets::init(device);
     std::cout << device->deviceName() << std::endl;
 
     auto frameSize = device->getScreenSize();
@@ -38,8 +39,10 @@ bool App::init() {
     _cameraUniform.create(device,sizeof(Data));
     updateCameraUniform(_cameraNode);
 
-	_texture = checkboardTexture(device, 1280, 720, 100);
-	auto texView = _texture->createTextureView();
+    _ibl = std::make_shared<ImageBasedLight>(Assets::loadTexture("textures/IBL/fireplace_8k.hdr"),2048);
+
+	_texture = _ibl->getCubeMap();
+	auto texView = _ibl->getCubeMapView();
 
 	_descSet = device->createDescSet();
 	_descSet->setUniformBuffer(_cameraUniform, 0, ShaderStage::Vertex);
@@ -51,8 +54,9 @@ bool App::init() {
     PipelineInfo rp;
     rp.viewport(Viewport(glm::vec2(0), mainWnd->wndSize()));
     rp.scissor(glm::ivec2(0), mainWnd->wndSize());
-    rp.addShader(ShaderStage::Vertex, "../glsl/cube.vert");
-    rp.addShader(ShaderStage::Fragment, "../glsl/cube.frag");
+    rp.addShader(ShaderStage::Vertex, "../glsl/cubemap.vert");
+    rp.addShader(ShaderStage::Fragment, "../glsl/cubemap.frag");
+    rp.rasterizer(PolygonMode::Fill,CullMode::Front);
     rp.setDescSet(_descSet);
     rp.setRenderPass(screenRTs[0]->renderPass());
 

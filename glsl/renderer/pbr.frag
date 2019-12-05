@@ -26,7 +26,7 @@ void main() {
     vec2 rm = texture(material,uv).rg;
     vec3 albedo = texture(albedoTex,uv).rgb;
 
-    vec3 f = light(lightDir,wo,normal,rm.y,rm.x,albedo)*3.0f;
+    vec3 f = light(lightDir,wo,normal,rm.y,rm.x,albedo)*10.0f;
 
     fragColor = vec4(f,1.f);//vec4(vec3(uv,0.0), 1.0);
 }

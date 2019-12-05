@@ -49,6 +49,7 @@ class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
 
 		spTexture createTexture(int width, int height, int miplevels,
 								const Format &format, const TextureType &type) final;
+		spTexture createTexture() final;
 
 		spFramebuffer createFramebuffer(const glm::ivec2& size) final;
 		spFramebuffer createFramebuffer(const int width, const int height) final;

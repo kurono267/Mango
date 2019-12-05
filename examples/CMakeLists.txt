@@ -16,5 +16,5 @@ target_link_libraries(compute mango)
 add_executable(procedure procedure/App.cpp procedure/App.hpp procedure/main.cpp)
 target_link_libraries(procedure mango)
 
-add_executable(cubemap cubemap/App.cpp cubemap/App.hpp cubemap/main.cpp cubemap/IBL.cpp cubemap/IBL.hpp)
+add_executable(cubemap cubemap/App.cpp cubemap/App.hpp cubemap/main.cpp)
 target_link_libraries(cubemap mango)

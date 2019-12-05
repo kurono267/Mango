@@ -237,6 +237,10 @@ mango::spTexture DeviceVK::createTexture(int width, int height, int miplevels, c
 	return texture;
 }
 
+spTexture DeviceVK::createTexture() {
+	return std::make_shared<TextureVK>();
+}
+
 spFramebuffer DeviceVK::createFramebuffer(const glm::ivec2& size) {
 	return std::make_shared<FramebufferVK>(size);
 }
@@ -317,12 +321,12 @@ void DeviceVK::submit(const mango::spCommandBuffer& cmd, const mango::spSemaphor
 	auto waitVK = std::dynamic_pointer_cast<SemaphoreVK>(waitForIt);
 	auto signalVK = std::dynamic_pointer_cast<SemaphoreVK>(result);
 
-	vk::Semaphore waitSemaphores[] = {waitVK->getVK()};
+	vk::Semaphore waitSemaphores[] = {waitVK?waitVK->getVK(): nullptr};
 	vk::Semaphore signalSemaphores[] = {signalVK->getVK()};
 	vk::PipelineStageFlags waitStages[] = {vk::PipelineStageFlagBits::eColorAttachmentOutput};
 
 	vk::SubmitInfo submitInfo(
-		1, waitSemaphores,
+		waitVK?1:0, waitVK?waitSemaphores: nullptr,
 		waitStages,
 		1, &cmd_vk,
 		1, signalSemaphores

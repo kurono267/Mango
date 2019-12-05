@@ -67,6 +67,7 @@ class Device {
 
 		virtual spTexture createTexture(int width,int height,
 										int miplevels, const Format& format,const TextureType& type) = 0;
+		virtual spTexture createTexture() = 0;
 
 		virtual glm::ivec2 getScreenSize() = 0;
 

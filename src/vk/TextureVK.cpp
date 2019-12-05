@@ -44,7 +44,9 @@ void TextureVK::create(const int width, const int height,const int miplevels , c
 	auto vkDevice = device->getDevice();
 	_width = width;
 	_height = height;
+	_depth = 1;
 	_mipLevels = miplevels;
+	_layers = 1;
 	_type = type;
 	_format = format;
 	_isOwned = true;
@@ -65,17 +67,71 @@ void TextureVK::create(const int width, const int height,const int miplevels , c
 		usage |= vk::ImageUsageFlagBits::eStorage;
 	}
 
+	createVK(vk::ImageCreateFlags(),vk::ImageType::e2D,vk::Extent3D(_width,_height,_depth),_layers,_mipLevels,mango::vulkan::formatVK(format),usage,layout);
+
+	if(((uint32_t)type & (uint32_t)mango::TextureType::Output)
+	   && ((uint32_t)type & (uint32_t)mango::TextureType::Input)){
+		transition(vk::ImageLayout::eShaderReadOnlyOptimal);
+	}
+	if(type == mango::TextureType::DepthStencil){
+		transition(vk::ImageLayout::eDepthStencilAttachmentOptimal);
+	}
+}
+
+void TextureVK::createCubeMap(int width, int height, int mipLevels, const Format& format, const TextureType& type) {
+	auto device = Instance::device<DeviceVK>();
+	auto vkDevice = device->getDevice();
+	_width = width;
+	_height = height;
+	_depth = 1;
+	_mipLevels = mipLevels;
+	_layers = 6;
+	_type = type;
+	_format = format;
+	_isOwned = true;
+
+	vk::ImageUsageFlags usage = (vk::ImageUsageFlags)0;
+	vk::ImageLayout layout = vk::ImageLayout::ePreinitialized;
+	if(type == mango::TextureType::DepthStencil){
+		usage |= vk::ImageUsageFlagBits::eDepthStencilAttachment;
+		layout = vk::ImageLayout::eUndefined;
+	}
+	if((uint32_t)type & (uint32_t)mango::TextureType::Input){
+		usage |= vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled;
+	}
+	if((uint32_t)type & (uint32_t)mango::TextureType::Output) {
+		usage |= vk::ImageUsageFlagBits::eColorAttachment;
+	}
+	if((uint32_t)type & (uint32_t)mango::TextureType::Storage){
+		usage |= vk::ImageUsageFlagBits::eStorage;
+	}
+
+	createVK(vk::ImageCreateFlagBits::eCubeCompatible,vk::ImageType::e2D,vk::Extent3D(_width,_height,_depth),_layers,_mipLevels,mango::vulkan::formatVK(format),usage,layout);
+
+	if(((uint32_t)type & (uint32_t)mango::TextureType::Output)
+	   && ((uint32_t)type & (uint32_t)mango::TextureType::Input)){
+		transition(vk::ImageLayout::eShaderReadOnlyOptimal);
+	}
+	if(type == mango::TextureType::DepthStencil){
+		transition(vk::ImageLayout::eDepthStencilAttachmentOptimal);
+	}
+}
+
+void TextureVK::createVK(const vk::ImageCreateFlags& flags,const vk::ImageType& imageType,const vk::Extent3D& extent3D,const int layers, const int mipLevels, const vk::Format& format, const vk::ImageUsageFlags& usage,const vk::ImageLayout& layout) {
+	auto device = Instance::device<DeviceVK>();
+	auto vkDevice = device->getDevice();
+
 	vk::ImageCreateInfo imageInfo(
-		vk::ImageCreateFlags(), // Basic
-		vk::ImageType::e2D, // Type 1D,2D,3D
-		mango::vulkan::formatVK(_format), // Format
-		vk::Extent3D(_width,_height,1), // Width, Height and Depth
-		_mipLevels, // Mip Levels
-		1, // Array Layers
-		vk::SampleCountFlagBits::e1, // Samples
-		vk::ImageTiling::eOptimal,
-		usage,
-		vk::SharingMode::eExclusive, 0, nullptr, layout
+			flags, // Basic
+			imageType, // Type 1D,2D,3D
+			format, // Format
+			extent3D, // Width, Height and Depth
+			mipLevels, // Mip Levels
+			layers, // Array Layers
+			vk::SampleCountFlagBits::e1, // Samples
+			vk::ImageTiling::eOptimal,
+			usage,
+			vk::SharingMode::eExclusive, 0, nullptr, layout
 	);
 
 	_pool = device->getCommandPool();
@@ -90,14 +146,6 @@ void TextureVK::create(const int width, const int height,const int miplevels , c
 	_memory = vkDevice.allocateMemory(allocInfo);
 
 	vkDevice.bindImageMemory(_image,_memory,0);
-
-	if(((uint32_t)type & (uint32_t)mango::TextureType::Output)
-	   && ((uint32_t)type & (uint32_t)mango::TextureType::Input)){
-		transition(vk::ImageLayout::eShaderReadOnlyOptimal);
-	}
-	if(type == mango::TextureType::DepthStencil){
-		transition(vk::ImageLayout::eDepthStencilAttachmentOptimal);
-	}
 }
 
 void flagsFromLayout(const vk::ImageLayout& layout,vk::AccessFlags& accessFlag,vk::PipelineStageFlags& stage){
@@ -190,7 +238,7 @@ void TextureVK::transition(const vk::ImageLayout& newLayout){
 	_layout = newLayout;
 }
 
-mango::spTextureView TextureVK::createTextureView(const ComponentMapping& componentMapping,const int minLevel,const int maxLevel){
+mango::spTextureView TextureVK::createTextureView(const ComponentMapping& componentMapping,int minLayer, int maxLayer,int minLevel,int maxLevel){
 	auto vkDevice = Instance::device<DeviceVK>()->getDevice();
 	vk::ImageAspectFlags imageAspectFlags = vk::ImageAspectFlagBits::eColor;
 	if(hasDepthComponent(_format))imageAspectFlags = vk::ImageAspectFlagBits::eDepth;
@@ -202,7 +250,27 @@ mango::spTextureView TextureVK::createTextureView(const ComponentMapping& compon
 		componentMappingVK(componentMapping),
 		vk::ImageSubresourceRange(
 			imageAspectFlags,
-			minLevel, maxLevel!=-1?maxLevel:_mipLevels, 0, 1)
+			minLevel, maxLevel!=-1?maxLevel:_mipLevels, minLayer, maxLayer!=-1?maxLayer:_layers)
+	);
+	auto texView = std::make_shared<TextureViewVK>(shared_from_this());
+	texView->_view = vkDevice.createImageView(viewCreateInfo);
+	texView->_isInit = true;
+	return texView;
+}
+
+mango::spTextureView TextureVK::createTextureViewCubeMap(const ComponentMapping& componentMapping,int minLayer, int maxLayer,int minLevel,int maxLevel){
+	auto vkDevice = Instance::device<DeviceVK>()->getDevice();
+	vk::ImageAspectFlags imageAspectFlags = vk::ImageAspectFlagBits::eColor;
+	if(hasDepthComponent(_format))imageAspectFlags = vk::ImageAspectFlagBits::eDepth;
+	auto viewCreateInfo = vk::ImageViewCreateInfo(
+			vk::ImageViewCreateFlags(),
+			_image,
+			vk::ImageViewType::eCube,
+			formatVK(_format),
+			componentMappingVK(componentMapping),
+			vk::ImageSubresourceRange(
+					imageAspectFlags,
+					minLevel, maxLevel!=-1?maxLevel:_mipLevels, minLayer, maxLayer!=-1?maxLayer:_layers)
 	);
 	auto texView = std::make_shared<TextureViewVK>(shared_from_this());
 	texView->_view = vkDevice.createImageView(viewCreateInfo);
