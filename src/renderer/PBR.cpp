@@ -12,6 +12,8 @@ PBR::PBR(const spGBuffer &gbuffer, const glm::ivec2& size) : _gBuffer(gbuffer) {
 	_lightResult = device->createTexture(size.x,size.y,1,Format::R32G32B32A32Sfloat,TextureType::Input | TextureType::Output);
 	auto lightResultView = _lightResult->createTextureView();
 
+	_ibl = std::make_shared<ImageBasedLight>(Assets::loadTexture("textures/IBL/cloud_layers_8k.hdr"),2048);
+
 	_renderPass = device->createRenderPass();
 	_renderPass->addAttachment(Attachment(_lightResult->format(),false,0));
 	_renderPass->addAttachment(Attachment(device->getDepthFormat(),true,1));
@@ -30,6 +32,13 @@ PBR::PBR(const spGBuffer &gbuffer, const glm::ivec2& size) : _gBuffer(gbuffer) {
 	_descSet->setTexture(_gBuffer->getAlbedo()->createTextureView(),Sampler(),2,ShaderStage::Fragment);
 	_descSet->setTexture(_gBuffer->getMaterial()->createTextureView(),Sampler(),3,ShaderStage::Fragment);
 	_descSet->setUniformBuffer(_uniform,4,ShaderStage::Fragment);
+
+	Sampler filtredSampler;
+	filtredSampler.maxLod = _ibl->getFilter()->mipLevels();
+	filtredSampler.mipmapMode = SamplerMipmapMode::Linear;
+
+	_descSet->setTexture(_ibl->getFilterView(),filtredSampler,5,ShaderStage::Fragment);
+	_descSet->setTexture(_ibl->getBRDFView(),Sampler(),6,ShaderStage::Fragment);
 	_descSet->create();
 
 	PipelineInfo pipelineInfo;
@@ -49,7 +58,7 @@ PBR::PBR(const spGBuffer &gbuffer, const glm::ivec2& size) : _gBuffer(gbuffer) {
 	_commandBuffer = device->createCommandBuffer();
 	_commandBuffer->begin();
 
-	_commandBuffer->setClearColor(0,glm::vec4(0.0f,1.0f,0.0f,1.0f));
+	_commandBuffer->setClearColor(0,glm::vec4(0.0f,0.0f,0.0f,1.0f));
 	_commandBuffer->setClearDepthStencil(1,1.0f,0.0f);
 
 	_commandBuffer->beginRenderPass(_renderPass,_framebuffer,RenderArea(_framebuffer->getSize(),glm::ivec2(0)));

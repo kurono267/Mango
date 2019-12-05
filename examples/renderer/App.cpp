@@ -22,15 +22,24 @@ bool App::init() {
 
 	//_scene.rootNode = std::make_shared<SceneNode>();
 
-	_scene.rootNode = Assets::loadModel("bunny/scene.gltf");
+	_scene.rootNode = createTestScene();//Assets::loadModel("models/bunny/scene.gltf");
 	BBox sceneBox = _scene.rootNode->boundingBox();
 	//std::cout << sceneBox << std::endl;
 	auto center = (sceneBox.min+sceneBox.max)*0.5f;
 	_scene.rootNode->setPos(-center);
 	_scene.rootNode->addChild(_cameraOrbit);
+/*
+	spMaterial planeMaterial = std::make_shared<Material>(device);
+	planeMaterial->setAlbedo(glm::vec4(1.f));
+	planeMaterial->setMetallicFactor(0.1f);
+	planeMaterial->setRoughnessFactor(0.1f);
+	spGeometry plane = Geometry::make(createQuad(),planeMaterial);
+	spSceneNode planeNode = std::make_shared<SceneNode>(plane);
+	planeNode->setScale(glm::vec3(10.f,10.f,1.f));
+	_scene.rootNode->addChild(planeNode);*/
 
-	spSceneNode testScene = createTestScene();
-	_scene.rootNode->addChild(testScene);
+	//spSceneNode testScene = createTestScene();
+	//_scene.rootNode->addChild(testScene);
 
 	_renderer = Renderer::make(device,mainWnd->wndSize());
 	_renderer->init(_scene);
@@ -43,19 +52,28 @@ spSceneNode App::createTestScene(){
 
 	spSceneNode rootNode = std::make_shared<SceneNode>();
 
-	spMaterial planeMaterial = std::make_shared<Material>(device);
-	planeMaterial->setAlbedo(glm::vec4(1.f));
-	planeMaterial->setMetallicFactor(0.1f);
-	planeMaterial->setRoughnessFactor(0.01f);
-	spGeometry plane = Geometry::make(createQuad(),planeMaterial);
-	spSceneNode planeNode = std::make_shared<SceneNode>(plane);
-	planeNode->setScale(glm::vec3(10.f,10.f,1.f));
-	rootNode->addChild(planeNode);
+	spMesh sphere = createSphere(64);
 
-	spMesh sphereMesh = createSphere(64);
-	spGeometry sphere = Geometry::make(sphereMesh,planeMaterial);
-	spSceneNode sphereNode = std::make_shared<SceneNode>(sphere);
-	rootNode->addChild(sphereNode);
+	const int roughMax = 10;
+	const int metallicMax = 10;
+
+	for(int r = 0;r<roughMax;++r){
+		for(int m = 0;m<metallicMax;++m){
+			spMaterial mat = std::make_shared<Material>(device);
+			mat->setAlbedo(glm::vec4(0.7f,0.1f,0.1f,1.f));
+			mat->setRoughnessFactor((float)(r)/(float)(roughMax-1));
+			mat->setMetallicFactor((float)(m)/(float)(metallicMax-1));
+			spGeometry geometry = Geometry::make(sphere,mat);
+
+			float x = (float)(r)/(float)(roughMax-1)*2.0f-1.f;
+			float y = (float)(m)/(float)(metallicMax-1)*2.0f-1.f;
+
+			spSceneNode node = std::make_shared<SceneNode>(geometry);
+			node->setScale(glm::vec3(0.1f,0.1f,0.1f));
+			node->setPos(glm::vec3(0.f,x,y));
+			rootNode->addChild(node);
+		}
+	}
 
 	return rootNode;
 }

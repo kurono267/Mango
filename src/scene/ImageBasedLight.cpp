@@ -43,7 +43,7 @@ void ImageBasedLight::convert2cubemap() {
 	auto device = Instance::device();
 
 	_cubeTexture = device->createTexture();
-	_cubeTexture->createCubeMap(_cubemapSize,_cubemapSize,1,Format::R16G16B16A16Sfloat,TextureType::Input | TextureType::Output);
+	_cubeTexture->createCubeMap(_cubemapSize,_cubemapSize,log2(_cubemapSize),Format::R16G16B16A16Sfloat,TextureType::Input | TextureType::Output);
 	_cubeTextureView = _cubeTexture->createTextureViewCubeMap();
 
 	_cubeRenderPass = device->createRenderPass();
@@ -51,11 +51,16 @@ void ImageBasedLight::convert2cubemap() {
 	_cubeRenderPass->addAttachment(Attachment(device->getDepthFormat(),true,1));
 	_cubeRenderPass->create();
 
-	for(int i = 0;i<6;++i){
-		_cubeFrameBuffers[i] = device->createFramebuffer(_cubemapSize,_cubemapSize);
-		_cubeFrameBuffers[i]->attachment(_cubeTexture->createTextureView(ComponentMapping(),i,1));
-		_cubeFrameBuffers[i]->depth();
-		_cubeFrameBuffers[i]->finish(_cubeRenderPass);
+	auto maxLevels = _cubeTexture->mipLevels();
+	_cubeFrameBuffers.resize(maxLevels*6);
+	for(int l = 0;l<maxLevels;++l) {
+		int mipsize = _cubemapSize >> l;
+		for (int i = 0; i < 6; ++i) {
+			_cubeFrameBuffers[l*6+i] = device->createFramebuffer(mipsize, mipsize);
+			_cubeFrameBuffers[l*6+i]->attachment(_cubeTexture->createTextureView(ComponentMapping(), i, 1,l,1));
+			_cubeFrameBuffers[l*6+i]->depth();
+			_cubeFrameBuffers[l*6+i]->finish(_cubeRenderPass);
+		}
 	}
 
 	_cubeMapDescSet = device->createDescSet();
@@ -64,8 +69,8 @@ void ImageBasedLight::convert2cubemap() {
 	_cubeMapDescSet->create();
 
 	PipelineInfo pipelineInfo;
-	pipelineInfo.scissor(glm::ivec2(0),glm::ivec2(_cubemapSize,_cubemapSize));
-	pipelineInfo.viewport(0,0,_cubemapSize,_cubemapSize);
+	pipelineInfo.dynamicViewport();
+	pipelineInfo.dynamicScissor();
 	pipelineInfo.rasterizer(PolygonMode::Fill,CullMode::Front);
 	pipelineInfo.setRenderPass(_cubeRenderPass);
 	pipelineInfo.addShader(ShaderStage::Vertex,"../glsl/renderer/image2cube.vert");
@@ -82,16 +87,23 @@ void ImageBasedLight::convert2cubemap() {
 	_cubeMapCommands->setClearColor(0,glm::vec4(0,0,0,1.f));
 	_cubeMapCommands->setClearDepthStencil(1);
 
-	for(int face = 0;face<6;++face){
-		_cubeMapCommands->beginRenderPass(_cubeRenderPass,_cubeFrameBuffers[face],RenderArea(glm::ivec2(_cubemapSize),glm::ivec2(0)));
+	for(int level = 0;level<maxLevels;++level) {
+		int mipsize = _cubemapSize >> level;
+		for (int face = 0; face < 6; ++face) {
+			_cubeMapCommands->beginRenderPass(_cubeRenderPass, _cubeFrameBuffers[level*6+face],
+											  RenderArea(glm::ivec2(_cubemapSize), glm::ivec2(0)));
 
-		_cubeMapCommands->bindPipeline(_cubeMapPipeline);
-		_cubeMapCommands->bindDescriptorSet(_cubeMapPipeline,_cubeMapDescSet);
-		_cubeMapCommands->pushConstants(_cubeMapPipeline,0,sizeof(int),ShaderStage::Vertex,&face);
+			_cubeMapCommands->setViewport(glm::ivec2(mipsize));
+			_cubeMapCommands->setScissor(glm::ivec2(mipsize));
 
-		_cubeMesh->draw(_cubeMapCommands);
+			_cubeMapCommands->bindPipeline(_cubeMapPipeline);
+			_cubeMapCommands->bindDescriptorSet(_cubeMapPipeline, _cubeMapDescSet);
+			_cubeMapCommands->pushConstants(_cubeMapPipeline, 0, sizeof(int), ShaderStage::Vertex, &face);
 
-		_cubeMapCommands->endRenderPass();
+			_cubeMesh->draw(_cubeMapCommands);
+
+			_cubeMapCommands->endRenderPass();
+		}
 	}
 
 	_cubeMapCommands->end();
@@ -109,13 +121,14 @@ struct FilterConsts {
 void ImageBasedLight::filter() {
 	auto device = Instance::device();
 
+	const int roughLevels = 6;
+
 	_filterTexture = device->createTexture();
-	_filterTexture->createCubeMap(_cubemapSize,_cubemapSize,log2(_cubemapSize),Format::R16G16B16A16Sfloat,TextureType::Input | TextureType::Output);
+	_filterTexture->createCubeMap(_cubemapSize,_cubemapSize,roughLevels,Format::R16G16B16A16Sfloat,TextureType::Input | TextureType::Output);
 	_filterTextureView = _filterTexture->createTextureViewCubeMap();
 
 	std::cout << "FilterTexture lod count " << _filterTexture->mipLevels() << std::endl;
 
-	const int roughLevels = _filterTexture->mipLevels();
 	_filterFrameBuffers.resize(roughLevels*6);
 	for(int m = 0;m<roughLevels;++m){
 		int mipsize = _cubemapSize >> m;
@@ -127,9 +140,12 @@ void ImageBasedLight::filter() {
 		}
 	}
 
+	Sampler envSampler;
+	envSampler.maxLod = _cubeTexture->mipLevels();
+
 	_postDescSet = device->createDescSet();
 	_postDescSet->setUniformBuffer(_cubeMatrices,0,ShaderStage::Vertex);
-	_postDescSet->setTexture(_cubeTextureView,Sampler(),1,ShaderStage::Fragment);
+	_postDescSet->setTexture(_cubeTextureView,envSampler,1,ShaderStage::Fragment);
 	_postDescSet->create();
 
 	PipelineInfo pipelineInfo;
@@ -158,12 +174,12 @@ void ImageBasedLight::filter() {
 	for(int m = 0;m<roughLevels;++m) {
 		int mipsize = _cubemapSize >> m;
 		for (int face = 0; face < 6; ++face) {
-			_filterCommands->beginRenderPass(_cubeRenderPass, _filterFrameBuffers[m*6+face],
-											 RenderArea(glm::ivec2(mipsize), glm::ivec2(0)));
-
 			_filterCommands->bindPipeline(_filterPipeline);
 			_filterCommands->setViewport(glm::ivec2(mipsize));
 			_filterCommands->setScissor(glm::ivec2(mipsize));
+
+			_filterCommands->beginRenderPass(_cubeRenderPass, _filterFrameBuffers[m*6+face],
+											 RenderArea(glm::ivec2(mipsize), glm::ivec2(0)));
 
 			_filterCommands->bindDescriptorSet(_filterPipeline, _postDescSet);
 

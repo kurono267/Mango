@@ -5,6 +5,7 @@
 #ifndef MANGO_PBR_HPP
 #define MANGO_PBR_HPP
 
+#include <scene/ImageBasedLight.hpp>
 #include "GBuffer.hpp"
 
 namespace mango {
@@ -19,6 +20,8 @@ class PBR {
 	protected:
 		spTexture _lightResult;
 		spGBuffer _gBuffer;
+
+		spImageBasedLight _ibl;
 
 		spPipeline _pipeline;
 		spRenderPass _renderPass;

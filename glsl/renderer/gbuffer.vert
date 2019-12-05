@@ -28,5 +28,5 @@ void main() {
     gl_Position = camera.viewProj*worldPos;
     outUV = inUV;
     outPos = worldPos.xyz;
-    outNormal = normalize((node.world*vec4(inNormal,1.f)).xyz);
+    outNormal = normalize(mat3(transpose(inverse(node.world))) * inNormal);
 }

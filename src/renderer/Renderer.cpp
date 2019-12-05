@@ -71,9 +71,9 @@ void Renderer::render(const Scene& scene) {
 
 	_gBuffer->render(scene,_screenAvailable,_gbufferFinish);
 	_pbr->render(scene,_gbufferFinish,_pbrFinish);
-	_raytracer->render(scene,_pbrFinish,_raytracerFinish);
+	//_raytracer->render(scene,_pbrFinish,_raytracerFinish);
 
-	_device->submit(_frameCommandBuffers[imageIndex],_raytracerFinish,_renderFinish);
+	_device->submit(_frameCommandBuffers[imageIndex],_pbrFinish,_renderFinish);
 	_device->present(imageIndex,_renderFinish);
 }
 

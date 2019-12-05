@@ -9,5 +9,5 @@ layout(location = 0) out vec4 outColor;
 layout(binding = 1) uniform samplerCube cubeMap;
 
 void main() {
-    outColor = vec4(clamp(textureLod(cubeMap,normalize(pos),10).xyz,0.f,1.f),1.0); // Simple gamma
+    outColor = vec4(clamp(textureLod(cubeMap,normalize(pos),0).xyz,0.f,1.f),1.0); // Simple gamma
 }

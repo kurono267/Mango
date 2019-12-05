@@ -7,6 +7,8 @@
 
 #include <api/Texture.hpp>
 #include <unified/Image.hpp>
+#include <unified/Uniform.hpp>
+#include <unified/Mesh.hpp>
 
 namespace mango {
 
@@ -51,7 +53,7 @@ class ImageBasedLight {
 		spTextureView _brdfTextureView;
 
 		spRenderPass _cubeRenderPass;
-		spFramebuffer _cubeFrameBuffers[6];
+		std::vector<spFramebuffer> _cubeFrameBuffers;
 
 		spCommandBuffer _cubeMapCommands;
 		spPipeline _cubeMapPipeline;
