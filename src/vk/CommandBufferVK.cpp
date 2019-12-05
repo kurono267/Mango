@@ -154,6 +154,11 @@ void CommandBufferVK::bindDescriptorSet(const spCompute &compute, const spDescSe
 							static_cast<uint32_t>(_descSets.size()), _descSets.data(), 0, nullptr);
 }
 
+void CommandBufferVK::pushConstants(const spPipeline& pipeline, uint32_t offset, uint32_t size, ShaderStage stage, void* data) {
+	auto internalPipeline = std::dynamic_pointer_cast<PipelineVK>(pipeline);
+	_cmd.pushConstants(internalPipeline->getLayout(),vulkan::shaderStageVK(stage),offset,size,data);
+}
+
 void CommandBufferVK::clearTexture(const spTexture &texture, const glm::vec4 &color) {
 	auto internalTexture = std::dynamic_pointer_cast<TextureVK>(texture);
 	vk::ImageSubresourceRange imageSubresourceRange(vk::ImageAspectFlagBits::eColor,0,texture->mipLevels(),0,1);

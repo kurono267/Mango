@@ -18,7 +18,7 @@ layout(location = 0) out vec2 outUV;
 layout(location = 1) out vec3 outPos;
 
 void main() {
-    vec4 pos = camera.viewProj*vec4(inPosition*500.f,1.0);
+    vec4 pos = camera.viewProj*vec4(inPosition*5000.f,1.0);
     gl_Position = pos;
     outPos = inPosition;
     outUV = inUV;

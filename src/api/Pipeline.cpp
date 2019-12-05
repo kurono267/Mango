@@ -97,6 +97,14 @@ void PipelineInfo::depth(const bool& enable, const bool& write,const CompareOp& 
 	_depthStencil.comp = comp;
 }
 
+void PipelineInfo::constant(uint32_t offset,uint32_t size, ShaderStage shaderStage) {
+	_constants.emplace_back(offset,size,shaderStage);
+}
+
+const std::vector<PushConstantInfo>& PipelineInfo::getConstants() const {
+	return _constants;
+}
+
 const PrimitiveTopology& PipelineInfo::getTopology() const {
 	return _topology;
 }

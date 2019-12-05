@@ -14,13 +14,13 @@ layout(location = 1) out vec2 uv;
 layout(set = 0, binding = 0) uniform UniformBufferObject {
     mat4 matrices[6];
 } ubo;
-/*
+
 layout(push_constant) uniform PushConsts {
     int face;
-} pushConsts;*/
+} pushConsts;
 
 void main() {
     pos         = inPosition;
     uv = inUV;
-    gl_Position = ubo.matrices[0]*vec4(pos,1.0);
+    gl_Position = ubo.matrices[pushConsts.face]*vec4(pos,1.0);
 }

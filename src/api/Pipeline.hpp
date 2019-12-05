@@ -68,6 +68,14 @@ class RenderPass {
 
 typedef std::shared_ptr<RenderPass> spRenderPass;
 
+struct PushConstantInfo {
+	PushConstantInfo(uint32_t _offset, uint32_t _size, ShaderStage _stage) :
+			stage(_stage),size(_size),offset(_offset){}
+	ShaderStage stage;
+	uint32_t offset;
+	uint32_t size;
+};
+
 class PipelineInfo {
 	friend class Pipeline;
 	public:
@@ -104,6 +112,9 @@ class PipelineInfo {
 					const BlendFactor& srcAlphaBlendFactor = BlendFactor::One,const BlendFactor& dstAlphaBlendFactor = BlendFactor::Zero,
 					const BlendOp& alphaBlendOp = BlendOp::Add);
 		void depth(const bool& enable = true, const bool& write = true,const CompareOp& comp = CompareOp::Less);
+		void constant(uint32_t offset,uint32_t size, ShaderStage shaderStage);
+
+		const std::vector<PushConstantInfo>& getConstants() const;
 
 		const PrimitiveTopology& getTopology() const;
 		const Viewport& getViewport() const;
@@ -136,6 +147,8 @@ class PipelineInfo {
 		MultisamplingState _multisampling;
 		std::vector<BlendAttachmentState> _blendAttachments;
 		DepthState  _depthStencil;
+
+		std::vector<PushConstantInfo> _constants;
 
 		bool _dynamicScissor;
 		bool _dynamicViewport;

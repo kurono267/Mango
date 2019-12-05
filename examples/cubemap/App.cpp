@@ -30,7 +30,7 @@ bool App::init() {
     auto frameSize = device->getScreenSize();
 
     // Create scene with camera only
-    _cameraNode = std::make_shared<SceneNode>(std::make_shared<Camera>(glm::radians(45.0f),(float)(frameSize.x)/(float)(frameSize.y),0.1f,1000.0f));
+    _cameraNode = std::make_shared<SceneNode>(std::make_shared<Camera>(glm::radians(45.0f),(float)(frameSize.x)/(float)(frameSize.y),0.1f,10000.0f));
 	_cameraNode->setPos(glm::vec3(0.f,0.f,-5.f));
 
 	_cameraOrbit = std::make_shared<SceneNode>();
@@ -39,7 +39,7 @@ bool App::init() {
     _cameraUniform.create(device,sizeof(Data));
     updateCameraUniform(_cameraNode);
 
-    _ibl = std::make_shared<ImageBasedLight>(Assets::loadTexture("textures/IBL/fireplace_8k.hdr"),2048);
+    _ibl = std::make_shared<ImageBasedLight>(Assets::loadTexture("textures/IBL/neuer_zollhof_8k.hdr"),2048);
 
 	_texture = _ibl->getCubeMap();
 	auto texView = _ibl->getCubeMapView();

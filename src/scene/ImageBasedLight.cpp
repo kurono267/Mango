@@ -68,6 +68,7 @@ void ImageBasedLight::convert2cubemap() {
 	pipelineInfo.addShader(ShaderStage::Vertex,"../glsl/renderer/image2cube.vert");
 	pipelineInfo.addShader(ShaderStage::Fragment,"../glsl/renderer/image2cube.frag");
 	pipelineInfo.setDescSet(_cubeMapDescSet);
+	pipelineInfo.constant(0,sizeof(int),ShaderStage::Vertex);
 
 	_cubeMapPipeline = device->createPipeline(pipelineInfo);
 
@@ -83,6 +84,7 @@ void ImageBasedLight::convert2cubemap() {
 
 		_cubeMapCommands->bindPipeline(_cubeMapPipeline);
 		_cubeMapCommands->bindDescriptorSet(_cubeMapPipeline,_cubeMapDescSet);
+		_cubeMapCommands->pushConstants(_cubeMapPipeline,0,sizeof(int),ShaderStage::Vertex,&face);
 
 		_cubeMesh->draw(_cubeMapCommands);
 

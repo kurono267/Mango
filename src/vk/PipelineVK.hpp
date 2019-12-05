@@ -59,6 +59,7 @@ class PipelineVK : public mango::Pipeline {
 
 		std::vector<std::shared_ptr<DescSetVK>> _descSet;
 		std::vector<vk::DescriptorSetLayout> _descLayouts;
+		std::vector<vk::PushConstantRange> _vkConstants;
 		vk::PipelineLayoutCreateInfo _pipelineLayoutInfo;
 
 		vk::PushConstantRange _pushConstRange;

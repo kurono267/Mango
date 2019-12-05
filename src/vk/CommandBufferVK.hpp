@@ -37,6 +37,8 @@ class CommandBufferVK : public CommandBuffer {
 		void bindDescriptorSet(const spCompute &compute, const std::vector<spDescSet> &descSets) final;
 		void bindDescriptorSet(const spCompute &compute, const spDescSet &descSet) final;
 
+		void pushConstants(const spPipeline& pipeline, uint32_t offset, uint32_t size, ShaderStage stage, void* data) final;
+
 		void bindVertexBuffer(const spBuffer& buffer, uint32_t offset = 0) final;
 		void bindIndexBuffer(const spBuffer& buffer,uint32_t offset = 0) final;
 		void drawIndexed(uint32_t indexCount, uint32_t instanceCount = 1, uint32_t firstIndex = 0, int32_t vertexOffset = 0, uint32_t firstInstance = 0) final;
