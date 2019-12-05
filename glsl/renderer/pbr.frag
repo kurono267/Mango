@@ -15,6 +15,7 @@ layout(binding = 4) uniform CameraPos {
 
 layout(binding = 5) uniform samplerCube filtredIBL;
 layout(binding = 6) uniform sampler2D specBRDF;
+layout(binding = 7) uniform samplerCube irradianceTex;
 
 layout(location = 0) in vec2 uv;
 
@@ -32,15 +33,15 @@ vec3 ibl(vec3 N,vec3 V, vec3 pos, vec3 albedo, float metallic, float roughness, 
     vec3 kD = 1.0 - kS;
     kD *= 1.0 - metallic;
 
-    const float MAX_REFLECTION_LOD = 6.0;
-    vec3 irradiance = textureLod(filtredIBL, R,  MAX_REFLECTION_LOD).rgb*lightScale;
+    const float MAX_REFLECTION_LOD = 5.0;
+    vec3 irradiance = texture(irradianceTex, N).rgb*lightScale;
     vec3 diffuse    = irradiance * albedo;
 
     vec3 prefilteredColor = textureLod(filtredIBL, R,  roughness * MAX_REFLECTION_LOD).rgb*lightScale;
     vec2 envBRDF  = texture(specBRDF, vec2(max(dot(N, V), 0.0), roughness)).rg;
     vec3 specular = prefilteredColor * (F * envBRDF.x + envBRDF.y);
 
-    vec3 ambient = (kD * albedo + specular);
+    vec3 ambient = (kD * diffuse + specular);
 
     return ambient;
 }
@@ -55,7 +56,7 @@ void main() {
     vec2 rm = texture(material,uv).rg;
     vec4 albedo = texture(albedoTex,uv);
 
-    vec3 f = ibl(normal,-wo,pos,albedo.rgb,rm.y,rm.x,0.5f);
+    vec3 f = ibl(normal,wo,pos,albedo.rgb,rm.y,rm.x,2.0f);
 
     //vec3 f = light(lightDir,wo,normal,rm.y,rm.x,albedo)*10.0f;
 

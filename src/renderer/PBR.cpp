@@ -12,7 +12,7 @@ PBR::PBR(const spGBuffer &gbuffer, const glm::ivec2& size) : _gBuffer(gbuffer) {
 	_lightResult = device->createTexture(size.x,size.y,1,Format::R32G32B32A32Sfloat,TextureType::Input | TextureType::Output);
 	auto lightResultView = _lightResult->createTextureView();
 
-	_ibl = std::make_shared<ImageBasedLight>(Assets::loadTexture("textures/IBL/cloud_layers_8k.hdr"),2048);
+	_ibl = std::make_shared<ImageBasedLight>(Assets::loadTexture("textures/IBL/neuer_zollhof_8k.hdr"),2048);
 
 	_renderPass = device->createRenderPass();
 	_renderPass->addAttachment(Attachment(_lightResult->format(),false,0));
@@ -39,6 +39,7 @@ PBR::PBR(const spGBuffer &gbuffer, const glm::ivec2& size) : _gBuffer(gbuffer) {
 
 	_descSet->setTexture(_ibl->getFilterView(),filtredSampler,5,ShaderStage::Fragment);
 	_descSet->setTexture(_ibl->getBRDFView(),Sampler(),6,ShaderStage::Fragment);
+	_descSet->setTexture(_ibl->getIrradianceView(),Sampler(),7,ShaderStage::Fragment);
 	_descSet->create();
 
 	PipelineInfo pipelineInfo;

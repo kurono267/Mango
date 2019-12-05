@@ -21,6 +21,7 @@ ImageBasedLight::ImageBasedLight(const spTexture &image, const int cubemapSize) 
 	convert2cubemap();
 	filter();
 	brdf();
+	irradiance();
 }
 
 void ImageBasedLight::init() {
@@ -91,7 +92,7 @@ void ImageBasedLight::convert2cubemap() {
 		int mipsize = _cubemapSize >> level;
 		for (int face = 0; face < 6; ++face) {
 			_cubeMapCommands->beginRenderPass(_cubeRenderPass, _cubeFrameBuffers[level*6+face],
-											  RenderArea(glm::ivec2(_cubemapSize), glm::ivec2(0)));
+											  RenderArea(glm::ivec2(mipsize), glm::ivec2(0)));
 
 			_cubeMapCommands->setViewport(glm::ivec2(mipsize));
 			_cubeMapCommands->setScissor(glm::ivec2(mipsize));
@@ -175,11 +176,12 @@ void ImageBasedLight::filter() {
 		int mipsize = _cubemapSize >> m;
 		for (int face = 0; face < 6; ++face) {
 			_filterCommands->bindPipeline(_filterPipeline);
-			_filterCommands->setViewport(glm::ivec2(mipsize));
-			_filterCommands->setScissor(glm::ivec2(mipsize));
 
 			_filterCommands->beginRenderPass(_cubeRenderPass, _filterFrameBuffers[m*6+face],
 											 RenderArea(glm::ivec2(mipsize), glm::ivec2(0)));
+
+			_filterCommands->setViewport(glm::ivec2(mipsize));
+			_filterCommands->setScissor(glm::ivec2(mipsize));
 
 			_filterCommands->bindDescriptorSet(_filterPipeline, _postDescSet);
 
@@ -243,6 +245,64 @@ void ImageBasedLight::brdf() {
 	device->waitIdle();
 }
 
+void ImageBasedLight::irradiance() {
+	auto device = Instance::device();
+
+	_irradianceTexture = device->createTexture();
+	_irradianceTexture->createCubeMap(_cubemapSize,_cubemapSize,1,Format::R16G16B16A16Sfloat,TextureType::Input | TextureType::Output);
+	_irradianceTextureView = _irradianceTexture->createTextureViewCubeMap();
+
+	for (int i = 0; i < 6; ++i) {
+		_irradianceFrameBuffers[i] = device->createFramebuffer(_cubemapSize, _cubemapSize);
+		_irradianceFrameBuffers[i]->attachment(_irradianceTexture->createTextureView(ComponentMapping(), i, 1,0,1));
+		_irradianceFrameBuffers[i]->depth();
+		_irradianceFrameBuffers[i]->finish(_cubeRenderPass);
+	}
+
+	_irradianceDescSet = device->createDescSet();
+	_irradianceDescSet->setUniformBuffer(_cubeMatrices,0,ShaderStage::Vertex);
+	_irradianceDescSet->setTexture(_cubeTextureView,Sampler(),1,ShaderStage::Fragment);
+	_irradianceDescSet->create();
+
+	PipelineInfo pipelineInfo;
+	pipelineInfo.scissor(glm::ivec2(0),glm::ivec2(_cubemapSize,_cubemapSize));
+	pipelineInfo.viewport(0,0,_cubemapSize,_cubemapSize);
+	pipelineInfo.rasterizer(PolygonMode::Fill,CullMode::Front);
+	pipelineInfo.setRenderPass(_cubeRenderPass);
+	pipelineInfo.addShader(ShaderStage::Vertex,"../glsl/renderer/image2cube.vert");
+	pipelineInfo.addShader(ShaderStage::Fragment,"../glsl/renderer/irradiance.frag");
+	pipelineInfo.setDescSet(_irradianceDescSet);
+	pipelineInfo.constant(0,sizeof(int),ShaderStage::Vertex);
+
+	_irradiancePipeline = device->createPipeline(pipelineInfo);
+
+	_irradianceCommands = device->createCommandBuffer();
+
+	_irradianceCommands->begin();
+
+	_irradianceCommands->setClearColor(0,glm::vec4(0,0,0,1.f));
+	_irradianceCommands->setClearDepthStencil(1);
+
+	for (int face = 0; face < 6; ++face) {
+		_irradianceCommands->beginRenderPass(_cubeRenderPass, _irradianceFrameBuffers[face],
+										  RenderArea(glm::ivec2(_cubemapSize), glm::ivec2(0)));
+
+		_irradianceCommands->bindPipeline(_irradiancePipeline);
+		_irradianceCommands->bindDescriptorSet(_irradiancePipeline, _irradianceDescSet);
+		_irradianceCommands->pushConstants(_irradiancePipeline, 0, sizeof(int), ShaderStage::Vertex, &face);
+
+		_cubeMesh->draw(_irradianceCommands);
+
+		_irradianceCommands->endRenderPass();
+	}
+
+	_irradianceCommands->end();
+
+	spSemaphore semaphore = device->createSemaphore();
+	device->submit(_irradianceCommands, nullptr,semaphore);
+	device->waitIdle();
+}
+
 void ImageBasedLight::setImage(const spTexture &image) {
 	_image = image;
 	convert2cubemap();
@@ -274,6 +334,13 @@ spTexture ImageBasedLight::getBRDF() {
 
 spTextureView ImageBasedLight::getBRDFView() {
 	return _brdfTextureView;
+}
+
+spTexture ImageBasedLight::getIrradiance() {
+	return _irradianceTexture;
+}
+spTextureView ImageBasedLight::getIrradianceView() {
+	return _irradianceTextureView;
 }
 
 }

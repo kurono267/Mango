@@ -10,12 +10,12 @@ layout(binding = 1) uniform sampler2D image;
 
 const vec2 invAtan = vec2(0.1591, 0.3183);
 vec2 SampleSphericalMap(vec3 v){
-    vec2 uv = vec2(atan(v.z, v.x), asin(v.y)+3.1415f);
+    vec2 uv = vec2(atan(v.z, v.x), asin(v.y));
     uv *= invAtan;
     uv += 0.5;
     return uv;
 }
 
 void main() {
-    outColor = vec4(texture(image,SampleSphericalMap(normalize(pos))).xyz,1.0);
+    outColor = vec4(clamp(texture(image,SampleSphericalMap(normalize(pos))).xyz,0.f,1.f),1.0);
 }

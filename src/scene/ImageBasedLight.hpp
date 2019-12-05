@@ -30,10 +30,14 @@ class ImageBasedLight {
 
 		spTexture getBRDF();
 		spTextureView getBRDFView();
+
+		spTexture getIrradiance();
+		spTextureView getIrradianceView();
 	protected:
 		void convert2cubemap();
 		void filter();
 		void brdf();
+		void irradiance();
 		void init();
 	protected:
 		spTexture _image;
@@ -48,6 +52,9 @@ class ImageBasedLight {
 
 		spTexture _filterTexture;
 		spTextureView _filterTextureView;
+
+		spTexture _irradianceTexture;
+		spTextureView _irradianceTextureView;
 
 		spTexture _brdfTexture;
 		spTextureView _brdfTextureView;
@@ -69,6 +76,11 @@ class ImageBasedLight {
 		spPipeline _brdfPipeline;
 
 		spRenderTarget _brdfRenderTarget;
+
+		spFramebuffer _irradianceFrameBuffers[6];
+		spCommandBuffer _irradianceCommands;
+		spPipeline _irradiancePipeline;
+		spDescSet _irradianceDescSet;
 
 };
 

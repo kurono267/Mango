@@ -41,8 +41,8 @@ bool App::init() {
 
     _ibl = std::make_shared<ImageBasedLight>(Assets::loadTexture("textures/IBL/neuer_zollhof_8k.hdr"),2048);
 
-	_texture = _ibl->getFilter();
-	auto texView = _ibl->getFilterView();
+	_texture = _ibl->getIrradiance();
+	auto texView = _ibl->getIrradianceView();
 
 	Sampler sampler;
 	sampler.maxLod = _texture->mipLevels();
