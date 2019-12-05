@@ -20,6 +20,7 @@ ImageBasedLight::ImageBasedLight(const spTexture &image, const int cubemapSize) 
 	init();
 	convert2cubemap();
 	filter();
+	brdf();
 }
 
 void ImageBasedLight::init() {
@@ -35,6 +36,7 @@ void ImageBasedLight::init() {
 	_cubeMatrices.create(Instance::device(),sizeof(CubeMatrices),&matrices);
 
 	_cubeMesh = createCube();
+	_quadMesh = createQuad();
 }
 
 void ImageBasedLight::convert2cubemap() {
@@ -157,7 +159,7 @@ void ImageBasedLight::filter() {
 		int mipsize = _cubemapSize >> m;
 		for (int face = 0; face < 6; ++face) {
 			_filterCommands->beginRenderPass(_cubeRenderPass, _filterFrameBuffers[m*6+face],
-											 RenderArea(glm::ivec2(_cubemapSize), glm::ivec2(0)));
+											 RenderArea(glm::ivec2(mipsize), glm::ivec2(0)));
 
 			_filterCommands->bindPipeline(_filterPipeline);
 			_filterCommands->setViewport(glm::ivec2(mipsize));
@@ -167,7 +169,7 @@ void ImageBasedLight::filter() {
 
 			consts.face = face;
 			consts.rough = (float)(m)/((float)roughLevels-1.0f);
-			_filterCommands->pushConstants(_filterPipeline, 0, sizeof(FilterConsts), ShaderStage::Vertex, &consts);
+			_filterCommands->pushConstants(_filterPipeline, 0, sizeof(FilterConsts), ShaderStage::AllGraphics, &consts);
 
 			_cubeMesh->draw(_filterCommands);
 
@@ -179,6 +181,49 @@ void ImageBasedLight::filter() {
 
 	spSemaphore semaphore = device->createSemaphore();
 	device->submit(_filterCommands, nullptr,semaphore);
+	device->waitIdle();
+}
+
+#define BRDF_SIZE 256
+
+void ImageBasedLight::brdf() {
+	auto device = Instance::device();
+
+	_brdfTexture = device->createTexture(BRDF_SIZE,BRDF_SIZE,1,Format::R16G16Sfloat,TextureType::Input | TextureType::Output);
+	_brdfTextureView = _brdfTexture->createTextureView();
+
+	_brdfRenderTarget = RenderTarget::make(BRDF_SIZE,BRDF_SIZE);
+	_brdfRenderTarget->attach(_brdfTextureView);
+	_brdfRenderTarget->attachDepth();
+	_brdfRenderTarget->finish();
+
+	PipelineInfo pipelineInfo;
+	pipelineInfo.scissor(glm::ivec2(0),glm::ivec2(BRDF_SIZE,BRDF_SIZE));
+	pipelineInfo.viewport(0,0,BRDF_SIZE,BRDF_SIZE);
+	pipelineInfo.blend(1,false);
+	pipelineInfo.addShader(ShaderStage::Vertex,"../glsl/renderer/specular_brdf.vert");
+	pipelineInfo.addShader(ShaderStage::Fragment,"../glsl/renderer/specular_brdf.frag");
+	pipelineInfo.setRenderPass(_brdfRenderTarget->renderPass());
+
+	_brdfPipeline = device->createPipeline(pipelineInfo);
+
+	_brdfCommands = device->createCommandBuffer();
+
+	_brdfCommands->begin();
+
+	_brdfCommands->setClearColor(0,glm::vec4(0,0,0,1.f));
+	_brdfCommands->setClearDepthStencil(1);
+
+	_brdfCommands->beginRenderPass(_brdfRenderTarget->renderPass(),_brdfRenderTarget->framebuffer(),RenderArea(glm::ivec2(BRDF_SIZE,BRDF_SIZE),glm::ivec2(0,0)));
+	_brdfCommands->bindPipeline(_brdfPipeline);
+
+	_quadMesh->draw(_brdfCommands);
+
+	_brdfCommands->endRenderPass();
+	_brdfCommands->end();
+
+	spSemaphore semaphore = device->createSemaphore();
+	device->submit(_brdfCommands, nullptr,semaphore);
 	device->waitIdle();
 }
 
@@ -205,6 +250,14 @@ spTexture ImageBasedLight::getFilter() {
 
 spTextureView ImageBasedLight::getFilterView() {
 	return _filterTextureView;
+}
+
+spTexture ImageBasedLight::getBRDF() {
+	return _brdfTexture;
+}
+
+spTextureView ImageBasedLight::getBRDFView() {
+	return _brdfTextureView;
 }
 
 }

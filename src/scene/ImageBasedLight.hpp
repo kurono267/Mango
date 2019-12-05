@@ -25,9 +25,13 @@ class ImageBasedLight {
 
 		spTexture getFilter();
 		spTextureView getFilterView();
+
+		spTexture getBRDF();
+		spTextureView getBRDFView();
 	protected:
 		void convert2cubemap();
 		void filter();
+		void brdf();
 		void init();
 	protected:
 		spTexture _image;
@@ -35,6 +39,7 @@ class ImageBasedLight {
 
 		Uniform _cubeMatrices;
 		spMesh _cubeMesh;
+		spMesh _quadMesh;
 
 		spTexture _cubeTexture;
 		spTextureView _cubeTextureView;
@@ -42,9 +47,11 @@ class ImageBasedLight {
 		spTexture _filterTexture;
 		spTextureView _filterTextureView;
 
+		spTexture _brdfTexture;
+		spTextureView _brdfTextureView;
+
 		spRenderPass _cubeRenderPass;
 		spFramebuffer _cubeFrameBuffers[6];
-		std::vector<spFramebuffer> _filterFrameBuffers;
 
 		spCommandBuffer _cubeMapCommands;
 		spPipeline _cubeMapPipeline;
@@ -53,6 +60,13 @@ class ImageBasedLight {
 		spCommandBuffer _filterCommands;
 		spPipeline _filterPipeline;
 		spDescSet _postDescSet;
+
+		std::vector<spFramebuffer> _filterFrameBuffers;
+
+		spCommandBuffer _brdfCommands;
+		spPipeline _brdfPipeline;
+
+		spRenderTarget _brdfRenderTarget;
 
 };
 

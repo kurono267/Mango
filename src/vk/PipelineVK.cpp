@@ -223,7 +223,7 @@ void PipelineVK::setDescSet(const std::vector<mango::spDescSet> &descSets) {
 
 	_pipelineLayoutInfo = vk::PipelineLayoutCreateInfo(
 			vk::PipelineLayoutCreateFlags(),
-			static_cast<uint32_t>(_descLayouts.size()), _descLayouts.data(), _vkConstants.size(), _vkConstants.data());
+			static_cast<uint32_t>(_descLayouts.size()), _descLayouts.data(), _vkConstants.size(), _vkConstants.empty()? nullptr:_vkConstants.data());
 }
 
 void PipelineVK::setDescSet(const mango::spDescSet &descSet) {
@@ -231,7 +231,7 @@ void PipelineVK::setDescSet(const mango::spDescSet &descSet) {
 	_descLayouts[0] = std::dynamic_pointer_cast<DescSetVK>(descSet)->getLayout();
 	_pipelineLayoutInfo = vk::PipelineLayoutCreateInfo(
 			vk::PipelineLayoutCreateFlags(),
-			static_cast<uint32_t>(_descLayouts.size()), _descLayouts.data(),_vkConstants.size(), _vkConstants.data());
+			static_cast<uint32_t>(_descLayouts.size()), _descLayouts.data(),_vkConstants.size(), _vkConstants.empty()? nullptr:_vkConstants.data());
 }
 
 vk::PipelineLayout PipelineVK::getLayout() {
