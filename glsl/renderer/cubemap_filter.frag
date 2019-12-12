@@ -54,7 +54,7 @@ void main() {
     vec3 R = N;
     vec3 V = R;
 
-    float resolution = 2048.0;
+    float resolution = textureSize(cubeMap,0).x;
     float saTexel  = 4.0 * PI / (6.0 * resolution * resolution);
 
     const uint SAMPLE_COUNT = 1024u;

@@ -56,9 +56,9 @@ void main() {
     vec2 rm = texture(material,uv).rg;
     vec4 albedo = texture(albedoTex,uv);
 
-    vec3 f = ibl(normal,wo,pos,albedo.rgb,rm.y,rm.x,2.0f);
+    vec3 f = ibl(normal,wo,pos,albedo.rgb,rm.y,rm.x,1.0f);
 
     //vec3 f = light(lightDir,wo,normal,rm.y,rm.x,albedo)*10.0f;
 
-    fragColor = vec4(f*posData.a,posData.a);//vec4(vec3(uv,0.0), 1.0);
+    fragColor = vec4(f*posData.a,1.f);//vec4(vec3(uv,0.0), 1.0);
 }

@@ -60,7 +60,7 @@ spSceneNode App::createTestScene(){
 	for(int r = 0;r<roughMax;++r){
 		for(int m = 0;m<metallicMax;++m){
 			spMaterial mat = std::make_shared<Material>(device);
-			mat->setAlbedo(glm::vec4(0.7f,0.1f,0.1f,1.f));
+			mat->setAlbedo(glm::vec4(1.f,1.f,1.f,1.f));
 			mat->setRoughnessFactor((float)(r)/(float)(roughMax-1));
 			mat->setMetallicFactor((float)(m)/(float)(metallicMax-1));
 			spGeometry geometry = Geometry::make(sphere,mat);
