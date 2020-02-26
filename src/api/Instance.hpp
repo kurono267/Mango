@@ -15,7 +15,7 @@ class InstanceAPI {
 		virtual ~InstanceAPI() = default;
 		InstanceAPI(const InstanceAPI& i) = delete;
 
-		virtual void init(const std::string& title, GLFWwindow* window,const glm::ivec2& size) = 0;
+		virtual void init(const std::string& title, void* window,const glm::ivec2& size) = 0;
 		virtual spDevice device() = 0;
 
 		virtual void release() = 0;
@@ -24,7 +24,7 @@ class InstanceAPI {
 class Instance {
 	public:
 		template<typename InstanceType>
-		static void init(const std::string& title, GLFWwindow* window,const glm::ivec2& size) {
+		static void init(const std::string& title, void* window,const glm::ivec2& size) {
 			auto& that = get();
 			if(that._impl){
 				throw std::runtime_error("Instance init should call once");

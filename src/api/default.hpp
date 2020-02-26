@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <GLFW/glfw3.h>
 #define GLM_FORCE_RADIANS
 #define GLM_ENABLE_EXPERIMENTAL
 #define GLM_FORCE_XYZW_ONLY

@@ -15,7 +15,7 @@ class InstanceVK : public InstanceAPI {
 		InstanceVK();
 		~InstanceVK() final;
 
-		void init(const std::string& title, GLFWwindow* window,const glm::ivec2& size) final;
+		void init(const std::string& title, void* window,const glm::ivec2& size) final;
 		spDevice device() final;
 
 		void release() final;
@@ -28,8 +28,8 @@ class InstanceVK : public InstanceAPI {
 		bool checkValidationLayerSupport();
 
 		// Create surface
-		void createSurface(GLFWwindow* window);
-
+		void createSurface(void* window);
+    
 		vk::Instance _instance;
 		vk::DebugReportCallbackEXT _callback;
 		vk::SurfaceKHR _surface;

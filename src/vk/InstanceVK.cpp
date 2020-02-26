@@ -25,7 +25,7 @@ void InstanceVK::release(){
 	_device.reset();
 }
 
-void InstanceVK::init(const std::string& title, GLFWwindow* window,const glm::ivec2& size){
+void InstanceVK::init(const std::string& title, void* window,const glm::ivec2& size){
 	_size = size;
 	_title = title;
 
@@ -41,11 +41,23 @@ mango::spDevice InstanceVK::device(){
 	return _device;
 }
 
-void InstanceVK::createSurface(GLFWwindow* window){
+void InstanceVK::createSurface(void* window){
 	VkSurfaceKHR surface;
+#ifdef MANGO_GLFW
 	if (glfwCreateWindowSurface(_instance, window, nullptr, &surface) != VK_SUCCESS){
 		throw std::runtime_error("failed to create window surface!");
 	}
+#elif MANGO_APPLE
+    VkIOSSurfaceCreateInfoMVK surfaceCreateInfo = {};
+    surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK; // TODO check ios or macos
+    surfaceCreateInfo.pNext = NULL;
+    surfaceCreateInfo.flags = 0;
+    surfaceCreateInfo.pView = view;
+    auto err = vkCreateIOSSurfaceMVK(_instance, &surfaceCreateInfo, nullptr, &surface);
+    if(err != VK_SUCCESS){
+        throw std::runtime_error("failed to create window surface!");
+    }
+#endif
 	_surface = surface;
 }
 

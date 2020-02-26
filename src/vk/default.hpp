@@ -6,7 +6,6 @@
 #define MANGO_VK_DEFAULT_HPP
 
 #define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
 #include <vulkan/vulkan.hpp>
 #define GLM_FORCE_RADIANS
 #define GLM_ENABLE_EXPERIMENTAL
