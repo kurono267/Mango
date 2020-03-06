@@ -2,7 +2,6 @@
 // Created by kurono267 on 05.06.18.
 //
 
-#include <shaderc/shaderc.hpp>
 #include <filesystem>
 
 #include <unified/Mesh.hpp>

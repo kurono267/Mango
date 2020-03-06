@@ -2,7 +2,13 @@
 // Created by kurono267 on 2019-09-05.
 //
 
+#include <TargetConditionals.h>
+#if 0
 #include <shaderc/shaderc.hpp>
+#endif
+#ifdef TARGET_OS_IOS
+#include <MoltenVKShaderConverter/include/MoltenVKGLSLToSPIRVConverter/GLSLConversion.h>
+#endif
 #include <filesystem>
 #include <iostream>
 #include <unordered_set>
@@ -14,6 +20,7 @@
 using namespace mango;
 using namespace mango::vulkan;
 
+#if 0
 class GLSLIncluder : public shaderc::CompileOptions::IncluderInterface {
 	public:
 		GLSLIncluder() = default;
@@ -91,7 +98,10 @@ void GLSLIncluder::ReleaseInclude(shaderc_include_result* include_result) {
 	delete include_result;
 }
 
+#endif
+
 std::optional<vk::ShaderModule> ShaderVK::createShader(const mango::ShaderStage &type, const std::string &filename) {
+#if 0
 	std::string content = mango::readFile(filename);
 	shaderc::Compiler shaderCompiler;
 	shaderc::CompileOptions compileOptions;
@@ -125,8 +135,34 @@ std::optional<vk::ShaderModule> ShaderVK::createShader(const mango::ShaderStage 
 	for(auto b : shaderResult){
 		shaderBinary.push_back(b);
 	}
-
-	vk::ShaderModuleCreateInfo createInfo(vk::ShaderModuleCreateFlags(),shaderBinary.size()*sizeof(uint32_t),shaderBinary.data());
+#endif
+    MVKGLSLConversionShaderStage shader_kind;
+    switch (type){
+        case mango::ShaderStage::Vertex: shader_kind = kMVKGLSLConversionShaderStageVertex;
+            break;
+        case mango::ShaderStage::Fragment: shader_kind = kMVKGLSLConversionShaderStageFragment;
+            break;
+        case mango::ShaderStage::Compute: shader_kind = kMVKGLSLConversionShaderStageCompute;
+            break;
+        case mango::ShaderStage::Geometry: shader_kind = kMVKGLSLConversionShaderStageGeometry;
+            break;
+        case mango::ShaderStage::TessellationControl: shader_kind = kMVKGLSLConversionShaderStageTessControl;
+            break;
+        case mango::ShaderStage::TessellationEvaluation: shader_kind = kMVKGLSLConversionShaderStageTessEval;
+            break;
+        default:
+            throw std::logic_error("Shader Stage not supported");
+    }
+    uint32_t* shader_data = nullptr;
+    size_t shader_length;
+    char* shader_log = nullptr;
+    mvkConvertGLSLFileToSPIRV(filename.c_str(),shader_kind,&shader_data,&shader_length,&shader_log,true,true);
+    if(shader_log){
+        std::cout << "Shader " << filename << " log: " << std::endl;
+        std::cout << shader_log << std::endl;
+    }
+    
+	vk::ShaderModuleCreateInfo createInfo(vk::ShaderModuleCreateFlags(),shader_length,shader_data);
 	auto shaderModule = Instance::device<DeviceVK>()->getDevice().createShaderModule(createInfo);
 
 	return shaderModule;

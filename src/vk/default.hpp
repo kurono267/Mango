@@ -5,8 +5,17 @@
 #ifndef MANGO_VK_DEFAULT_HPP
 #define MANGO_VK_DEFAULT_HPP
 
+#include <TargetConditionals.h> // TODO add ifdef for MacOS only
+
+#ifndef TARGET_OS_IOS
 #define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
+#endif
 #include <vulkan/vulkan.hpp>
+#ifdef TARGET_OS_IOS
+#include <vulkan/vulkan_ios.h>
+#endif
+
 #define GLM_FORCE_RADIANS
 #define GLM_ENABLE_EXPERIMENTAL
 #define GLM_FORCE_XYZW_ONLY

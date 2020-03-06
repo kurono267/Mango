@@ -25,41 +25,47 @@ void InstanceVK::release(){
 	_device.reset();
 }
 
-void InstanceVK::init(const std::string& title, void* window,const glm::ivec2& size){
-	_size = size;
-	_title = title;
-
-	createInstance();
-	setupDebugCallback();
-	createSurface(window);
-
-	_device = std::make_shared<DeviceVK>();
-	dynamic_cast<DeviceVK*>(_device.get())->create(_instance,_surface,size);
-}
-
 mango::spDevice InstanceVK::device(){
 	return _device;
 }
 
-void InstanceVK::createSurface(void* window){
-	VkSurfaceKHR surface;
-#ifdef MANGO_GLFW
-	if (glfwCreateWindowSurface(_instance, window, nullptr, &surface) != VK_SUCCESS){
-		throw std::runtime_error("failed to create window surface!");
-	}
-#elif MANGO_APPLE
+void InstanceVK::init(const std::string& title, void* view,const glm::ivec2& size) {
+    _size = size;
+    _title = title;
+
+    createInstance();
+    setupDebugCallback();
+    createSurface(view);
+
+    _device = std::make_shared<DeviceVK>();
+    dynamic_cast<DeviceVK*>(_device.get())->create(_instance,_surface,size);
+}
+
+#ifdef TARGET_OS_IOS
+
+void InstanceVK::createSurface(void* view){
     VkIOSSurfaceCreateInfoMVK surfaceCreateInfo = {};
-    surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK; // TODO check ios or macos
+    surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK;
     surfaceCreateInfo.pNext = NULL;
     surfaceCreateInfo.flags = 0;
     surfaceCreateInfo.pView = view;
+    VkSurfaceKHR surface;
     auto err = vkCreateIOSSurfaceMVK(_instance, &surfaceCreateInfo, nullptr, &surface);
     if(err != VK_SUCCESS){
+        std::cout << "vkCreateIOSSurfaceMVK failed" << std::endl;
+    }
+    _surface = surface;
+}
+#else
+
+void InstanceVK::createSurface(void* window){
+    VkSurfaceKHR surface;
+    if (glfwCreateWindowSurface(_instance, window, nullptr, &surface) != VK_SUCCESS){
         throw std::runtime_error("failed to create window surface!");
     }
-#endif
-	_surface = surface;
+    _surface = surface;
 }
+#endif
 
 VkResult vkCreateDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugReportCallbackEXT* pCallback) {
     auto func = (PFN_vkCreateDebugReportCallbackEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT");
@@ -138,16 +144,20 @@ void InstanceVK::setupDebugCallback() {
 }
 
 std::vector<const char*> InstanceVK::getRequiredExtensions() {
-	std::vector<const char*> extensions;
+    std::vector<const char*> extensions;
+    #ifdef TARGET_OS_IOS
+        extensions.push_back(VK_MVK_IOS_SURFACE_EXTENSION_NAME);
+    #else
+        unsigned int glfwExtensionCount = 0;
+        const char** glfwExtensions;
 
-	unsigned int glfwExtensionCount = 0;
-	const char** glfwExtensions;
+        glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
-	glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+        for (unsigned int i = 0; i < glfwExtensionCount; i++) {
+            extensions.push_back(glfwExtensions[i]);
+        }
+    #endif
 
-	for (unsigned int i = 0; i < glfwExtensionCount; i++) {
-		extensions.push_back(glfwExtensions[i]);
-	}
 	extensions.push_back(VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
 
 	if (enableValidationLayers) {

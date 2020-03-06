@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C47D9EA82411D524006980B9 /* MoltenVKGLSLToSPIRVConverter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C47D9EA72411D524006980B9 /* MoltenVKGLSLToSPIRVConverter.framework */; };
+		C47D9EAA2411D53A006980B9 /* MoltenVK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C47D9EA92411D53A006980B9 /* MoltenVK.framework */; };
+		C47D9EAC2411D66C006980B9 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C47D9EAB2411D66C006980B9 /* Metal.framework */; };
+		C47D9EAE2411D685006980B9 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C47D9EAD2411D685006980B9 /* CoreFoundation.framework */; };
+		C47D9EB02411D696006980B9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C47D9EAF2411D696006980B9 /* UIKit.framework */; };
+		C47D9EB22411D6CD006980B9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C47D9EB12411D6CD006980B9 /* CoreGraphics.framework */; };
+		C47D9EB42411D6FB006980B9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C47D9EB32411D6FB006980B9 /* Foundation.framework */; };
+		C47D9EB92411D7ED006980B9 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C47D9EB72411D79B006980B9 /* QuartzCore.framework */; };
 		C4C951C62407168E002AB269 /* mango.h in Headers */ = {isa = PBXBuildFile; fileRef = C4C951C42407168E002AB269 /* mango.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C4C9522824071725002AB269 /* Raytracer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C4C951CE24071725002AB269 /* Raytracer.cpp */; };
 		C4C9522924071725002AB269 /* Renderer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C4C951CF24071725002AB269 /* Renderer.hpp */; };
@@ -93,10 +101,20 @@
 		C4C9527A24071725002AB269 /* Assets.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C4C9522524071725002AB269 /* Assets.hpp */; };
 		C4C9527B24071725002AB269 /* Scene.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C4C9522624071725002AB269 /* Scene.hpp */; };
 		C4C9527C24071725002AB269 /* Camera.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C4C9522724071725002AB269 /* Camera.hpp */; };
-		C4C9528B24072679002AB269 /* MoltenVK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4C9528A24072679002AB269 /* MoltenVK.framework */; };
+		C4C9528E24073BEC002AB269 /* MainAppIOS.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C4C9528C24073BEC002AB269 /* MainAppIOS.hpp */; };
+		C4C9528F24073BEC002AB269 /* MainAppIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C4C9528D24073BEC002AB269 /* MainAppIOS.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C47D9EA72411D524006980B9 /* MoltenVKGLSLToSPIRVConverter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MoltenVKGLSLToSPIRVConverter.framework; path = ../external/MoltenVKShaderConverter/MoltenVKGLSLToSPIRVConverter/iOS/framework/MoltenVKGLSLToSPIRVConverter.framework; sourceTree = "<group>"; };
+		C47D9EA92411D53A006980B9 /* MoltenVK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MoltenVK.framework; path = ../external/MoltenVK/iOS/framework/MoltenVK.framework; sourceTree = "<group>"; };
+		C47D9EAB2411D66C006980B9 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		C47D9EAD2411D685006980B9 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		C47D9EAF2411D696006980B9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		C47D9EB12411D6CD006980B9 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		C47D9EB32411D6FB006980B9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		C47D9EB52411D72D006980B9 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		C47D9EB72411D79B006980B9 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		C4C951C12407168E002AB269 /* mango.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = mango.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4C951C42407168E002AB269 /* mango.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mango.h; sourceTree = "<group>"; };
 		C4C951C52407168E002AB269 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -185,7 +203,8 @@
 		C4C9522524071725002AB269 /* Assets.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Assets.hpp; sourceTree = "<group>"; };
 		C4C9522624071725002AB269 /* Scene.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Scene.hpp; sourceTree = "<group>"; };
 		C4C9522724071725002AB269 /* Camera.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Camera.hpp; sourceTree = "<group>"; };
-		C4C9528A24072679002AB269 /* MoltenVK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MoltenVK.framework; path = ../external/MoltenVK/iOS/framework/MoltenVK.framework; sourceTree = "<group>"; };
+		C4C9528C24073BEC002AB269 /* MainAppIOS.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MainAppIOS.hpp; sourceTree = "<group>"; };
+		C4C9528D24073BEC002AB269 /* MainAppIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainAppIOS.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -193,7 +212,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C4C9528B24072679002AB269 /* MoltenVK.framework in Frameworks */,
+				C47D9EB92411D7ED006980B9 /* QuartzCore.framework in Frameworks */,
+				C47D9EB22411D6CD006980B9 /* CoreGraphics.framework in Frameworks */,
+				C47D9EAE2411D685006980B9 /* CoreFoundation.framework in Frameworks */,
+				C47D9EAA2411D53A006980B9 /* MoltenVK.framework in Frameworks */,
+				C47D9EAC2411D66C006980B9 /* Metal.framework in Frameworks */,
+				C47D9EA82411D524006980B9 /* MoltenVKGLSLToSPIRVConverter.framework in Frameworks */,
+				C47D9EB42411D6FB006980B9 /* Foundation.framework in Frameworks */,
+				C47D9EB02411D696006980B9 /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -203,7 +229,8 @@
 		C4C951B72407168E002AB269 = {
 			isa = PBXGroup;
 			children = (
-				C4C9528A24072679002AB269 /* MoltenVK.framework */,
+				C47D9EA92411D53A006980B9 /* MoltenVK.framework */,
+				C47D9EA72411D524006980B9 /* MoltenVKGLSLToSPIRVConverter.framework */,
 				C4C951CC24071725002AB269 /* src */,
 				C4C951C32407168E002AB269 /* mango */,
 				C4C951C22407168E002AB269 /* Products */,
@@ -262,6 +289,8 @@
 		C4C951D724071725002AB269 /* app */ = {
 			isa = PBXGroup;
 			children = (
+				C4C9528D24073BEC002AB269 /* MainAppIOS.cpp */,
+				C4C9528C24073BEC002AB269 /* MainAppIOS.hpp */,
 				C4C951D824071725002AB269 /* BaseApp.hpp */,
 				C4C951D924071725002AB269 /* MainApp.cpp */,
 				C4C951DA24071725002AB269 /* MainApp.hpp */,
@@ -289,31 +318,31 @@
 		C4C951E724071725002AB269 /* vk */ = {
 			isa = PBXGroup;
 			children = (
-				C4C951E824071725002AB269 /* CommandBufferVK.cpp */,
-				C4C951E924071725002AB269 /* InstanceVK.cpp */,
-				C4C951EA24071725002AB269 /* ComputeVK.cpp */,
-				C4C951EB24071725002AB269 /* FramebufferVK.cpp */,
-				C4C951EC24071725002AB269 /* PipelineVK.hpp */,
-				C4C951ED24071725002AB269 /* ConvertVK.hpp */,
-				C4C951EE24071725002AB269 /* ShaderVK.cpp */,
-				C4C951EF24071725002AB269 /* Swapchain.hpp */,
-				C4C951F024071725002AB269 /* DeviceVK.cpp */,
-				C4C951F124071725002AB269 /* DescSetVK.cpp */,
-				C4C951F224071725002AB269 /* BufferVK.hpp */,
-				C4C951F324071725002AB269 /* TextureVK.cpp */,
-				C4C951F424071725002AB269 /* Swapchain.cpp */,
-				C4C951F524071725002AB269 /* DeviceVK.hpp */,
-				C4C951F624071725002AB269 /* DescSetVK.hpp */,
 				C4C951F724071725002AB269 /* BufferVK.cpp */,
-				C4C951F824071725002AB269 /* TextureVK.hpp */,
+				C4C951F224071725002AB269 /* BufferVK.hpp */,
+				C4C951E824071725002AB269 /* CommandBufferVK.cpp */,
 				C4C951F924071725002AB269 /* CommandBufferVK.hpp */,
-				C4C951FA24071725002AB269 /* InstanceVK.hpp */,
+				C4C951EA24071725002AB269 /* ComputeVK.cpp */,
 				C4C951FB24071725002AB269 /* ComputeVK.hpp */,
-				C4C951FC24071725002AB269 /* FramebufferVK.hpp */,
-				C4C951FD24071725002AB269 /* PipelineVK.cpp */,
 				C4C951FE24071725002AB269 /* ConvertVK.cpp */,
-				C4C951FF24071725002AB269 /* ShaderVK.hpp */,
+				C4C951ED24071725002AB269 /* ConvertVK.hpp */,
 				C4C9520024071725002AB269 /* default.hpp */,
+				C4C951F124071725002AB269 /* DescSetVK.cpp */,
+				C4C951F624071725002AB269 /* DescSetVK.hpp */,
+				C4C951F024071725002AB269 /* DeviceVK.cpp */,
+				C4C951F524071725002AB269 /* DeviceVK.hpp */,
+				C4C951EB24071725002AB269 /* FramebufferVK.cpp */,
+				C4C951FC24071725002AB269 /* FramebufferVK.hpp */,
+				C4C951E924071725002AB269 /* InstanceVK.cpp */,
+				C4C951FA24071725002AB269 /* InstanceVK.hpp */,
+				C4C951FD24071725002AB269 /* PipelineVK.cpp */,
+				C4C951EC24071725002AB269 /* PipelineVK.hpp */,
+				C4C951EE24071725002AB269 /* ShaderVK.cpp */,
+				C4C951FF24071725002AB269 /* ShaderVK.hpp */,
+				C4C951F424071725002AB269 /* Swapchain.cpp */,
+				C4C951EF24071725002AB269 /* Swapchain.hpp */,
+				C4C951F324071725002AB269 /* TextureVK.cpp */,
+				C4C951F824071725002AB269 /* TextureVK.hpp */,
 			);
 			path = vk;
 			sourceTree = "<group>";
@@ -321,23 +350,23 @@
 		C4C9520124071725002AB269 /* api */ = {
 			isa = PBXGroup;
 			children = (
-				C4C9520224071725002AB269 /* Instance.hpp */,
-				C4C9520324071725002AB269 /* Compute.hpp */,
-				C4C9520424071725002AB269 /* Utils.cpp */,
-				C4C9520524071725002AB269 /* CommandBuffer.hpp */,
-				C4C9520624071725002AB269 /* Framebuffer.cpp */,
-				C4C9520724071725002AB269 /* DescSet.hpp */,
-				C4C9520824071725002AB269 /* Pipeline.cpp */,
-				C4C9520924071725002AB269 /* Framebuffer.hpp */,
-				C4C9520A24071725002AB269 /* Texture.hpp */,
-				C4C9520B24071725002AB269 /* Device.hpp */,
-				C4C9520C24071725002AB269 /* Pipeline.hpp */,
 				C4C9520D24071725002AB269 /* Buffer.hpp */,
+				C4C9520524071725002AB269 /* CommandBuffer.hpp */,
 				C4C9520E24071725002AB269 /* Compute.cpp */,
-				C4C9520F24071725002AB269 /* Instance.cpp */,
-				C4C9521024071725002AB269 /* Utils.hpp */,
-				C4C9521124071725002AB269 /* Types.hpp */,
+				C4C9520324071725002AB269 /* Compute.hpp */,
 				C4C9521224071725002AB269 /* default.hpp */,
+				C4C9520724071725002AB269 /* DescSet.hpp */,
+				C4C9520B24071725002AB269 /* Device.hpp */,
+				C4C9520624071725002AB269 /* Framebuffer.cpp */,
+				C4C9520924071725002AB269 /* Framebuffer.hpp */,
+				C4C9520F24071725002AB269 /* Instance.cpp */,
+				C4C9520224071725002AB269 /* Instance.hpp */,
+				C4C9520824071725002AB269 /* Pipeline.cpp */,
+				C4C9520C24071725002AB269 /* Pipeline.hpp */,
+				C4C9520A24071725002AB269 /* Texture.hpp */,
+				C4C9521124071725002AB269 /* Types.hpp */,
+				C4C9520424071725002AB269 /* Utils.cpp */,
+				C4C9521024071725002AB269 /* Utils.hpp */,
 			);
 			path = api;
 			sourceTree = "<group>";
@@ -372,6 +401,13 @@
 		C4C9528024071A11002AB269 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C47D9EB72411D79B006980B9 /* QuartzCore.framework */,
+				C47D9EB52411D72D006980B9 /* Accelerate.framework */,
+				C47D9EB32411D6FB006980B9 /* Foundation.framework */,
+				C47D9EB12411D6CD006980B9 /* CoreGraphics.framework */,
+				C47D9EAF2411D696006980B9 /* UIKit.framework */,
+				C47D9EAD2411D685006980B9 /* CoreFoundation.framework */,
+				C47D9EAB2411D66C006980B9 /* Metal.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -417,6 +453,7 @@
 				C4C9526224071725002AB269 /* Pipeline.hpp in Headers */,
 				C4C9527124071725002AB269 /* SceneTransform.hpp in Headers */,
 				C4C9524424071725002AB269 /* ConvertVK.hpp in Headers */,
+				C4C9528E24073BEC002AB269 /* MainAppIOS.hpp in Headers */,
 				C4C9527824071725002AB269 /* Geometry.hpp in Headers */,
 				C4C9527024071725002AB269 /* SceneNode.hpp in Headers */,
 				C4C9522F24071725002AB269 /* Raytracer.hpp in Headers */,
@@ -539,6 +576,7 @@
 				C4C9525424071725002AB269 /* PipelineVK.cpp in Sources */,
 				C4C9524724071725002AB269 /* DeviceVK.cpp in Sources */,
 				C4C9526C24071725002AB269 /* Assets.cpp in Sources */,
+				C4C9528F24073BEC002AB269 /* MainAppIOS.cpp in Sources */,
 				C4C9524124071725002AB269 /* ComputeVK.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -675,12 +713,17 @@
 		C4C951CA2407168E002AB269 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = HZ3J6FYD96;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SRCROOT)/../external/MoltenVK/iOS/framework",
+					"$(SRCROOT)/../external/MoltenVKShaderConverter/MoltenVKGLSLToSPIRVConverter/iOS/framework",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"MANGO_APPLE=1",
 					"DEBUG=1",
@@ -701,6 +744,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.kurono267.mango;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -708,12 +752,17 @@
 		C4C951CB2407168E002AB269 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = HZ3J6FYD96;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SRCROOT)/../external/MoltenVK/iOS/framework",
+					"$(SRCROOT)/../external/MoltenVKShaderConverter/MoltenVKGLSLToSPIRVConverter/iOS/framework",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = "MANGO_APPLE=1";
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
@@ -731,6 +780,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.kurono267.mango;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

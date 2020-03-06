@@ -543,7 +543,6 @@ vk::Format mango::vulkan::formatVK(const mango::Format& _mango){
 
 mango::Format mango::vulkan::formatVK2Mango(const vk::Format& _vk){
 	switch (_vk){
-		case vk::Format::eUndefined: return mango::Format::Undefined;
 		case vk::Format::eR4G4UnormPack8: return mango::Format::R4G4UnormPack8;
 		case vk::Format::eR4G4B4A4UnormPack16: return mango::Format::R4G4B4A4UnormPack16;
 		case vk::Format::eB4G4R4A4UnormPack16: return mango::Format::B4G4R4A4UnormPack16;
@@ -770,6 +769,10 @@ mango::Format mango::vulkan::formatVK2Mango(const vk::Format& _vk){
 		case vk::Format::ePvrtc14BppSrgbBlockIMG: return mango::Format::Pvrtc14BppSrgbBlockIMG;
 		case vk::Format::ePvrtc22BppSrgbBlockIMG: return mango::Format::Pvrtc22BppSrgbBlockIMG;
 		case vk::Format::ePvrtc24BppSrgbBlockIMG: return mango::Format::Pvrtc24BppSrgbBlockIMG;
+        // Default case
+        case vk::Format::eUndefined:
+        default:
+            return mango::Format::Undefined;
 	}
 }
 
