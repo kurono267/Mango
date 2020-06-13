@@ -6,8 +6,8 @@
 #define MANGO_CONVERTVK_HPP
 
 #include "default.hpp"
-#include <mango.hpp>
-#include "api/Types.hpp"
+#include "../api/Types.hpp"
+#include "../api/Pipeline.hpp"
 
 namespace mango::vulkan {
 

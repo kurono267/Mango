@@ -5,8 +5,8 @@
 #ifndef MANGO_RENDERTARGET_HPP
 #define MANGO_RENDERTARGET_HPP
 
-#include <api/Framebuffer.hpp>
-#include <api/Pipeline.hpp>
+#include "../api/Framebuffer.hpp"
+#include "../api/Pipeline.hpp"
 
 namespace mango {
 

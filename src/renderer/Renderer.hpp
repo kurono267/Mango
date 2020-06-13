@@ -5,7 +5,6 @@
 #ifndef MANGO_RENDERER_HPP
 #define MANGO_RENDERER_HPP
 
-#include <mango.hpp>
 #include <scene/Scene.hpp>
 #include "GBuffer.hpp"
 #include "PBR.hpp"

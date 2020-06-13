@@ -5,9 +5,7 @@
 #ifndef UTILS_IMAGE_HPP
 #define UTILS_IMAGE_HPP
 
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/glm.hpp>
-#include <glm/gtx/string_cast.hpp>
+#include "../api/default.hpp"
 #include <vector>
 
 #include <functional>

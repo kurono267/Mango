@@ -4,7 +4,9 @@
 #include <memory>
 #include <iostream>
 
+#include <GLFW/glfw3.h>
 #include "BaseApp.hpp"
+#include "MainApp.hpp"
 
 namespace mango {
 
@@ -17,23 +19,22 @@ class MainAppGLFW : public MainApp,std::enable_shared_from_this<MainAppGLFW> {
 			std::cout << "MainApp Destructor" << std::endl;
 		}
 
-		void setBaseApp(spBaseApp app);
+		void setBaseApp(spBaseApp app) override;
 
-		const GLFWKey keyState() const;
-		const GLFWMouse mouseState() const;
+		const KeyData glfwKeyState() const override;
 
-		void exit();
+		void exit() override;
 		// Create window and setup
 		void create(const std::string& title,const int width,const int height);
-		glm::ivec2 wndSize(); // Return window size
+		glm::ivec2 wndSize() override; // Return window size
 		
 		void vsync(bool on);
 
-		void run();
+		void run() override;
 		void resize(const int width,const int height);
-		bool is();
+		bool is() override;
 
-		void* window();
+		void* window() override;
 
 		static ptr& instance(){
 			static ptr app; // lazy singleton, instantiated on first use
@@ -48,20 +49,30 @@ class MainAppGLFW : public MainApp,std::enable_shared_from_this<MainAppGLFW> {
 
 		static void __glfwOnKey(GLFWwindow* window, int key, int scancode, int action, int mods){
 			ptr& app = instance();
-			app->_lastKey = GLFWKey(key,scancode,action,mods);
+			app->_lastKey = KeyData(key,scancode,action,mods);
 			app->_app->onKey(app->glfwKeyState());
 		}
 
 		static void __glfwOnMouseBtn(GLFWwindow* window, int button, int action, int mods){
 			ptr& app = instance();
-			app->_lastMouse = GLFWMouse(button,action, mods);
-			app->_app->onMouse(app->glfwMouseState());
+			double x; double y;
+			glfwGetCursorPos(app->_window,&x,&y);
+			if(button == GLFW_MOUSE_BUTTON_LEFT) {
+				if (action == GLFW_PRESS) {
+					app->_prevMousePos = glm::vec2(x,y);
+					app->_app->onTouchDown(glm::vec2(x, y));
+				}
+			}
 		}
 
 		static void __glfwOnMousePos(GLFWwindow* window, double x, double y){
 			ptr& app = instance();
-			app->_lastMouse = GLFWMouse(x,y);
-			app->_app->onMouse(app->glfwMouseState());
+			if(glfwGetMouseButton(app->_window,GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
+				double x; double y;
+				glfwGetCursorPos(app->_window,&x,&y);
+				glm::vec2 curr(x,y);
+				app->_app->onTouch(curr,curr-app->_prevMousePos);
+			}
 		}
 
 		static void __glfwOnScroll(GLFWwindow* window, double x, double y){
@@ -75,13 +86,12 @@ class MainAppGLFW : public MainApp,std::enable_shared_from_this<MainAppGLFW> {
 			app->resize(width,height);
 		}
 
-		spBaseApp _app;
-		// Current statements
-		GLFWKey   _lastKey;
-		GLFWMouse _lastMouse;
+		// Current statement
+		glm::vec2 _prevMousePos;
 
 		std::string _title;
 
+		KeyData _lastKey;
 		GLFWwindow* _window;
 
 		bool _isRun;

@@ -1,5 +1,6 @@
 #include "BVH.hpp"
 #include "BBox.hpp"
+#include "../api/Instance.hpp"
 
 using namespace glm;
 using namespace mango;
@@ -109,7 +110,7 @@ uint32_t BVH::findSplitLBVH(const std::vector<Prim>& primitives,uint32_t start, 
     if(startMorton == endMorton) // If morton code identical split is middle
         return (start+end) >> 1;  // (start+end)/2
 
-    auto commonPrefix = std::__clz(startMorton ^ endMorton);
+    auto commonPrefix = std::__libcpp_clz(startMorton ^ endMorton);
 
     auto split = start; // initial guess
     auto step = end - start;
@@ -120,7 +121,7 @@ uint32_t BVH::findSplitLBVH(const std::vector<Prim>& primitives,uint32_t start, 
 
         if (newSplit < end) {
             auto splitCode = primitives[newSplit].mortonCode;
-            auto splitPrefix = std::__clz(startMorton ^ splitCode);
+            auto splitPrefix = std::__libcpp_clz(startMorton ^ splitCode);
             if (splitPrefix > commonPrefix)
                 split = newSplit; // accept proposal
         }

@@ -9,7 +9,7 @@
 #define TINYGLTF_NO_EXTERNAL_IMAGE
 #include <tiny_gltf.h>
 #include <iostream>
-#include <api/Utils.hpp>
+#include "../api/Utils.hpp"
 #include <filesystem>
 
 using namespace mango;

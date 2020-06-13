@@ -2,8 +2,12 @@
 // Created by kurono267 on 2019-12-05.
 //
 
-#include <api/Instance.hpp>
-#include <mango.hpp>
+#include "../api/Instance.hpp"
+#include "../api/Pipeline.hpp"
+#include "../api/Framebuffer.hpp"
+#include "../api/CommandBuffer.hpp"
+#include "../unified/RenderTarget.hpp"
+
 #include "ImageBasedLight.hpp"
 
 namespace mango {

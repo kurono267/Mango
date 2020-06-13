@@ -3,12 +3,13 @@
 //
 
 #include "App.hpp"
+#include <app/MainAppGLFW.hpp>
 
 int main(){
-    spMainApp main = MainApp::instance();
+    auto main = MainAppGLFW::instance();
 
     main->create("Renderer",1280,720);
-    main->createApplication<App>();
+    main->setBaseApp(std::make_shared<App>(main));
 
     main->run();
 

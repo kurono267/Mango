@@ -4,8 +4,6 @@
 
 #include "BBox.hpp"
 #include <vector>
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/string_cast.hpp>
 
 BBox::BBox() : min(std::numeric_limits<float>::infinity()), max(-std::numeric_limits<float>::infinity()) {}
 BBox::BBox(const BBox& a) : min(a.min), max(a.max) {}

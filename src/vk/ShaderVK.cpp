@@ -3,10 +3,10 @@
 //
 
 #include <TargetConditionals.h>
-#if 0
+#if 1
 #include <shaderc/shaderc.hpp>
 #endif
-#ifdef TARGET_OS_IOS
+#if 0 //TARGET_OS_IOS
 #include <MoltenVKShaderConverter/include/MoltenVKGLSLToSPIRVConverter/GLSLConversion.h>
 #endif
 #include <filesystem>
@@ -14,13 +14,14 @@
 #include <unordered_set>
 
 #include "ShaderVK.hpp"
-#include <api/Utils.hpp>
+#include "../api/Utils.hpp"
 #include "DeviceVK.hpp"
+#include "../api/Instance.hpp"
 
 using namespace mango;
 using namespace mango::vulkan;
 
-#if 0
+#if 1
 class GLSLIncluder : public shaderc::CompileOptions::IncluderInterface {
 	public:
 		GLSLIncluder() = default;
@@ -101,7 +102,7 @@ void GLSLIncluder::ReleaseInclude(shaderc_include_result* include_result) {
 #endif
 
 std::optional<vk::ShaderModule> ShaderVK::createShader(const mango::ShaderStage &type, const std::string &filename) {
-#if 0
+#if 1
 	std::string content = mango::readFile(filename);
 	shaderc::Compiler shaderCompiler;
 	shaderc::CompileOptions compileOptions;
@@ -135,7 +136,7 @@ std::optional<vk::ShaderModule> ShaderVK::createShader(const mango::ShaderStage 
 	for(auto b : shaderResult){
 		shaderBinary.push_back(b);
 	}
-#endif
+#else
     MVKGLSLConversionShaderStage shader_kind;
     switch (type){
         case mango::ShaderStage::Vertex: shader_kind = kMVKGLSLConversionShaderStageVertex;
@@ -161,8 +162,9 @@ std::optional<vk::ShaderModule> ShaderVK::createShader(const mango::ShaderStage 
         std::cout << "Shader " << filename << " log: " << std::endl;
         std::cout << shader_log << std::endl;
     }
+#endif
     
-	vk::ShaderModuleCreateInfo createInfo(vk::ShaderModuleCreateFlags(),shader_length,shader_data);
+	vk::ShaderModuleCreateInfo createInfo(vk::ShaderModuleCreateFlags(),shaderBinary.size()*4,shaderBinary.data());
 	auto shaderModule = Instance::device<DeviceVK>()->getDevice().createShaderModule(createInfo);
 
 	return shaderModule;

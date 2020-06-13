@@ -4,6 +4,10 @@
 
 #include "TextureVK.hpp"
 #include "BufferVK.hpp"
+#include "../api/Instance.hpp"
+#include "../vk/DeviceVK.hpp"
+#include <iostream>
+#include "../api/Utils.hpp"
 
 using namespace mango::vulkan;
 

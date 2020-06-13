@@ -5,7 +5,9 @@
 #ifndef MANGO_COMMANDBUFFER_HPP
 #define MANGO_COMMANDBUFFER_HPP
 
-#include <mango.hpp>
+#include "Pipeline.hpp"
+#include "Texture.hpp"
+#include "Compute.hpp"
 
 namespace mango {
 

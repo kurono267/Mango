@@ -5,7 +5,7 @@
 #ifndef MANGO_COMPUTEVK_HPP
 #define MANGO_COMPUTEVK_HPP
 
-#include <api/Compute.hpp>
+#include "../api/Compute.hpp"
 #include "default.hpp"
 #include "DeviceVK.hpp"
 

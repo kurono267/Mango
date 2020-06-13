@@ -1,5 +1,6 @@
 set(MANGO_SRC
         app/MainApp.cpp
+        app/MainAppGLFW.cpp
         api/Pipeline.cpp
         api/Buffer.hpp
         unified/Mesh.cpp
@@ -78,4 +79,4 @@ set(MANGO_VK
 add_definitions(-DMVK_CONFIG_FULL_IMAGE_VIEW_SWIZZLE=1)
 
 add_library(mango SHARED ${MANGO_SRC} ${MANGO_VK})
-target_link_libraries(mango glfw ${Vulkan_LIBRARY} shaderc_combined stdc++)
+target_link_libraries(mango glfw vulkan shaderc_combined stdc++)

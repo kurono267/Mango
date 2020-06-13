@@ -3,7 +3,8 @@
 //
 
 #include "Mesh.hpp"
-#include "api/CommandBuffer.hpp"
+#include "../api/CommandBuffer.hpp"
+#include "../api/Instance.hpp"
 
 using namespace mango;
 

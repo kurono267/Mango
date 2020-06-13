@@ -5,7 +5,7 @@
 #ifndef MANGO_ASSETS_HPP
 #define MANGO_ASSETS_HPP
 
-#include <api/Texture.hpp>
+#include "../api/Texture.hpp"
 #include <unordered_map>
 #include "SceneNode.hpp"
 

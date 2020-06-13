@@ -6,7 +6,7 @@
 #define MANGO_PIPELINEVK_HPP
 
 #include "InstanceVK.hpp"
-#include "api/Pipeline.hpp"
+#include "../api/Pipeline.hpp"
 #include "DescSetVK.hpp"
 
 #include <iostream>

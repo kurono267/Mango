@@ -5,7 +5,7 @@
 #ifndef MANGO_CAMERA_HPP
 #define MANGO_CAMERA_HPP
 
-#include <api/default.hpp>
+#include "../api/default.hpp"
 
 namespace mango {
 /// Simple perspective camera

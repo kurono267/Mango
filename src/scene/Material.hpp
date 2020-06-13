@@ -5,10 +5,10 @@
 #ifndef MANGO_MATERIAL_HPP
 #define MANGO_MATERIAL_HPP
 
-#include <api/Device.hpp>
-#include <api/Texture.hpp>
-#include <unified/Utils.hpp>
-#include <unified/Uniform.hpp>
+#include "../api/Device.hpp"
+#include "../api/Texture.hpp"
+#include "../unified/Utils.hpp"
+#include "../unified/Uniform.hpp"
 
 namespace mango {
 

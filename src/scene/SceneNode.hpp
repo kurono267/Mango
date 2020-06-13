@@ -11,7 +11,7 @@
 #include "Camera.hpp"
 #include "Geometry.hpp"
 #include "BBox.hpp"
-#include <unified/Uniform.hpp>
+#include "../unified/Uniform.hpp"
 
 namespace mango {
 

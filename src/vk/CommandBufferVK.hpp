@@ -5,7 +5,7 @@
 #ifndef MANGO_COMMANDBUFFERVK_HPP
 #define MANGO_COMMANDBUFFERVK_HPP
 
-#include "api/CommandBuffer.hpp"
+#include "../api/CommandBuffer.hpp"
 #include "default.hpp"
 #include <unordered_map>
 

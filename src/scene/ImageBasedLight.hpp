@@ -5,10 +5,10 @@
 #ifndef MANGO_IMAGEBASEDLIGHT_HPP
 #define MANGO_IMAGEBASEDLIGHT_HPP
 
-#include <api/Texture.hpp>
-#include <unified/Image.hpp>
-#include <unified/Uniform.hpp>
-#include <unified/Mesh.hpp>
+#include "../api/Texture.hpp"
+#include "../unified/Image.hpp"
+#include "../unified/Uniform.hpp"
+#include "../unified/Mesh.hpp"
 
 namespace mango {
 

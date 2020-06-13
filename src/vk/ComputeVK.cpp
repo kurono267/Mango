@@ -6,6 +6,7 @@
 #include "InstanceVK.hpp"
 #include "DescSetVK.hpp"
 #include "ShaderVK.hpp"
+#include <iostream>
 
 using namespace mango;
 using namespace mango::vulkan;

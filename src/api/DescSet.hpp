@@ -8,7 +8,7 @@
 #include <memory>
 #include "Types.hpp"
 #include "Texture.hpp"
-#include "unified/Uniform.hpp"
+#include "../unified/Uniform.hpp"
 
 namespace mango {
 

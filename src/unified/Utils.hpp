@@ -5,7 +5,7 @@
 #ifndef MANGO_UNIFIED_UTILS_HPP
 #define MANGO_UNIFIED_UTILS_HPP
 
-#include "api/Texture.hpp"
+#include "../api/Texture.hpp"
 
 namespace mango {
 

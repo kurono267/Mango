@@ -3,7 +3,8 @@
 //
 
 #include "GBuffer.hpp"
-#include <mango.hpp>
+#include <api/CommandBuffer.hpp>
+#include <scene/Assets.hpp>
 
 using namespace mango;
 

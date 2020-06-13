@@ -6,7 +6,7 @@
 #include "InstanceVK.hpp"
 #include "PipelineVK.hpp"
 #include "BufferVK.hpp"
-#include <mango.hpp>
+#include <glfw/glfw3.h>
 
 using namespace mango::vulkan;
 using namespace mango;
@@ -41,7 +41,7 @@ void InstanceVK::init(const std::string& title, void* view,const glm::ivec2& siz
     dynamic_cast<DeviceVK*>(_device.get())->create(_instance,_surface,size);
 }
 
-#ifdef TARGET_OS_IOS
+#if 0
 
 void InstanceVK::createSurface(void* view){
     VkIOSSurfaceCreateInfoMVK surfaceCreateInfo = {};
@@ -59,8 +59,8 @@ void InstanceVK::createSurface(void* view){
 #else
 
 void InstanceVK::createSurface(void* window){
-    VkSurfaceKHR surface;
-    if (glfwCreateWindowSurface(_instance, window, nullptr, &surface) != VK_SUCCESS){
+	VkSurfaceKHR surface;
+    if (glfwCreateWindowSurface(_instance, (GLFWwindow*)window, nullptr, &surface) != VK_SUCCESS){
         throw std::runtime_error("failed to create window surface!");
     }
     _surface = surface;
@@ -145,7 +145,7 @@ void InstanceVK::setupDebugCallback() {
 
 std::vector<const char*> InstanceVK::getRequiredExtensions() {
     std::vector<const char*> extensions;
-    #ifdef TARGET_OS_IOS
+    #if 0
         extensions.push_back(VK_MVK_IOS_SURFACE_EXTENSION_NAME);
     #else
         unsigned int glfwExtensionCount = 0;
@@ -158,7 +158,7 @@ std::vector<const char*> InstanceVK::getRequiredExtensions() {
         }
     #endif
 
-	extensions.push_back(VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
+//extensions.push_back(VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
 
 	if (enableValidationLayers) {
 		extensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);

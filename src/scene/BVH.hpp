@@ -1,7 +1,6 @@
 #pragma once
 
-#include "mango.hpp"
-#include <unified/Mesh.hpp>
+#include "../unified/Mesh.hpp"
 #include <algorithm>
 
 #define NODE_MAX_TRIANGLE 1 // Max triangle in node

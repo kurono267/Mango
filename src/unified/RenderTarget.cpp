@@ -3,7 +3,7 @@
 //
 
 #include "RenderTarget.hpp"
-#include "api/Instance.hpp"
+#include "../api/Instance.hpp"
 
 using namespace mango;
 

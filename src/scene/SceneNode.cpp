@@ -3,8 +3,8 @@
 //
 
 #include "SceneNode.hpp"
-#include <api/Instance.hpp>
-#include <api/DescSet.hpp>
+#include "../api/Instance.hpp"
+#include "../api/DescSet.hpp"
 
 using namespace mango;
 

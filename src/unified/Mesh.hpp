@@ -6,11 +6,11 @@
 #define MANGO_MESH_HPP
 
 #include <vector>
-#include <scene/BBox.hpp>
-#include "api/Buffer.hpp"
-#include "api/default.hpp"
-#include "api/Types.hpp"
-#include "api/Device.hpp"
+#include "../scene/BBox.hpp"
+#include "../api/Buffer.hpp"
+#include "../api/default.hpp"
+#include "../api/Types.hpp"
+#include "../api/Device.hpp"
 #include "Uniform.hpp"
 
 namespace mango {

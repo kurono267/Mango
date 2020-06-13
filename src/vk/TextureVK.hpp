@@ -6,7 +6,7 @@
 #define MANGO_IMAGE_VK_HPP
 
 #include "default.hpp"
-#include "api/Texture.hpp"
+#include "../api/Texture.hpp"
 #include "ConvertVK.hpp"
 
 namespace mango::vulkan {

@@ -5,7 +5,7 @@
 #ifndef MANGO_SCENETRANSFORM_HPP
 #define MANGO_SCENETRANSFORM_HPP
 
-#include <api/default.hpp>
+#include "../api/default.hpp"
 
 namespace mango {
 

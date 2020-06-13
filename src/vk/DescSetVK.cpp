@@ -6,6 +6,8 @@
 #include "BufferVK.hpp"
 #include "TextureVK.hpp"
 #include <set>
+#include <iostream>
+#include "../api/Instance.hpp"
 
 namespace mango::vulkan {
 

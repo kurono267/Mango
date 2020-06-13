@@ -5,7 +5,7 @@
 #ifndef MANGO_GEOMETRY_HPP
 #define MANGO_GEOMETRY_HPP
 
-#include <unified/Mesh.hpp>
+#include "../unified/Mesh.hpp"
 #include "Material.hpp"
 
 namespace mango {

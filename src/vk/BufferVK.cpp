@@ -3,6 +3,8 @@
 //
 
 #include "BufferVK.hpp"
+#include <iostream>
+#include "../api/Instance.hpp"
 
 using namespace mango::vulkan;
 

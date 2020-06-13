@@ -9,7 +9,7 @@
 #pragma once
 
 #include <memory>
-#include <api/default.hpp>
+#include "../api/default.hpp"
 #include <iostream>
 
 namespace mango {
@@ -45,6 +45,8 @@ class MainApp {
         virtual bool is() = 0;
     
         virtual void* window() = 0; // Internal window
+	protected:
+		spBaseApp _app;
 };
 
 typedef std::shared_ptr<MainApp> spMainApp;

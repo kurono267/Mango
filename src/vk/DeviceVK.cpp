@@ -4,8 +4,7 @@
 
 #include <iostream>
 #include <set>
-#include <mango.hpp>
-#include <api/Texture.hpp>
+#include "../api/Texture.hpp"
 #include "DeviceVK.hpp"
 #include "PipelineVK.hpp"
 #include "BufferVK.hpp"
@@ -13,7 +12,7 @@
 #include "FramebufferVK.hpp"
 #include "DescSetVK.hpp"
 #include "ComputeVK.hpp"
-#include <unified/RenderTarget.hpp>
+#include "../unified/RenderTarget.hpp"
 
 using namespace mango::vulkan;
 using namespace mango;

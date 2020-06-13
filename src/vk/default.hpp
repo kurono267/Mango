@@ -11,19 +11,18 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #endif
+#ifndef MANGO_FRAMEWORK
 #include <vulkan/vulkan.hpp>
 #ifdef TARGET_OS_IOS
 #include <vulkan/vulkan_ios.h>
 #endif
+#else
+#include <mango/external/vulkan/vulkan.hpp>
+#ifdef TARGET_OS_IOS
+#include <mango/external/vulkan/vulkan_ios.h>
+#endif
+#endif
 
-#define GLM_FORCE_RADIANS
-#define GLM_ENABLE_EXPERIMENTAL
-#define GLM_FORCE_XYZW_ONLY
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp> // glm::value_ptr
-#include <glm/gtc/matrix_transform.hpp> // glm::perspective
-#include <glm/gtx/rotate_vector.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/quaternion.hpp>
+#include "../api/default.hpp"
 
 #endif //MANGO_DEFAULT_HPP

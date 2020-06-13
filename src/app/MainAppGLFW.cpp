@@ -26,7 +26,7 @@ void MainAppGLFW::resize(const int width,const int height){
 }
 			
 void MainAppGLFW::run(){
-	_app->mainApp = shared_from_this();
+	//_app->mainApp = shared_from_this();
 	_app->init();
 	while(_isRun){
 		_app->update();
@@ -47,7 +47,7 @@ glm::ivec2 MainAppGLFW::wndSize(){
 
 void MainAppGLFW::create(const std::string& title,const int width,const int height){
 	try {
-		glfwSetErrorCallback(&MainApp::__glfwOnError);
+		glfwSetErrorCallback(&MainAppGLFW::__glfwOnError);
 		if (!glfwInit())
 			::exit(EXIT_FAILURE);
 
@@ -57,11 +57,11 @@ void MainAppGLFW::create(const std::string& title,const int width,const int heig
 			glfwTerminate();
 			::exit(EXIT_FAILURE);
 		}
-		glfwSetKeyCallback(_window, &MainApp::__glfwOnKey);
-		glfwSetCursorPosCallback(_window, &MainApp::__glfwOnMousePos);
-		glfwSetMouseButtonCallback(_window, &MainApp::__glfwOnMouseBtn);
-		glfwSetScrollCallback(_window, &MainApp::__glfwOnScroll);
-		glfwSetWindowSizeCallback(_window, &MainApp::__glfwOnResize);
+		glfwSetKeyCallback(_window, &MainAppGLFW::__glfwOnKey);
+		glfwSetCursorPosCallback(_window, &MainAppGLFW::__glfwOnMousePos);
+		glfwSetMouseButtonCallback(_window, &MainAppGLFW::__glfwOnMouseBtn);
+		glfwSetScrollCallback(_window, &MainAppGLFW::__glfwOnScroll);
+		glfwSetWindowSizeCallback(_window, &MainAppGLFW::__glfwOnResize);
 
 		_title = title;
 	} catch(std::exception& e){
@@ -74,10 +74,6 @@ void MainAppGLFW::vsync(bool on){
 	else glfwSwapInterval(0);
 }
 
-const GLFWKey MainAppGLFW::keyState() const {
+const KeyData MainAppGLFW::glfwKeyState() const {
 	return _lastKey;
-}
-
-const GLFWMouse MainAppGLFW::mouseState() const {
-	return _lastMouse;
 }

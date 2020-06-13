@@ -3,7 +3,8 @@
 #include "TextureVK.hpp"
 #include "DeviceVK.hpp"
 #include "ConvertVK.hpp"
-#include <api/Utils.hpp>
+#include "../api/Utils.hpp"
+#include "../api/Instance.hpp"
 
 using namespace mango::vulkan;
 

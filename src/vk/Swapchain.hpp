@@ -1,7 +1,7 @@
 #pragma once
 
 #include "default.hpp"
-#include "api/Texture.hpp"
+#include "../api/Texture.hpp"
 
 namespace mango {
     class Device;

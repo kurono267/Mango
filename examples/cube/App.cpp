@@ -44,23 +44,21 @@ bool App::init() {
 	_descSet->setTexture(texView, Sampler(), 1, ShaderStage::Fragment);
 	_descSet->create();
 
+	auto screenRTs = device->getScreenRenderTargets();
+
     PipelineInfo rp;
     rp.viewport(Viewport(glm::vec2(0), mainWnd->wndSize()));
     rp.scissor(glm::ivec2(0), mainWnd->wndSize());
     rp.addShader(ShaderStage::Vertex, "../glsl/cube.vert");
     rp.addShader(ShaderStage::Fragment, "../glsl/cube.frag");
     rp.setDescSet(_descSet);
-    rp.setRenderPass(device->getScreenRenderPass());
+	rp.setRenderPass(screenRTs[0]->renderPass());
 
     _main = device->createPipeline(rp);
 
     _cube = createCube();
 
-    auto screenBuffers = device->getScreenbuffers();
-    for (const auto &screen : screenBuffers) {
-        std::cout << screen->info() << std::endl;
-    }
-    _cmdScreen.resize(screenBuffers.size());
+	_cmdScreen.resize(screenRTs.size());
     for (int i = 0; i < _cmdScreen.size(); ++i) {
         _cmdScreen[i] = device->createCommandBuffer();
         _cmdScreen[i]->begin();
@@ -68,8 +66,8 @@ bool App::init() {
         _cmdScreen[i]->setClearColor(0, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
         _cmdScreen[i]->setClearDepthStencil(1, 1.0f, 0.0f);
 
-        _cmdScreen[i]->beginRenderPass(rp.getRenderPass(), screenBuffers[i],
-                                       RenderArea(screenBuffers[i]->getSize(), glm::ivec2(0)));
+        _cmdScreen[i]->beginRenderPass(rp.getRenderPass(),  screenRTs[i]->framebuffer(),
+                                       RenderArea(device->getScreenSize(), glm::ivec2(0)));
         _cmdScreen[i]->bindPipeline(_main);
         _cmdScreen[i]->bindDescriptorSet(_main, _descSet);
         _cube->draw(_cmdScreen[i]);

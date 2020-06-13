@@ -4,6 +4,12 @@
 
 #include "Raytracer.hpp"
 
+#include <api/Instance.hpp>
+#include <api/DescSet.hpp>
+#include <api/Pipeline.hpp>
+#include <api/Framebuffer.hpp>
+#include <api/CommandBuffer.hpp>
+
 using namespace mango;
 
 const int rtGroupSize = 16;
