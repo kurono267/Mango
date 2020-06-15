@@ -1,5 +1,6 @@
 #define MANGO_VULKAN
 #include <mango.hpp>
+#include <app/MainAppGLFW.hpp>
 #include <chrono>
 
 using namespace mango;
@@ -12,7 +13,7 @@ class TestApp : public BaseApp {
 		bool init() final {
 			auto mainWnd = mainApp.lock();
 
-			Instance::init<vulkan::InstanceVK>("Test",mainWnd->window(),mainWnd->wndSize());
+			Instance::init<vulkan::InstanceVK>("Test",mainWnd->window(),mainWnd->frameSize());
 
 			auto device = Instance::device();
 			std::cout << device->deviceName() << std::endl;
@@ -28,24 +29,24 @@ class TestApp : public BaseApp {
 			_descSet->setTexture(textureView,Sampler(),1,ShaderStage::Fragment);
             _descSet->create();
 
+            auto screenRTs = device->getScreenRenderTargets();
+
 			PipelineInfo rp;
-			rp.viewport(Viewport(glm::vec2(0),mainWnd->wndSize()));
-			rp.scissor(glm::ivec2(0),mainWnd->wndSize());
+			rp.viewport(Viewport(glm::vec2(0),mainWnd->frameSize()));
+			rp.scissor(glm::ivec2(0),mainWnd->frameSize());
 			rp.addShader(ShaderStage::Vertex,"../glsl/test.vert");
 			rp.addShader(ShaderStage::Fragment,"../glsl/test.frag");
 			rp.setDescSet(_descSet);
-			spRenderPass renderPass = device->getScreenRenderPass();
-			rp.setRenderPass(renderPass);
+			rp.setRenderPass(screenRTs[0]->renderPass());
 
 			_main = device->createPipeline(rp);
 
 			_quad = createQuad();
 
-			auto screenBuffers = device->getScreenbuffers();
-			for(const auto& screen : screenBuffers){
-				std::cout << screen->info() << std::endl;
+			for(const auto& screen : screenRTs){
+				std::cout << screen->framebuffer()->info() << std::endl;
 			}
-			_cmdScreen.resize(screenBuffers.size());
+			_cmdScreen.resize(screenRTs.size());
 			for(int i = 0;i<_cmdScreen.size();++i){
 				_cmdScreen[i] = device->createCommandBuffer();
 				_cmdScreen[i]->begin();
@@ -53,7 +54,7 @@ class TestApp : public BaseApp {
 				_cmdScreen[i]->setClearColor(0,glm::vec4(0.0f,1.0f,0.0f,1.0f));
 				_cmdScreen[i]->setClearDepthStencil(1,1.0f,0.0f);
 
-				_cmdScreen[i]->beginRenderPass(renderPass,screenBuffers[i],RenderArea(screenBuffers[i]->getSize(),glm::ivec2(0)));
+				_cmdScreen[i]->beginRenderPass(rp.getRenderPass(),screenRTs[i]->framebuffer(),RenderArea(screenRTs[i]->framebuffer()->getSize(),glm::ivec2(0)));
 				_cmdScreen[i]->bindPipeline(_main);
 				_cmdScreen[i]->bindDescriptorSet(_main,_descSet);
 				_quad->draw(_cmdScreen[i]);
@@ -98,10 +99,10 @@ class TestApp : public BaseApp {
 };
 
 int main(){
-	spMainApp main = MainApp::instance();
+	auto main = MainAppGLFW::instance();
 
 	main->create("Base",1280,720);
-	main->createApplication<TestApp>();
+	main->setBaseApp(std::make_shared<TestApp>(main));
 
 	main->run();
 

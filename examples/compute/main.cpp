@@ -38,24 +38,24 @@ class TestApp : public BaseApp {
 
             _compute = device->createCompute("../glsl/compute.glsl",{_computeSet});
 
+            auto screenRTs = device->getScreenRenderTargets();
+
 			PipelineInfo rp;
 			rp.viewport(Viewport(glm::vec2(0),mainWnd->wndSize()));
 			rp.scissor(glm::ivec2(0),mainWnd->wndSize());
 			rp.addShader(ShaderStage::Vertex,"../glsl/test.vert");
 			rp.addShader(ShaderStage::Fragment,"../glsl/test.frag");
 			rp.setDescSet(_descSet);
-			spRenderPass renderPass = device->getScreenRenderPass();
-			rp.setRenderPass(renderPass);
+			rp.setRenderPass(screenRTs[0]->renderPass());
 
 			_main = device->createPipeline(rp);
 
 			_quad = createQuad();
 
-			auto screenBuffers = device->getScreenbuffers();
-			for(const auto& screen : screenBuffers){
-				std::cout << screen->info() << std::endl;
+			for(const auto& screen : screenRTs){
+				std::cout << screen->framebuffer()->info() << std::endl;
 			}
-			_cmdScreen.resize(screenBuffers.size());
+			_cmdScreen.resize(screenRTs.size());
 			for(int i = 0;i<_cmdScreen.size();++i){
 				_cmdScreen[i] = device->createCommandBuffer();
 				_cmdScreen[i]->begin();
@@ -63,7 +63,7 @@ class TestApp : public BaseApp {
 				_cmdScreen[i]->setClearColor(0,glm::vec4(0.0f,1.0f,0.0f,1.0f));
 				_cmdScreen[i]->setClearDepthStencil(1,1.0f,0.0f);
 
-				_cmdScreen[i]->beginRenderPass(renderPass,screenBuffers[i],RenderArea(screenBuffers[i]->getSize(),glm::ivec2(0)));
+				_cmdScreen[i]->beginRenderPass(rp.getRenderPass(),screenRTs[i]->framebuffer(),RenderArea(screenRTs[i]->framebuffer()->getSize(),glm::ivec2(0)));
 				_cmdScreen[i]->bindPipeline(_main);
 				_cmdScreen[i]->bindDescriptorSet(_main,_descSet);
 				_quad->draw(_cmdScreen[i]);
@@ -122,11 +122,13 @@ class TestApp : public BaseApp {
 		spSemaphore _renderFinish;
 };
 
-int main(){
-	spMainApp main = MainApp::instance();
+#include <app/MainAppGLFW.hpp>
 
-	main->create("Base",1280,720);
-	main->createApplication<TestApp>();
+int main(){
+	auto main = MainAppGLFW::instance();
+
+	main->create("Compute",1280,720);
+	main->setBaseApp(std::make_shared<TestApp>(main));
 
 	main->run();
 

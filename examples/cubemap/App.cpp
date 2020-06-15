@@ -21,7 +21,7 @@ void App::updateCameraUniform(const spSceneNode& cameraNode) {
 bool App::init() {
     auto mainWnd = mainApp.lock();
 
-    Instance::init<vulkan::InstanceVK>("CubeMap", mainWnd->window(), mainWnd->wndSize());
+    Instance::init<vulkan::InstanceVK>("CubeMap", mainWnd->window(), mainWnd->frameSize());
 
     auto device = Instance::device();
     Assets::init(device);
@@ -55,8 +55,8 @@ bool App::init() {
 	auto screenRTs = device->getScreenRenderTargets();
 
     PipelineInfo rp;
-    rp.viewport(Viewport(glm::vec2(0), mainWnd->wndSize()));
-    rp.scissor(glm::ivec2(0), mainWnd->wndSize());
+    rp.viewport(Viewport(glm::vec2(0), mainWnd->frameSize()));
+    rp.scissor(glm::ivec2(0), mainWnd->frameSize());
     rp.addShader(ShaderStage::Vertex, "../glsl/cubemap.vert");
     rp.addShader(ShaderStage::Fragment, "../glsl/cubemap.frag");
     rp.rasterizer(PolygonMode::Fill,CullMode::Front);

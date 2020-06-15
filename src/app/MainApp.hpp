@@ -40,6 +40,7 @@ class MainApp {
         virtual void exit() = 0;
         // Create window and setup
         virtual glm::ivec2 wndSize() = 0; // Return window size
+        virtual glm::ivec2 frameSize() = 0;
     
         virtual void run() = 0;
         virtual bool is() = 0;

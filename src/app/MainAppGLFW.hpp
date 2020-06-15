@@ -27,6 +27,7 @@ class MainAppGLFW : public MainApp,std::enable_shared_from_this<MainAppGLFW> {
 		// Create window and setup
 		void create(const std::string& title,const int width,const int height);
 		glm::ivec2 wndSize() override; // Return window size
+		glm::ivec2 frameSize() override;
 		
 		void vsync(bool on);
 
@@ -59,7 +60,7 @@ class MainAppGLFW : public MainApp,std::enable_shared_from_this<MainAppGLFW> {
 			glfwGetCursorPos(app->_window,&x,&y);
 			if(button == GLFW_MOUSE_BUTTON_LEFT) {
 				if (action == GLFW_PRESS) {
-					app->_prevMousePos = glm::vec2(x,y);
+					app->_prevMousePos = glm::vec2(x,y)/glm::vec2(app->wndSize());
 					app->_app->onTouchDown(glm::vec2(x, y));
 				}
 			}
@@ -71,6 +72,7 @@ class MainAppGLFW : public MainApp,std::enable_shared_from_this<MainAppGLFW> {
 				double x; double y;
 				glfwGetCursorPos(app->_window,&x,&y);
 				glm::vec2 curr(x,y);
+				curr /= glm::vec2(app->wndSize());
 				app->_app->onTouch(curr,curr-app->_prevMousePos);
 			}
 		}

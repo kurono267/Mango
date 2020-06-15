@@ -22,7 +22,7 @@ void App::updateCameraUniform(const spSceneNode& cameraNode) {
 bool App::init() {
     auto mainWnd = mainApp.lock();
 
-	Instance::init<vulkan::InstanceVK>("Renderer", mainWnd->window(), mainWnd->wndSize());
+	Instance::init<vulkan::InstanceVK>("Renderer", mainWnd->window(), mainWnd->frameSize());
 
     auto device = Instance::device();
     Assets::init(device);
@@ -56,6 +56,8 @@ bool App::init() {
 	_descSet->setUniformBuffer(_nodeUniform, 1, ShaderStage::Vertex);
 	_descSet->create();
 
+	auto screenRTs = device->getScreenRenderTargets();
+
     PipelineInfo rp;
     rp.viewport(Viewport(glm::vec2(0), mainWnd->wndSize()));
     rp.scissor(glm::ivec2(0), mainWnd->wndSize());
@@ -66,17 +68,16 @@ bool App::init() {
 	descSets[0] = _descSet;
 	descSets[1] = Material::generalDescSet(device);
     rp.setDescSet(descSets);
-    rp.setRenderPass(device->getScreenRenderPass());
+	rp.setRenderPass(screenRTs[0]->renderPass());
 
     _main = device->createPipeline(rp);
 
     _cube = createCube();
 
-    auto screenBuffers = device->getScreenbuffers();
-    for (const auto &screen : screenBuffers) {
-        std::cout << screen->info() << std::endl;
+    for (const auto &screen : screenRTs) {
+        std::cout << screen->framebuffer()->info() << std::endl;
     }
-    _cmdScreen.resize(screenBuffers.size());
+    _cmdScreen.resize(screenRTs.size());
     for (int i = 0; i < _cmdScreen.size(); ++i) {
         _cmdScreen[i] = device->createCommandBuffer();
         _cmdScreen[i]->begin();
@@ -84,8 +85,8 @@ bool App::init() {
         _cmdScreen[i]->setClearColor(0, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
         _cmdScreen[i]->setClearDepthStencil(1, 1.0f, 0.0f);
 
-        _cmdScreen[i]->beginRenderPass(rp.getRenderPass(), screenBuffers[i],
-                                       RenderArea(screenBuffers[i]->getSize(), glm::ivec2(0)));
+        _cmdScreen[i]->beginRenderPass(rp.getRenderPass(), screenRTs[i]->framebuffer(),
+                                       RenderArea(screenRTs[i]->framebuffer()->getSize(), glm::ivec2(0)));
         _cmdScreen[i]->bindPipeline(_main);
         //_cmdScreen[i]->bindDescriptorSet(_main, _descSet);
 		_scene->run([&](const spSceneNode& node, bool& stop){

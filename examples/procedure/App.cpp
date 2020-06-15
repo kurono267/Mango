@@ -7,7 +7,7 @@
 bool App::init() {
     auto mainWnd = mainApp.lock();
 
-    Instance::init<vulkan::InstanceVK>("Cube", mainWnd->window(), mainWnd->wndSize());
+    Instance::init<vulkan::InstanceVK>("Cube", mainWnd->window(), mainWnd->frameSize());
 
     auto device = Instance::device();
     std::cout << device->deviceName() << std::endl;
@@ -18,20 +18,21 @@ bool App::init() {
     _descSet->setTexture(_noise2d->createTextureView(),Sampler(Filter::Nearest,Filter::Nearest),0,ShaderStage::Fragment);
     _descSet->create();
 
+    auto screenRTs = device->getScreenRenderTargets();
+
     PipelineInfo rp;
-    rp.viewport(Viewport(glm::vec2(0), mainWnd->wndSize()));
-    rp.scissor(glm::ivec2(0), mainWnd->wndSize());
+    rp.viewport(Viewport(glm::vec2(0), mainWnd->frameSize()));
+    rp.scissor(glm::ivec2(0), mainWnd->frameSize());
     rp.addShader(ShaderStage::Vertex, "../glsl/procedure/main.vert");
     rp.addShader(ShaderStage::Fragment, "../glsl/procedure/main.frag");
     rp.setDescSet(_descSet);
-    rp.setRenderPass(device->getScreenRenderPass());
+    rp.setRenderPass(screenRTs[0]->renderPass());
 
     _main = device->createPipeline(rp);
 
     _quad = createQuad();
 
-    auto screenBuffers = device->getScreenbuffers();
-    _cmdScreen.resize(screenBuffers.size());
+    _cmdScreen.resize(screenRTs.size());
     for (int i = 0; i < _cmdScreen.size(); ++i) {
         _cmdScreen[i] = device->createCommandBuffer();
         _cmdScreen[i]->begin();
@@ -39,8 +40,8 @@ bool App::init() {
         _cmdScreen[i]->setClearColor(0, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
         _cmdScreen[i]->setClearDepthStencil(1, 1.0f, 0.0f);
 
-        _cmdScreen[i]->beginRenderPass(rp.getRenderPass(), screenBuffers[i],
-                                       RenderArea(screenBuffers[i]->getSize(), glm::ivec2(0)));
+        _cmdScreen[i]->beginRenderPass(rp.getRenderPass(), screenRTs[i]->framebuffer(),
+                                       RenderArea(screenRTs[i]->framebuffer()->getSize(), glm::ivec2(0)));
         _cmdScreen[i]->bindPipeline(_main);
         _cmdScreen[i]->bindDescriptorSet(_main,_descSet);
         _quad->draw(_cmdScreen[i]);
