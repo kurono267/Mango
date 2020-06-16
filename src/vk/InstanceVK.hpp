@@ -4,11 +4,13 @@
 
 #pragma once
 
-#include "default.hpp"
+#include "../api/default.hpp"
 #include "../api/Instance.hpp"
-#include "DeviceVK.hpp"
+#include "../api/Device.hpp"
 
 namespace mango::vulkan {
+
+class InstanceVKImpl;
 
 class InstanceVK : public InstanceAPI {
 	public:
@@ -20,19 +22,7 @@ class InstanceVK : public InstanceAPI {
 
 		void release() final;
 	protected:
-		void createInstance();
-
-		// Validation layers
-		std::vector<const char*> getRequiredExtensions();
-		void setupDebugCallback();
-		bool checkValidationLayerSupport();
-
-		// Create surface
-		void createSurface(void* window);
-    
-		vk::Instance _instance;
-		vk::DebugReportCallbackEXT _callback;
-		vk::SurfaceKHR _surface;
+		InstanceVKImpl* _impl;
 
 		spDevice _device;
 
