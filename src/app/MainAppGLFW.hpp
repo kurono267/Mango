@@ -60,7 +60,8 @@ class MainAppGLFW : public MainApp,std::enable_shared_from_this<MainAppGLFW> {
 			glfwGetCursorPos(app->_window,&x,&y);
 			if(button == GLFW_MOUSE_BUTTON_LEFT) {
 				if (action == GLFW_PRESS) {
-					app->_prevMousePos = glm::vec2(x,y)/glm::vec2(app->wndSize());
+					app->_prevMousePos = glm::vec2(x,y);
+					app->_prevMouseTime = std::chrono::system_clock::now();
 					app->_app->onTouchDown(glm::vec2(x, y));
 				}
 			}
@@ -69,11 +70,13 @@ class MainAppGLFW : public MainApp,std::enable_shared_from_this<MainAppGLFW> {
 		static void __glfwOnMousePos(GLFWwindow* window, double x, double y){
 			ptr& app = instance();
 			if(glfwGetMouseButton(app->_window,GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
-				double x; double y;
-				glfwGetCursorPos(app->_window,&x,&y);
 				glm::vec2 curr(x,y);
-				curr /= glm::vec2(app->wndSize());
-				app->_app->onTouch(curr,curr-app->_prevMousePos);
+				glm::vec2 delta = curr-app->_prevMousePos;
+				app->_prevMousePos = curr;
+				auto now = std::chrono::system_clock::now();
+				float dt = std::chrono::duration<float>(now-app->_prevMouseTime).count();
+				app->_app->onTouch(curr,delta*dt);
+				app->_prevMouseTime = now;
 			}
 		}
 
@@ -90,6 +93,7 @@ class MainAppGLFW : public MainApp,std::enable_shared_from_this<MainAppGLFW> {
 
 		// Current statement
 		glm::vec2 _prevMousePos;
+		std::chrono::system_clock::time_point _prevMouseTime;
 
 		std::string _title;
 
