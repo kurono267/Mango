@@ -1,4 +1,5 @@
 #include "MainAppGLFW.hpp"
+#include "../vk/InstanceVK.hpp"
 
 using namespace mango;
 
@@ -27,6 +28,7 @@ void MainAppGLFW::resize(const int width,const int height){
 			
 void MainAppGLFW::run(){
 	//_app->mainApp = shared_from_this();
+	Instance::init<vulkan::InstanceVK>(_title, window(), frameSize());
 	_app->init();
 	while(_isRun){
 		_app->update();
@@ -36,6 +38,8 @@ void MainAppGLFW::run(){
 		if(glfwWindowShouldClose(_window))_isRun = false;
 	}
 	_app->onExit();
+	_app.reset();
+	Instance::release();
 }
 
 glm::ivec2 MainAppGLFW::wndSize(){

@@ -203,7 +203,7 @@ spMesh mango::createSphere(const int segments) {
 			sVertex v;
 			v.pos = pos;
 			v.normal = glm::normalize(pos);
-			v.uv = glm::vec2(x/segments,y/segments);
+			v.uv = glm::vec2((float)x/(float)segments,(float)y/(float)segments);
 			vertices.push_back(v);
 		}
 	}
