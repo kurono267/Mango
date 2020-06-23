@@ -6,6 +6,7 @@
 
 #include "Device.hpp"
 #include "Buffer.hpp"
+#include <iostream>
 
 namespace mango {
 
@@ -31,6 +32,7 @@ class Instance {
 			}
 			that._impl = std::make_unique<InstanceType>();
 			that._impl->init(title,window,size);
+			std::cout << "Selected GPU: " << Instance::device()->deviceName() << std::endl;
 		}
 
 		template<typename T = Device>
