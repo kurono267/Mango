@@ -16,6 +16,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/string_cast.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 #else
 #include <mango/external/glm/glm.hpp>
 #include <mango/external/glm/gtc/type_ptr.hpp> // glm::value_ptr
