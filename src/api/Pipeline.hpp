@@ -8,6 +8,7 @@
 #include "Types.hpp"
 #include "Device.hpp"
 #include "DescSet.hpp"
+#include "Buffer.hpp"
 
 #include <vector>
 #include <unordered_map>
@@ -113,6 +114,7 @@ class PipelineInfo {
 					const BlendOp& alphaBlendOp = BlendOp::Add);
 		void depth(const bool& enable = true, const bool& write = true,const CompareOp& comp = CompareOp::Less);
 		void constant(uint32_t offset,uint32_t size, ShaderStage shaderStage);
+		void vertexFormat(const VertexBinding& binding, const std::vector<VertexAttrib>& attribs);
 
 		const std::vector<PushConstantInfo>& getConstants() const;
 
@@ -129,6 +131,9 @@ class PipelineInfo {
 		const spRenderPass& getRenderPass() const;
 
 		const std::vector<spDescSet>& getDescSets() const;
+
+		const VertexBinding& getVertexBinding() const;
+		const std::vector<VertexAttrib>& getVertexAttribs() const;
 
 		bool isDynamicScissor() const;
 		bool isDynamicViewport() const;
@@ -156,6 +161,9 @@ class PipelineInfo {
 		std::unordered_map<ShaderStage,std::string> _shaders;
 		spRenderPass _renderPass;
 		std::vector<spDescSet> _descSets;
+
+		VertexBinding _vertexBinding;
+		std::vector<VertexAttrib> _vertexAttribs;
 };
 
 class Pipeline {

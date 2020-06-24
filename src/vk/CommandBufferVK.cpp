@@ -70,6 +70,11 @@ void CommandBufferVK::bindIndexBuffer(const spBuffer &buffer,uint32_t offset) {
 	_cmd.bindIndexBuffer(bufferVK->getVKBuffer(),offset,vk::IndexType::eUint32);
 }
 
+void CommandBufferVK::bindIndexBuffer16(const spBuffer& buffer,uint32_t offset) {
+	auto bufferVK = std::dynamic_pointer_cast<BufferVK>(buffer);
+
+	_cmd.bindIndexBuffer(bufferVK->getVKBuffer(),offset,vk::IndexType::eUint16);
+}
 
 void CommandBufferVK::drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset,
 							 uint32_t firstInstance) {

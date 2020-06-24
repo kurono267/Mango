@@ -41,6 +41,7 @@ class CommandBufferVK : public CommandBuffer {
 
 		void bindVertexBuffer(const spBuffer& buffer, uint32_t offset = 0) final;
 		void bindIndexBuffer(const spBuffer& buffer,uint32_t offset = 0) final;
+		void bindIndexBuffer16(const spBuffer& buffer,uint32_t offset = 0) final;
 		void drawIndexed(uint32_t indexCount, uint32_t instanceCount = 1, uint32_t firstIndex = 0, int32_t vertexOffset = 0, uint32_t firstInstance = 0) final;
 		void endRenderPass() final;
 		void end() final;

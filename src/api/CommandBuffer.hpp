@@ -41,6 +41,7 @@ class CommandBuffer {
 		virtual void pushConstants(const spPipeline& pipeline, uint32_t offset, uint32_t size, ShaderStage stage, void* data) = 0;
 		virtual void bindVertexBuffer(const spBuffer& buffer, uint32_t offset = 0) = 0;
 		virtual void bindIndexBuffer(const spBuffer& buffer,uint32_t offset = 0) = 0;
+		virtual void bindIndexBuffer16(const spBuffer& buffer,uint32_t offset = 0) = 0;
 		virtual void drawIndexed(uint32_t indexCount, uint32_t instanceCount = 1, uint32_t firstIndex = 0, int32_t vertexOffset = 0, uint32_t firstInstance = 0) = 0;
 		virtual void endRenderPass() = 0;
 		virtual void end() = 0;

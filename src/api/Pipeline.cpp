@@ -9,6 +9,7 @@ using namespace mango;
 
 PipelineInfo::PipelineInfo(){
 	inputAssembly(PrimitiveTopology::TriangleList);
+	vertexFormat(sVertex::bindingDesc(),sVertex::attributes());
 	dynamicScissor();
 	dynamicViewport();
 	rasterizer();
@@ -99,6 +100,18 @@ void PipelineInfo::depth(const bool& enable, const bool& write,const CompareOp& 
 
 void PipelineInfo::constant(uint32_t offset,uint32_t size, ShaderStage shaderStage) {
 	_constants.emplace_back(offset,size,shaderStage);
+}
+
+void PipelineInfo::vertexFormat(const VertexBinding& binding, const std::vector<VertexAttrib>& attribs) {
+	_vertexBinding = binding;
+	_vertexAttribs = attribs;
+}
+
+const VertexBinding& PipelineInfo::getVertexBinding() const {
+	return _vertexBinding;
+}
+const std::vector<VertexAttrib>& PipelineInfo::getVertexAttribs() const {
+	return _vertexAttribs;
 }
 
 const std::vector<PushConstantInfo>& PipelineInfo::getConstants() const {

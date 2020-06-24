@@ -151,12 +151,12 @@ void PipelineVK::create() {
 
 	// Set Vertex format
 
-	auto sVertexBindDesc = sVertex::bindingDesc();
-	auto sVertexAttrDesc = sVertex::attributes();
+	auto vertexBindDesc = _renderPattern.getVertexBinding();
+	auto vertexAttrDesc = _renderPattern.getVertexAttribs();
 
-	auto bindingDescription = vk::VertexInputBindingDescription(sVertexBindDesc.binding,sVertexBindDesc.stride);
+	auto bindingDescription = vk::VertexInputBindingDescription(vertexBindDesc.binding, vertexBindDesc.stride);
     std::vector<vk::VertexInputAttributeDescription> attributeDescriptions;
-    for(auto attr : sVertexAttrDesc){
+    for(auto attr : vertexAttrDesc){
         attributeDescriptions.push_back(vk::VertexInputAttributeDescription(
             attr.location,attr.binding,formatVK(attr.format),attr.offset
         ));
