@@ -21,7 +21,7 @@ const bool enableValidationLayers = true;
 #endif
 
 const std::vector<const char*> validationLayers = {
-    "VK_LAYER_LUNARG_standard_validation"
+    "VK_LAYER_KHRONOS_validation"
 };
 
 class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {

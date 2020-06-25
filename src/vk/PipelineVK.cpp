@@ -200,7 +200,7 @@ void PipelineVK::create() {
 		_pLayout,
 		_renderPass->getVK(),0);
 
-	_pipeline = vk_device.createGraphicsPipelines(nullptr,pipelineInfo)[0];
+	_pipeline = vk_device.createGraphicsPipelines(nullptr,pipelineInfo).value[0];
 
 	for(const auto& shader : _shaders){
 		vk_device.destroyShaderModule(shader.module);

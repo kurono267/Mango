@@ -55,7 +55,7 @@ void ComputeVK::init() {
 			_pipelineLayout
 	);
 
-	_pipeline = vk_device.createComputePipeline(nullptr,info);
+	_pipeline = vk_device.createComputePipeline(nullptr,info).value;
 	vk_device.destroyShaderModule(shaderStageInfo.module);
 }
 

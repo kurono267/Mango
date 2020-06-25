@@ -37,7 +37,7 @@ void vkDestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackE
 class mango::vulkan::InstanceVKImpl {
 	public:
 		void createInstance(const std::string& title) {
-			vk::ApplicationInfo appInfo(title.c_str(),VK_MAKE_VERSION(1, 0, 0),"Mango",VK_MAKE_VERSION(1, 0, 0),VK_API_VERSION_1_0);
+			vk::ApplicationInfo appInfo(title.c_str(),VK_MAKE_VERSION(1, 0, 0),"Mango",VK_MAKE_VERSION(1, 0, 0),VK_API_VERSION_1_2);
 
 			vk::InstanceCreateInfo createInfo;
 			createInfo.setPApplicationInfo(&appInfo);

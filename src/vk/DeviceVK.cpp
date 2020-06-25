@@ -122,7 +122,7 @@ bool checkDeviceExtensionSupport(vk::PhysicalDevice device) {
 	std::set<std::string> requiredExtensions(deviceExtensions.begin(), deviceExtensions.end());
 
 	for (const auto& extension : availableExtensions) {
-		requiredExtensions.erase(extension.extensionName);
+		requiredExtensions.erase(std::string(extension.extensionName));
 	}
 
 	if(!requiredExtensions.empty()){
@@ -196,7 +196,7 @@ void DeviceVK::createLogicalDevice(){
 
 std::string DeviceVK::deviceName(){
 	vk::PhysicalDeviceProperties pdProp = _pDevice.getProperties();
-	return pdProp.deviceName;
+	return std::string(pdProp.deviceName);
 }
 
 vk::Device DeviceVK::getDevice() {
