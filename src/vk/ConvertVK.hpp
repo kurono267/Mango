@@ -48,6 +48,9 @@ vk::BorderColor borderColorVK(const BorderColor& _mango);
 
 vk::PipelineBindPoint pipelineBindPointVK(const PipelineBindPoint& _mango);
 
+vk::AttachmentLoadOp attachmentLoadOpVK(const AttachmentLoad& _mango);
+vk::AttachmentStoreOp attachmentStoreOpVK(const AttachmentStore& _mango);
+
 };
 
 #endif //MANGO_CONVERTVK_HPP

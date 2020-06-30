@@ -507,6 +507,19 @@ enum class PipelineBindPoint {
 	Compute
 };
 
+enum class AttachmentStore
+{
+	Store,
+	DontCare
+};
+
+enum class AttachmentLoad
+{
+	Load,
+	Clear,
+	DontCare
+};
+
 };
 
 #endif //MANGO_TYPES_HPP

@@ -82,7 +82,7 @@ class mango::vulkan::InstanceVKImpl {
 			}
 #endif
 
-//extensions.push_back(VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
+			extensions.push_back(VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME);
 
 			if (enableValidationLayers) {
 				extensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);

@@ -864,3 +864,18 @@ vk::PipelineBindPoint mango::vulkan::pipelineBindPointVK(const mango::PipelineBi
 		case PipelineBindPoint::Compute:return vk::PipelineBindPoint::eCompute;
 	}
 }
+
+vk::AttachmentLoadOp mango::vulkan::attachmentLoadOpVK(const mango::AttachmentLoad& _mango) {
+	switch(_mango){
+		case mango::AttachmentLoad::Clear: return vk::AttachmentLoadOp::eClear;
+		case mango::AttachmentLoad::Load: return vk::AttachmentLoadOp::eLoad;
+		case mango::AttachmentLoad::DontCare: return vk::AttachmentLoadOp::eDontCare;
+	}
+}
+
+vk::AttachmentStoreOp mango::vulkan::attachmentStoreOpVK(const mango::AttachmentStore& _mango) {
+	switch(_mango){
+		case mango::AttachmentStore::DontCare: return vk::AttachmentStoreOp::eDontCare;
+		case mango::AttachmentStore::Store: return vk::AttachmentStoreOp:: eStore;
+	}
+}

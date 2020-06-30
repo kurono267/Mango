@@ -38,6 +38,11 @@ glm::ivec2 Framebuffer::getAttachmentSize(const int id) {
 	return glm::ivec2(texture->width(),texture->height());
 }
 
+Format Framebuffer::getAttachmentFormat(const int id) {
+	auto texture = _attachments[id]->getTexture();
+	return texture->format();
+}
+
 std::string Framebuffer::info(){
 	std::stringstream stream;
 	stream << "Framebuffer Info" << std::endl;

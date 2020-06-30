@@ -43,16 +43,20 @@ struct DepthState {
 };
 
 struct Attachment {
-	Attachment(const Format& f, const bool& d, const int i,const SampleCount s = SampleCount::s1){
-		format = f;
-		depth = d;
-		index = i;
+	Attachment(const Format& _format, const bool& isDepth, const int _index, const AttachmentLoad& _loadOp = AttachmentLoad::Clear, const AttachmentStore& _storeOp = AttachmentStore::Store,const SampleCount s = SampleCount::s1){
+		format = _format;
+		depth = isDepth;
+		index = _index;
 		samples = s;
+		storeOp = _storeOp;
+		loadOp = _loadOp;
 	}
 	Format format;
 	SampleCount samples;
 	bool depth;
 	int index;
+	AttachmentLoad loadOp;
+	AttachmentStore storeOp;
 };
 
 class RenderPass {

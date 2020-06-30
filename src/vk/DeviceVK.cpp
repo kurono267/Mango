@@ -280,7 +280,7 @@ mango::Format DeviceVK::getDepthFormat() {
 void DeviceVK::createScreen(){
 	auto screenRenderPass = std::make_shared<RenderPassVK>();
 	screenRenderPass->addAttachment(Attachment(formatVK2Mango(_swapchain->getFormat()),false,0));
-	screenRenderPass->addAttachment(Attachment(getDepthFormat(),true,1));
+	screenRenderPass->addAttachment(Attachment(getDepthFormat(),true,1, AttachmentLoad::Clear, AttachmentStore::DontCare));
 	screenRenderPass->create(true);
 
 	auto imageViews = _swapchain->getImageViews();

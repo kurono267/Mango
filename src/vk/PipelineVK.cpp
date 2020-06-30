@@ -22,9 +22,8 @@ void RenderPassVK::create(const bool isPresent){
 
 		desc.setFormat(mango::vulkan::formatVK(a.format));
 		desc.setSamples(mango::vulkan::sampleCountVK(a.samples));
-		desc.setLoadOp(vk::AttachmentLoadOp::eClear);
-		if(!a.depth)desc.setStoreOp(vk::AttachmentStoreOp::eStore);
-		else desc.setStoreOp(vk::AttachmentStoreOp::eDontCare);
+		desc.setLoadOp(mango::vulkan::attachmentLoadOpVK(a.loadOp));
+		desc.setStoreOp(mango::vulkan::attachmentStoreOpVK(a.storeOp));
 		desc.setStencilLoadOp(vk::AttachmentLoadOp::eDontCare);
 		desc.setStencilStoreOp(vk::AttachmentStoreOp::eDontCare);
 		if(!a.depth)desc.setInitialLayout(isPresent?vk::ImageLayout::ePresentSrcKHR:vk::ImageLayout::eShaderReadOnlyOptimal);
