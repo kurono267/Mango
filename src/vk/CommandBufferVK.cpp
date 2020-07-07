@@ -107,7 +107,7 @@ void CommandBufferVK::create(){
 }
 
 CommandBufferVK::~CommandBufferVK() {
-	std::cout << "~CommandBufferVK" << std::endl;
+	//std::cout << "~CommandBufferVK" << std::endl;
 	if(_cmd){
 		_cmd.reset(vk::CommandBufferResetFlagBits::eReleaseResources);
 		auto device = Instance::device<DeviceVK>();

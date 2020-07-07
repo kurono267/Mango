@@ -41,6 +41,11 @@ struct BBox {
 	 * @return bounding box after apply transform
 	 */
     BBox applyTransform(const glm::mat4& transform);
+    /**
+     * Get list of points of bounding box
+     * @return list of points of bounding box
+     */
+    std::vector<glm::vec3> points() const;
 
     union {
         glm::vec4 bounds[2];

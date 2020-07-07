@@ -32,7 +32,6 @@ uint32_t BBox::maxDim(){
 }
 
 BBox BBox::applyTransform(const glm::mat4 &transform) {
-	glm::vec3 bounds[2] = {min,max};
 	BBox box;
 	for(int p = 0;p<8;++p) {
 		int i = p/4;
@@ -43,6 +42,18 @@ BBox BBox::applyTransform(const glm::mat4 &transform) {
 		box.expand(pos);
 	}
 	return box;
+}
+
+std::vector<glm::vec3> BBox::points() const {
+	std::vector<glm::vec3> points(8);
+	for(int p = 0;p<8;++p) {
+		int i = p/4;
+		int t0 = p%4;
+		int j = t0/2;
+		int k = t0%2;
+		points[i] = glm::vec3(bounds[i].x, bounds[j].y, bounds[k].z);
+	}
+	return points;
 }
 
 std::ostream& operator<<(std::ostream& stream, const BBox& box){
