@@ -39,6 +39,7 @@ class Mesh {
 		void draw(const spCommandBuffer& cmd, int indexCount = -1);
 		void bind(const spCommandBuffer& cmd);
 
+		size_t vertexBufferSize();
 		size_t verticesCount();
 		template<typename VertexType = sVertex>
 		VertexType* mapVertices() {
@@ -46,6 +47,7 @@ class Mesh {
 		}
 		void unmapVertices();
 
+		size_t indexBufferSize();
 		size_t indicesCount();
 		template<typename IndexType = uint32_t>
 		IndexType* mapIndices() {

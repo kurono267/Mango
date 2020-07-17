@@ -33,7 +33,8 @@ void Mesh::draw(const spCommandBuffer& cmd, int indexCount){
 
 void Mesh::bind(const spCommandBuffer& cmd) {
 	cmd->bindVertexBuffer(_vbDevice);
-	cmd->bindIndexBuffer(_ibDevice);
+	if(_indexSize == 2)cmd->bindIndexBuffer16(_ibDevice);
+	else cmd->bindIndexBuffer(_ibDevice);
 }
 
 void Mesh::updateVertices() {
@@ -103,6 +104,14 @@ void Mesh::genNormals() {
 
 	updateVertices();
 	updateIndices();
+}
+
+size_t Mesh::vertexBufferSize() {
+	return _vbHost->size();
+}
+
+size_t Mesh::indexBufferSize() {
+	return _ibHost->size();
 }
 
 spMesh mango::createQuad(){
