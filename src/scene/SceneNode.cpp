@@ -152,3 +152,24 @@ BBox SceneNode::boundingBox() {
 	}
 	return box;
 }
+
+Uniform mango::createCameraUniform(const spSceneNode& cameraNode) {
+	auto device = Instance::device();
+
+	Uniform cameraUniform;
+	cameraUniform.create(device,sizeof(CameraData));
+	if(cameraNode)updateCameraUniform(cameraNode,cameraUniform);
+	return cameraUniform;
+}
+
+void mango::updateCameraUniform(const spSceneNode& cameraNode, Uniform& uniform) {
+	if(!cameraNode->getCamera())throw std::logic_error("updateCameraUniform: Node don't contains camera");
+	CameraData data;
+	data.view = cameraNode->getWorldTransform();
+	data.proj = cameraNode->getCamera()->getProj();
+	data.viewProj = data.proj*data.view;
+	data.invView = glm::inverse(data.view);
+	data.invProj = glm::inverse(data.proj);
+
+	uniform.set(sizeof(CameraData),&data);
+}

@@ -19,6 +19,14 @@ struct NodeData {
 	glm::mat4 world;
 };
 
+struct CameraData {
+	glm::mat4 view;
+	glm::mat4 proj;
+	glm::mat4 viewProj;
+	glm::mat4 invView;
+	glm::mat4 invProj;
+};
+
 class SceneNode : public SceneTransform,public std::enable_shared_from_this<SceneNode> {
 	typedef std::shared_ptr<SceneNode> ptr;
 	public:
@@ -69,6 +77,9 @@ class SceneNode : public SceneTransform,public std::enable_shared_from_this<Scen
 };
 
 typedef std::shared_ptr<SceneNode> spSceneNode;
+
+Uniform createCameraUniform(const spSceneNode& cameraNode = nullptr);
+void updateCameraUniform(const spSceneNode& cameraNode, Uniform& uniform);
 
 }
 
