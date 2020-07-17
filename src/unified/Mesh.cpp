@@ -8,20 +8,15 @@
 
 using namespace mango;
 
-void Mesh::create(const mango::spDevice &device, const std::vector<mango::sVertex> &vertices,
-                         const std::vector<uint32_t> &indices) {
-	_bbox = BBox();
-	for(auto& vertex : vertices){
-		_bbox.expand(vertex.pos);
-	}
-    _vbHost = device->createBuffer(BufferType::Vertex | BufferType::Storage,MemoryType::HOST,vertices.size()*sizeof(sVertex),(void*)vertices.data());
-    _vbDevice = device->createBuffer(BufferType::Vertex | BufferType::Storage,MemoryType::DEVICE,vertices.size()*sizeof(sVertex));
-    _vbHost->copy(_vbDevice);
+void Mesh::create(const spDevice& device, size_t vertexBufferSize, size_t indexBufferSize, size_t vertexSize, size_t indexSize) {
+	_vertexSize = vertexSize;
+	_indexSize = indexSize;
 
-	_ibHost = device->createBuffer(BufferType::Index | BufferType::Storage,MemoryType::HOST,indices.size()*sizeof(uint32_t),(void*)indices.data());
-    _ibDevice = device->createBuffer(BufferType::Index | BufferType::Storage,MemoryType::DEVICE,indices.size()*sizeof(uint32_t));
-    _ibHost->copy(_ibDevice);
-	_indexCount = static_cast<uint32_t>(indices.size());
+	_vbHost = device->createBuffer(BufferType::Vertex | BufferType::Storage,MemoryType::HOST,vertexBufferSize);
+	_vbDevice = device->createBuffer(BufferType::Vertex | BufferType::Storage,MemoryType::DEVICE,vertexBufferSize);
+
+	_ibHost = device->createBuffer(BufferType::Index | BufferType::Storage,MemoryType::HOST,indexBufferSize);
+	_ibDevice = device->createBuffer(BufferType::Index | BufferType::Storage,MemoryType::DEVICE,indexBufferSize);
 }
 
 sVertex::sVertex(const glm::vec3& pos_,const glm::vec2& uv_,const glm::vec3& normal_)
@@ -31,10 +26,22 @@ sVertex::sVertex(const float& px,const float& py,const float& pz,const float& u,
 	pos(px,py,pz),uv(u,v),normal(nx,ny,nz)
 {}
 
-void Mesh::draw(const spCommandBuffer& cmd){
+void Mesh::draw(const spCommandBuffer& cmd, int indexCount){
+	bind(cmd);
+	cmd->drawIndexed(indexCount>=0?indexCount:indicesCount());
+}
+
+void Mesh::bind(const spCommandBuffer& cmd) {
 	cmd->bindVertexBuffer(_vbDevice);
 	cmd->bindIndexBuffer(_ibDevice);
-	cmd->drawIndexed(_indexCount);
+}
+
+void Mesh::updateVertices() {
+	_vbHost->copy(_vbDevice);
+}
+
+void Mesh::updateIndices() {
+	_ibHost->copy(_ibDevice);
 }
 
 BBox Mesh::getBoundingBox() {
@@ -42,11 +49,7 @@ BBox Mesh::getBoundingBox() {
 }
 
 size_t Mesh::verticesCount() {
-	return _vbHost->size()/sizeof(sVertex);
-}
-
-sVertex *Mesh::mapVertices() {
-	return (sVertex*)_vbHost->map();
+	return _vbHost->size()/_vertexSize;
 }
 
 void Mesh::unmapVertices() {
@@ -54,11 +57,7 @@ void Mesh::unmapVertices() {
 }
 
 size_t Mesh::indicesCount() {
-	return _ibHost->size()/sizeof(uint32_t);
-}
-
-uint32_t *Mesh::mapIndices() {
-	return (uint32_t*)_ibHost->map();
+	return _ibHost->size()/_indexSize;
 }
 
 void Mesh::unmapIndices() {
@@ -102,8 +101,8 @@ void Mesh::genNormals() {
 	unmapVertices();
 	unmapIndices();
 
-	_vbHost->copy(_vbDevice);
-	_ibHost->copy(_ibDevice);
+	updateVertices();
+	updateIndices();
 }
 
 spMesh mango::createQuad(){

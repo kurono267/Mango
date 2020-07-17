@@ -20,16 +20,55 @@ class Mesh {
 		Mesh() = default;
 		virtual ~Mesh() = default;
 
-		void create(const spDevice& device, const std::vector<sVertex>& vertices,const std::vector<uint32_t>& indices);
-		void draw(const spCommandBuffer& cmd);
+		template<typename VertexType = sVertex, typename IndexType = uint32_t>
+		void create(const spDevice& device, const std::vector<VertexType>& vertices,const std::vector<IndexType>& indices){
+			_bbox = BBox();
+			for(auto& vertex : vertices){
+				_bbox.expand(vertex.pos);
+			}
+
+			create(device,vertices.size()*sizeof(VertexType),indices.size()*sizeof(IndexType),sizeof(VertexType),sizeof(IndexType));
+
+			fillVertices(vertices);
+			fillIndices(indices);
+
+			updateVertices();
+			updateIndices();
+		}
+		void create(const spDevice& device, size_t vertexBufferSize, size_t indexBufferSize, size_t vertexSize, size_t indexSize);
+		void draw(const spCommandBuffer& cmd, int indexCount = -1);
+		void bind(const spCommandBuffer& cmd);
 
 		size_t verticesCount();
-		sVertex* mapVertices();
+		template<typename VertexType = sVertex>
+		VertexType* mapVertices() {
+			return (VertexType*)_vbHost->map();
+		}
 		void unmapVertices();
 
 		size_t indicesCount();
-		uint32_t* mapIndices();
+		template<typename IndexType = uint32_t>
+		IndexType* mapIndices() {
+			return (IndexType*)_ibHost->map();
+		}
 		void unmapIndices();
+
+		template<typename VertexType>
+		void fillVertices(const std::vector<VertexType>& vertices, size_t offset = 0) {
+			auto* data = mapVertices<VertexType>();
+			memcpy(data+offset,vertices.data(),vertices.size()*sizeof(VertexType));
+			unmapVertices();
+		}
+
+		template<typename IndexType>
+		void fillIndices(const std::vector<IndexType>& indices, size_t offset = 0) {
+			auto* data = mapIndices<IndexType>();
+			memcpy(data+offset,indices.data(),indices.size()*sizeof(IndexType));
+			unmapIndices();
+		}
+
+		void updateVertices();
+		void updateIndices();
 
 		BBox getBoundingBox();
 
@@ -42,7 +81,8 @@ class Mesh {
 		spBuffer _vbDevice;
 		spBuffer _ibHost;
 		spBuffer _ibDevice;
-		uint32_t _indexCount;
+		size_t _vertexSize;
+		size_t _indexSize;
 		BBox _bbox;
 };
 
