@@ -51,7 +51,7 @@ std::vector<glm::vec3> BBox::points() const {
 		int t0 = p%4;
 		int j = t0/2;
 		int k = t0%2;
-		points[i] = glm::vec3(bounds[i].x, bounds[j].y, bounds[k].z);
+		points[p] = glm::vec3(bounds[i].x, bounds[j].y, bounds[k].z);
 	}
 	return points;
 }
