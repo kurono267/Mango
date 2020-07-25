@@ -236,6 +236,12 @@ mango::spTexture DeviceVK::createTexture(int width, int height, int miplevels, c
 	return texture;
 }
 
+mango::spTexture DeviceVK::createTexture3D(int width, int height, int depth, int miplevels, const Format& format, const TextureType& type) {
+	auto texture = std::make_shared<TextureVK>();
+	texture->create3D(width,height,depth,miplevels,format,type);
+	return texture;
+}
+
 spTexture DeviceVK::createTexture() {
 	return std::make_shared<TextureVK>();
 }

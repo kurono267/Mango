@@ -18,6 +18,7 @@ class TextureVK : public Texture {
 
 		void create(int width, int height,int miplevels,const Format& format, const TextureType &type) override;
 	    void create(int width,int height,int miplevels,const Format& format,const TextureType &type,const vk::Image& image);
+		void create3D(int width,int height, int depth, int miplevels, const Format& format, const TextureType& type) final;
 	    virtual void createCubeMap(int width, int height, int mipLevels, const Format& format, const TextureType& type) final;
 
 		spTextureView createTextureView(const ComponentMapping& componentMapping = ComponentMapping(),int minLayer = 0, int maxLayer = -1,int minLevel = 0,int maxLevel = -1) override;
@@ -27,7 +28,7 @@ class TextureVK : public Texture {
 
 	    void transition(const vk::ImageLayout& newLayout);
 
-        void setBuffer(const spBuffer& buffer, const glm::ivec2& size, const uint& mipLevel, const uint& layer, const uint& offsetBuffer);
+        void setBuffer(const spBuffer& buffer, const glm::ivec3& size, const uint& mipLevel, const uint& layer, const uint& offsetBuffer);
 
         vk::Image getImage();
         vk::ImageLayout getImageLayout();
@@ -39,6 +40,7 @@ protected:
 		vk::CommandPool _pool;
 		vk::Queue _queue;
 		vk::ImageLayout _layout;
+		vk::ImageType _imageType;
 		bool _isOwned;
 };
 

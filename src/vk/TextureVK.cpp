@@ -41,6 +41,7 @@ void TextureVK::create(const int width,const int height,const int miplevels,cons
     _mipLevels = miplevels;
     _type = type;
 	_isOwned = false;
+	_imageType = vk::ImageType::e2D;
 }
 
 void TextureVK::create(const int width, const int height,const int miplevels , const Format& format, const mango::TextureType &type) {
@@ -54,6 +55,7 @@ void TextureVK::create(const int width, const int height,const int miplevels , c
 	_type = type;
 	_format = format;
 	_isOwned = true;
+	_imageType = vk::ImageType::e2D;
 
 	vk::ImageUsageFlags usage = (vk::ImageUsageFlags)0;
 	vk::ImageLayout layout = vk::ImageLayout::ePreinitialized;
@@ -71,7 +73,47 @@ void TextureVK::create(const int width, const int height,const int miplevels , c
 		usage |= vk::ImageUsageFlagBits::eStorage;
 	}
 
-	createVK(vk::ImageCreateFlags(),vk::ImageType::e2D,vk::Extent3D(_width,_height,_depth),_layers,_mipLevels,mango::vulkan::formatVK(format),usage,layout);
+	createVK(vk::ImageCreateFlags(),_imageType,vk::Extent3D(_width,_height,_depth),_layers,_mipLevels,mango::vulkan::formatVK(format),usage,layout);
+
+	if(((uint32_t)type & (uint32_t)mango::TextureType::Output)
+	   && ((uint32_t)type & (uint32_t)mango::TextureType::Input)){
+		transition(vk::ImageLayout::eShaderReadOnlyOptimal);
+	}
+	if(type == mango::TextureType::DepthStencil){
+		transition(vk::ImageLayout::eDepthStencilAttachmentOptimal);
+	}
+}
+
+void TextureVK::create3D(int width,int height, int depth, int miplevels, const Format& format, const TextureType& type) {
+	auto device = Instance::device<DeviceVK>();
+	auto vkDevice = device->getDevice();
+	_width = width;
+	_height = height;
+	_depth = depth;
+	_mipLevels = miplevels;
+	_layers = 1;
+	_type = type;
+	_format = format;
+	_isOwned = true;
+	_imageType = vk::ImageType::e3D;
+
+	vk::ImageUsageFlags usage = (vk::ImageUsageFlags)0;
+	vk::ImageLayout layout = vk::ImageLayout::ePreinitialized;
+	if(type == mango::TextureType::DepthStencil){
+		usage |= vk::ImageUsageFlagBits::eDepthStencilAttachment;
+		layout = vk::ImageLayout::eUndefined;
+	}
+	if((uint32_t)type & (uint32_t)mango::TextureType::Input){
+		usage |= vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled;
+	}
+	if((uint32_t)type & (uint32_t)mango::TextureType::Output) {
+		usage |= vk::ImageUsageFlagBits::eColorAttachment;
+	}
+	if((uint32_t)type & (uint32_t)mango::TextureType::Storage){
+		usage |= vk::ImageUsageFlagBits::eStorage;
+	}
+
+	createVK(vk::ImageCreateFlags(),vk::ImageType::e3D,vk::Extent3D(_width,_height,_depth),_layers,_mipLevels,mango::vulkan::formatVK(format),usage,layout);
 
 	if(((uint32_t)type & (uint32_t)mango::TextureType::Output)
 	   && ((uint32_t)type & (uint32_t)mango::TextureType::Input)){
@@ -93,6 +135,7 @@ void TextureVK::createCubeMap(int width, int height, int mipLevels, const Format
 	_type = type;
 	_format = format;
 	_isOwned = true;
+	_imageType = vk::ImageType::e2D;
 
 	vk::ImageUsageFlags usage = (vk::ImageUsageFlags)0;
 	vk::ImageLayout layout = vk::ImageLayout::ePreinitialized;
@@ -110,7 +153,7 @@ void TextureVK::createCubeMap(int width, int height, int mipLevels, const Format
 		usage |= vk::ImageUsageFlagBits::eStorage;
 	}
 
-	createVK(vk::ImageCreateFlagBits::eCubeCompatible,vk::ImageType::e2D,vk::Extent3D(_width,_height,_depth),_layers,_mipLevels,mango::vulkan::formatVK(format),usage,layout);
+	createVK(vk::ImageCreateFlagBits::eCubeCompatible,_imageType,vk::Extent3D(_width,_height,_depth),_layers,_mipLevels,mango::vulkan::formatVK(format),usage,layout);
 
 	if(((uint32_t)type & (uint32_t)mango::TextureType::Output)
 	   && ((uint32_t)type & (uint32_t)mango::TextureType::Input)){
@@ -246,10 +289,15 @@ mango::spTextureView TextureVK::createTextureView(const ComponentMapping& compon
 	auto vkDevice = Instance::device<DeviceVK>()->getDevice();
 	vk::ImageAspectFlags imageAspectFlags = vk::ImageAspectFlagBits::eColor;
 	if(hasDepthComponent(_format))imageAspectFlags = vk::ImageAspectFlagBits::eDepth;
+
+	vk::ImageViewType viewType = vk::ImageViewType::e2D;
+	if(_imageType == vk::ImageType::e3D){
+		viewType = vk::ImageViewType::e3D;
+	}
 	auto viewCreateInfo = vk::ImageViewCreateInfo(
 		vk::ImageViewCreateFlags(),
 		_image,
-		vk::ImageViewType::e2D,
+		viewType,
 		formatVK(_format),
 		componentMappingVK(componentMapping),
 		vk::ImageSubresourceRange(
@@ -284,11 +332,11 @@ mango::spTextureView TextureVK::createTextureViewCubeMap(const ComponentMapping&
 
 void TextureVK::set(const mango::spBuffer &buffer) {
 	transition(vk::ImageLayout::eTransferDstOptimal);
-    setBuffer(buffer,glm::ivec2(_width,_height),0,0,0);
+    setBuffer(buffer,glm::ivec3(_width,_height,_depth),0,0,0);
     transition(vk::ImageLayout::eShaderReadOnlyOptimal);
 }
 
-void TextureVK::setBuffer(const spBuffer& buffer, const glm::ivec2& size, const uint& mipLevel, const uint& layer, const uint& offsetBuffer){
+void TextureVK::setBuffer(const spBuffer& buffer, const glm::ivec3& size, const uint& mipLevel, const uint& layer, const uint& offsetBuffer){
 	auto vkDevice = Instance::device<DeviceVK>()->getDevice();
     vk::CommandBuffer commandBuffer = beginSingle(vkDevice,_pool);
 
@@ -302,7 +350,7 @@ void TextureVK::setBuffer(const spBuffer& buffer, const glm::ivec2& size, const 
             /* subRes imageOffest */
             subRes, {0, 0, 0},
             /* imageExtent */
-            {(uint)size.x,(uint)size.y,1}
+            {(uint)size.x,(uint)size.y,(uint)size.z}
     );
 
     commandBuffer.copyBufferToImage(std::dynamic_pointer_cast<BufferVK>(buffer)->getVKBuffer(),_image,vk::ImageLayout::eTransferDstOptimal, {region});

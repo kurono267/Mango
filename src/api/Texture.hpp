@@ -83,6 +83,7 @@ class Texture : public std::enable_shared_from_this<Texture> {
 
 		virtual void create(int width,int height,
 							int mipLevels, const Format& format,const TextureType& type) = 0;
+		virtual void create3D(int width,int height, int depth, int miplevels, const Format& format, const TextureType& type) = 0;
 		virtual void createCubeMap(int width, int height, int mipLevels, const Format& format, const TextureType& type) = 0;
 
 		virtual spTextureView createTextureView(const ComponentMapping& componentMapping = ComponentMapping(),int minLayer = 0, int maxLayer = -1,int minLevel = 0,int maxLevel = -1) = 0;
