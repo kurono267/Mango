@@ -34,7 +34,7 @@ class BaseApp {
 		virtual bool onMouseRight(const glm::vec2& coord){
 			return true;
 		}
-		virtual bool onScroll(const glm::vec2& offset){
+		virtual bool onScroll(const glm::vec2& offset, const float dt){
 			return true;
 		}
 		virtual bool onExit() = 0;

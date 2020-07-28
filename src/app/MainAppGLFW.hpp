@@ -91,8 +91,11 @@ class MainAppGLFW : public MainApp,std::enable_shared_from_this<MainAppGLFW> {
 
 		static void __glfwOnScroll(GLFWwindow* window, double x, double y){
 			ptr& app = instance();
+            auto now = std::chrono::system_clock::now();
+            float dt = std::chrono::duration<float>(now-app->_prevMouseTime).count();
+            app->_prevMouseTime = now;
 			glm::vec2 offset(x,y);
-			app->_app->onScroll(offset);
+			app->_app->onScroll(offset,dt);
 		}
 
 		static void __glfwOnResize(GLFWwindow* window, int width, int height){
