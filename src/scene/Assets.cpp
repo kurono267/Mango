@@ -244,7 +244,7 @@ spSceneNode recursiveLoadNodes(const spDevice& device,std::vector<spMaterial>& m
 			spMesh mesh = std::make_shared<Mesh>();
 			mesh->create(device,vertices,indices);
 
-			spMaterial mat = std::make_shared<Material>(device);
+			spMaterial mat = Material::create();
 
 			auto tfMaterial = tfModel.materials[tfPrim.material];
 			auto baseColorFactorItr = tfMaterial.values.find("baseColorFactor");

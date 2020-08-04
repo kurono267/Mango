@@ -8,7 +8,8 @@
 
 namespace mango {
 
-spTexture checkboardTexture(spDevice device, uint32_t width, uint32_t height, uint32_t step) {
+spTexture checkboardTexture(uint32_t width, uint32_t height, uint32_t step) {
+	auto device = Instance::device();
     // Create data
 	spBuffer buffer = device->createBuffer(BufferType::CPU,MemoryType::HOST,width*height*sizeof(glm::vec4));
 	auto pixels = (glm::vec4*)buffer->map();
@@ -30,14 +31,16 @@ spTexture checkboardTexture(spDevice device, uint32_t width, uint32_t height, ui
     return texture;
 }
 
-spTexture createSinglePixelTexture(spDevice device, float value) {
+spTexture createSinglePixelTexture(float value) {
+	auto device = Instance::device();
 	spTexture texture = device->createTexture(1,1,1,Format::R32Sfloat,TextureType::Input);
 	spBuffer buffer = device->createBuffer(BufferType::CPU,MemoryType::HOST,sizeof(float),(void*)&value);
 	texture->set(buffer);
 	return texture;
 }
 
-spTexture createSinglePixelTexture(spDevice device, const glm::vec4 &value) {
+spTexture createSinglePixelTexture(const glm::vec4 &value) {
+	auto device = Instance::device();
 	spTexture texture = device->createTexture(1,1,1,Format::R32G32B32A32Sfloat,TextureType::Input);
 	spBuffer buffer = device->createBuffer(BufferType::CPU,MemoryType::HOST,sizeof(glm::vec4),(void*)&value);
 	texture->set(buffer);

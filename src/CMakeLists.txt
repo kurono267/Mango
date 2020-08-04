@@ -34,23 +34,13 @@ set(MANGO_SRC
         scene/Geometry.hpp
         scene/BBox.cpp
         scene/BBox.hpp
-        renderer/Renderer.cpp
-        renderer/Renderer.hpp
-        renderer/GBuffer.cpp
-        renderer/GBuffer.hpp
         api/Instance.cpp
-        renderer/PBR.cpp
-        renderer/PBR.hpp
         api/Compute.cpp
         api/Compute.hpp
         scene/BVH.cpp
         scene/BVH.hpp
-        renderer/Raytracer.cpp
-        renderer/Raytracer.hpp
         unified/RenderTarget.cpp
-        unified/RenderTarget.hpp
-        scene/ImageBasedLight.cpp
-        scene/ImageBasedLight.hpp)
+        unified/RenderTarget.hpp)
 
 set(MANGO_VK
         vk/InstanceVK.cpp

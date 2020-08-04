@@ -7,8 +7,6 @@
 bool App::init() {
     auto mainWnd = mainApp.lock();
 
-    Instance::init<vulkan::InstanceVK>("Cube", mainWnd->window(), mainWnd->frameSize());
-
     auto device = Instance::device();
     std::cout << device->deviceName() << std::endl;
 

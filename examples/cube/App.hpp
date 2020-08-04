@@ -20,7 +20,7 @@ public:
     bool draw() final;
     bool update() final;
 
-    bool onTouch(const glm::vec2& coord, const glm::vec2& deltacoord) final;
+    bool onTouchMove(const glm::vec2& coord, const glm::vec2& deltacoord) final;
     bool onExit() final;
 protected:
     spPipeline _main;

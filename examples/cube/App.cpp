@@ -21,8 +21,6 @@ void App::updateCameraUniform(const spSceneNode& cameraNode) {
 bool App::init() {
     auto mainWnd = mainApp.lock();
 
-    Instance::init<vulkan::InstanceVK>("Cube", mainWnd->window(), mainWnd->wndSize());
-
     auto device = Instance::device();
     std::cout << device->deviceName() << std::endl;
 
@@ -36,7 +34,7 @@ bool App::init() {
     _cameraUniform.create(device,sizeof(Data));
     updateCameraUniform(_cameraNode);
 
-	_texture = checkboardTexture(device, 1280, 720, 100);
+	_texture = checkboardTexture( 1280, 720, 100);
 	auto texView = _texture->createTextureView();
 
 	_descSet = device->createDescSet();
@@ -47,8 +45,8 @@ bool App::init() {
 	auto screenRTs = device->getScreenRenderTargets();
 
     PipelineInfo rp;
-    rp.viewport(Viewport(glm::vec2(0), mainWnd->wndSize()));
-    rp.scissor(glm::ivec2(0), mainWnd->wndSize());
+    rp.viewport(Viewport(glm::vec2(0), mainWnd->frameSize()));
+    rp.scissor(glm::ivec2(0), mainWnd->frameSize());
     rp.addShader(ShaderStage::Vertex, "../glsl/cube.vert");
     rp.addShader(ShaderStage::Fragment, "../glsl/cube.frag");
     rp.setDescSet(_descSet);
@@ -97,7 +95,7 @@ bool App::update() {
     return true;
 }
 
-bool App::onTouch(const glm::vec2& coord, const glm::vec2& deltacoord){
+bool App::onTouchMove(const glm::vec2& coord, const glm::vec2& deltacoord){
 	glm::vec3 eulerAngles = _cameraOrbit->rotationEuler();
 	eulerAngles.y += deltacoord.x;
 	eulerAngles.x += deltacoord.y;

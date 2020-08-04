@@ -14,8 +14,10 @@ namespace mango {
 
 class Material {
 	public:
-		Material(const spDevice& device);
+		Material();
 		~Material() = default;
+
+		static std::shared_ptr<Material> create();
 
 		void setAlbedo(const glm::vec4& value);
 		void setAlbedo(const spTexture& texture);
@@ -30,9 +32,6 @@ class Material {
 		float getMetallicFactor();
 		float getRoughnessFactor();
 		spTexture getMetallicRoughness();
-
-		spDescSet getDescSet();
-		static spDescSet generalDescSet(const std::weak_ptr<Device> &device); // Desc set stored format of material
 	protected:
 		spTexture _albedo;
 		union {
@@ -44,15 +43,8 @@ class Material {
 		};
 		spTexture _metallicRoughness;
 
-		spTextureView _albedoView;
-		spTextureView _metallicRoughnessView;
-
-		std::weak_ptr<Device> _device;
-		spDescSet _descSet;
-
-		Uniform _uniform;
-
 		uint32_t _id;
+		spDevice _device;
 };
 
 typedef std::shared_ptr<Material> spMaterial;

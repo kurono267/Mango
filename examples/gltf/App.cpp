@@ -22,8 +22,6 @@ void App::updateCameraUniform(const spSceneNode& cameraNode) {
 bool App::init() {
     auto mainWnd = mainApp.lock();
 
-	Instance::init<vulkan::InstanceVK>("Renderer", mainWnd->window(), mainWnd->frameSize());
-
     auto device = Instance::device();
     Assets::init(device);
     std::cout << device->deviceName() << std::endl;

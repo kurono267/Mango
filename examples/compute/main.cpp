@@ -12,15 +12,13 @@ class TestApp : public BaseApp {
 		bool init() final {
 			auto mainWnd = mainApp.lock();
 
-			Instance::init<vulkan::InstanceVK>("Test",mainWnd->window(),mainWnd->wndSize());
-
 			auto device = Instance::device();
 			std::cout << device->deviceName() << std::endl;
 
 			glm::vec4 colorValue(0.5f,0.5f,1.0f,1.0f);
 			_color.create(device,sizeof(glm::vec4),&colorValue);
 
-            _texture = checkboardTexture(device,1280,720,100);
+            _texture = checkboardTexture(1280,720,100);
             auto texView = _texture->createTextureView();
 
             _computeTexture = device->createTexture(1280,720,1,Format::R16G16B16A16Unorm,TextureType::Input | TextureType::Storage);
@@ -41,8 +39,8 @@ class TestApp : public BaseApp {
             auto screenRTs = device->getScreenRenderTargets();
 
 			PipelineInfo rp;
-			rp.viewport(Viewport(glm::vec2(0),mainWnd->wndSize()));
-			rp.scissor(glm::ivec2(0),mainWnd->wndSize());
+			rp.viewport(Viewport(glm::vec2(0),mainWnd->frameSize()));
+			rp.scissor(glm::ivec2(0),mainWnd->frameSize());
 			rp.addShader(ShaderStage::Vertex,"../glsl/test.vert");
 			rp.addShader(ShaderStage::Fragment,"../glsl/test.frag");
 			rp.setDescSet(_descSet);
