@@ -34,6 +34,12 @@ class SceneNode : public SceneTransform,public std::enable_shared_from_this<Scen
 		SceneNode(const spCamera& camera);
 		SceneNode(const spGeometry& geometry);
 		SceneNode(const spMesh& mesh, const spMaterial& material);
+
+		static std::shared_ptr<SceneNode> create();
+		static std::shared_ptr<SceneNode> create(const spCamera& camera);
+		static std::shared_ptr<SceneNode> create(const spGeometry& geometry);
+		static std::shared_ptr<SceneNode> create(const spMesh& mesh, const spMaterial& material = nullptr);
+
 		~SceneNode();
 
 		void addChild(const ptr& child);

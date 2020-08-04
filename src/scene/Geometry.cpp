@@ -26,6 +26,6 @@ spMaterial mango::Geometry::getMaterial() {
 	return _material;
 }
 
-std::shared_ptr<Geometry> Geometry::make(const spMesh &mesh, const spMaterial &material) {
+std::shared_ptr<Geometry> Geometry::create(const spMesh &mesh, const spMaterial &material) {
 	return std::make_shared<Geometry>(mesh,material);
 }

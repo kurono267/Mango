@@ -7,6 +7,9 @@
 using namespace mango;
 
 Scene::Scene(const spSceneNode& node) : rootNode(node) {}
+Scene::Scene() {
+	rootNode = SceneNode::create();
+}
 
 spSceneNode Scene::getCameraNode() const {
 	spSceneNode finded;
@@ -17,4 +20,8 @@ spSceneNode Scene::getCameraNode() const {
 		}
 	});
 	return finded;
+}
+
+std::shared_ptr<Scene> Scene::create() {
+	return std::make_shared<Scene>();
 }

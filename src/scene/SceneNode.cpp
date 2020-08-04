@@ -27,9 +27,25 @@ SceneNode::SceneNode(const mango::spGeometry &geometry) {
 
 SceneNode::SceneNode(const spMesh &mesh, const spMaterial &material) {
 	_parent = nullptr;
-	_geometry = Geometry::make(mesh,material);
+	_geometry = Geometry::create(mesh,material);
 	_nodeData.world = glm::mat4(1.f);
 	createDescSet();
+}
+
+std::shared_ptr<SceneNode> SceneNode::create() {
+	return std::make_shared<SceneNode>();
+}
+
+std::shared_ptr<SceneNode> SceneNode::create(const spCamera& camera) {
+	return std::make_shared<SceneNode>(camera);
+}
+
+std::shared_ptr<SceneNode> SceneNode::create(const spGeometry& geometry){
+	return std::make_shared<SceneNode>(geometry);
+}
+
+std::shared_ptr<SceneNode> SceneNode::create(const spMesh& mesh, const spMaterial& material) {
+	return std::make_shared<SceneNode>(mesh,material);
 }
 
 SceneNode::~SceneNode(){

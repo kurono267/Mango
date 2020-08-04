@@ -4,6 +4,7 @@
 
 #include "SceneTransform.hpp"
 #include "../api/default.hpp"
+#include <glm/gtx/euler_angles.hpp>
 
 using namespace mango;
 
@@ -61,6 +62,7 @@ void SceneTransform::setRotation(const glm::quat& quat) {
 void SceneTransform::setRotation(const glm::vec3& euler) {
 	_rotationEuler = euler;
 	// Update rotationQuat and transform
+	//_rotationQuat = glm::toQuat( glm::orientate3( euler ) );
 	glm::quat X = glm::quat(glm::vec3(euler.x,0,0));
 	glm::quat Y = glm::quat(glm::vec3(0,euler.y,0));
 	glm::quat Z = glm::quat(glm::vec3(0,0,euler.z));

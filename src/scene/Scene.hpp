@@ -11,7 +11,7 @@ namespace mango {
 
 class Scene {
 	public:
-		Scene() = default;
+		Scene();
 		Scene(const spSceneNode& node);
 
 		spSceneNode getCameraNode() const;
@@ -19,7 +19,11 @@ class Scene {
 		spTexture background;
 		spTexture environmentLight;
 		spSceneNode rootNode;
+
+		static std::shared_ptr<Scene> create();
 };
+
+typedef std::shared_ptr<Scene> spScene;
 
 }
 

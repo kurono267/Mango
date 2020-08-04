@@ -35,7 +35,7 @@ class Geometry {
 		/// Construct shared pointer of Geometry
 		/// @param mesh - Mesh
 		/// @param material - Material
-		static std::shared_ptr<Geometry> make(const spMesh& mesh = nullptr, const spMaterial& material = nullptr);
+		static std::shared_ptr<Geometry> create(const spMesh& mesh = nullptr, const spMaterial& material = nullptr);
 	protected:
 		spMesh _mesh;
 		spMaterial _material;

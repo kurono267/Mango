@@ -278,7 +278,7 @@ spSceneNode recursiveLoadNodes(const spDevice& device,std::vector<spMaterial>& m
 			materials.push_back(mat);
 			mat->setID(materials.size()-1);
 
-			node->setGeometry(Geometry::make(mesh,mat));
+			node->setGeometry(Geometry::create(mesh,mat));
 		}
 	}
 	if(tfNode.matrix.size() == 16){

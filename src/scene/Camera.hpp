@@ -17,6 +17,9 @@ class Camera {
 		/// @param near - near plane
 		/// @param far - far plane
 		Camera(float angle,float aspect,float near,float far);
+
+		static std::shared_ptr<Camera> create(float angle,float aspect,float near,float far);
+
 		virtual ~Camera() = default;
 
 		/// Get projection matrix
