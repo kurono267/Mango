@@ -22,8 +22,8 @@ public:
 
     virtual void create() = 0;
 
-    virtual void setUniformBuffer(const Uniform& buffer,size_t binding,const ShaderStage& stage) = 0;
-    virtual void setStorageBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage) = 0;
+    virtual void setUniformBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage, size_t offset = 0, int size = -1) = 0;
+    virtual void setStorageBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage, size_t offset = 0, int size = -1) = 0;
     virtual void setTexture(const spTextureView& texture,const Sampler& sampler, size_t binding, const ShaderStage& stage) = 0;
     virtual void setStorageTexture(const spTextureView &texture, const Sampler &sampler, size_t binding, const ShaderStage &stage) = 0;
 };

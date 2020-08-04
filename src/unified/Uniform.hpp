@@ -22,6 +22,7 @@ class Uniform {
         void set(const size_t &size, const void *data);
 
         spBuffer getBuffer();
+        spBuffer getCPUBuffer();
         size_t size() const;
 
         operator bool() { return _is; }

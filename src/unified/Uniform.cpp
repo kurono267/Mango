@@ -34,6 +34,10 @@ spBuffer Uniform::getBuffer(){
     return _gpu;
 }
 
+spBuffer Uniform::getCPUBuffer() {
+	return _cpu;
+}
+
 size_t     Uniform::size() const {
     return _size;
 }

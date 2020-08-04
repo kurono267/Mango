@@ -73,7 +73,7 @@ void DescSetVK::create(){
     _descBufferInfos.resize(_uboBinds.size());
     for(auto u : _uboBinds){
         auto internalBuffer = std::dynamic_pointer_cast<BufferVK>(u.buffer.getBuffer());
-        _descBufferInfos.push_back(vk::DescriptorBufferInfo(internalBuffer->getVKBuffer(),0,u.buffer.size()));
+        _descBufferInfos.push_back(vk::DescriptorBufferInfo(internalBuffer->getVKBuffer(),u.offset,u.size));
         descWrites.push_back(vk::WriteDescriptorSet(_descSet,u.binding,0,1,u.descType,nullptr,&_descBufferInfos[_descBufferInfos.size()-1],nullptr));
     }
     _descImageInfos.resize(_samplerBinds.size());
@@ -84,12 +84,12 @@ void DescSetVK::create(){
     vk_device.updateDescriptorSets(descWrites,nullptr);
 }
 
-void DescSetVK::setUniformBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage){
-    _uboBinds.emplace_back(buffer,binding,shaderStageVK(stage),vk::DescriptorType::eUniformBuffer);
+void DescSetVK::setUniformBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage, size_t offset, int size){
+    _uboBinds.emplace_back(buffer,binding,shaderStageVK(stage),vk::DescriptorType::eUniformBuffer,offset,size<0?buffer.size():size);
 }
 
-void DescSetVK::setStorageBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage){
-	_uboBinds.emplace_back(buffer,binding,shaderStageVK(stage),vk::DescriptorType::eStorageBuffer);
+void DescSetVK::setStorageBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage, size_t offset, int size){
+	_uboBinds.emplace_back(buffer,binding,shaderStageVK(stage),vk::DescriptorType::eStorageBuffer,offset,size<0?buffer.size():size);
 }
 
 void DescSetVK::setStorageTexture(const spTextureView &texture, const Sampler &sampler, size_t binding, const ShaderStage &stage) {
@@ -105,8 +105,8 @@ void DescSetVK::setTexture(const spTextureView &texture, const Sampler &sampler,
 }
 
     DescSetVK::UBOBinding::UBOBinding(const Uniform &_buffer, size_t _binding, const vk::ShaderStageFlags &_stage,
-                                  const vk::DescriptorType &_descType)
-  : buffer(_buffer),binding(_binding),stage(_stage),descType(_descType)
+                                  const vk::DescriptorType &_descType, size_t _offset, size_t _size)
+  : buffer(_buffer),binding(_binding),stage(_stage),descType(_descType), offset(_offset), size(_size)
   {}
 
 DescSetVK::SamplerBinding::SamplerBinding(const spTextureViewVK& _textureView, const vk::Sampler &_sampler,

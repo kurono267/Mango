@@ -45,12 +45,13 @@ class SceneNode : public SceneTransform,public std::enable_shared_from_this<Scen
 		void addChild(const ptr& child);
 		std::vector<ptr>& getChilds();
 
+		void setRenderType(uint32_t renderType);
+		uint32_t getRenderType();
+
 		SceneNode* getParent();
 
 		void setCamera(const spCamera& camera);
 		void setGeometry(const spGeometry& geometry);
-
-		const spDescSet& getDescSet() const;
 
 		BBox boundingBox();
 
@@ -59,27 +60,15 @@ class SceneNode : public SceneTransform,public std::enable_shared_from_this<Scen
 
 		glm::mat4 getWorldTransform();
 
-		void setTransform(const glm::mat4& transform) override;
-		void setPos(const glm::vec3& pos) override;
-		void setRotation(const glm::quat& quat) override;
-		void setRotation(const glm::vec3& euler) override;
-		void setScale(const glm::vec3& scale) override;
-
 		void run(const std::function<void(const ptr& node, bool& stop)>& func,bool isRunForThis = true);
-
-		static spDescSet generalDescSet();
 	protected:
-		void createDescSet();
-		void updateDescSet();
-
 		std::vector<ptr> _childs;
 		mutable SceneNode* _parent;
 
 		spCamera _camera;
 		spGeometry _geometry;
-		spDescSet _descSet;
-		Uniform _uniform;
-		NodeData _nodeData;
+
+		uint32_t _renderType = 0;
 };
 
 typedef std::shared_ptr<SceneNode> spSceneNode;

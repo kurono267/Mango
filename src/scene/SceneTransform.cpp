@@ -18,6 +18,14 @@ SceneTransform::~SceneTransform() {
 
 }
 
+bool SceneTransform::isUpdated() {
+	return _isUpdated;
+}
+
+void SceneTransform::setUpdated(bool isUpdated) {
+	_isUpdated = isUpdated;
+}
+
 glm::mat4 SceneTransform::transform() const {
 	return _transform;
 }
@@ -44,12 +52,18 @@ void SceneTransform::setTransform(const glm::mat4& transform) {
 	glm::vec3 skew; glm::vec4 proj;
 	glm::decompose(_transform,_scale,_rotationQuat,_pos,skew,proj);
 	_rotationEuler = glm::eulerAngles(_rotationQuat);
+	setUpdated(true);
 }
 
 void SceneTransform::setPos(const glm::vec3& pos) {
 	_pos = pos;
 	// Update transform
 	_transform = createTransform(_pos,_rotationQuat,_scale);
+	setUpdated(true);
+}
+
+void SceneTransform::setPos(float x, float y, float z) {
+	setPos(glm::vec3(x,y,z));
 }
 
 void SceneTransform::setRotation(const glm::quat& quat) {
@@ -57,6 +71,7 @@ void SceneTransform::setRotation(const glm::quat& quat) {
 	// Update rotationEuler and transform
 	_rotationEuler = glm::eulerAngles(quat);
 	_transform = createTransform(_pos,_rotationQuat,_scale);
+	setUpdated(true);
 }
 
 void SceneTransform::setRotation(const glm::vec3& euler) {
@@ -69,12 +84,22 @@ void SceneTransform::setRotation(const glm::vec3& euler) {
 
 	_rotationQuat = X*Y*Z;
 	_transform = createTransform(_pos,_rotationQuat,_scale);
+	setUpdated(true);
+}
+
+void SceneTransform::setRotation(float eX, float eY, float eZ) {
+	setRotation(glm::vec3(eX,eY,eZ));
 }
 
 void SceneTransform::setScale(const glm::vec3& scale) {
 	_scale = scale;
 	// Update transform
 	_transform = createTransform(_pos,_rotationQuat,_scale);
+	setUpdated(true);
+}
+
+void SceneTransform::setScale(float sX,float sY,float sZ) {
+	setScale(glm::vec3(sX,sY,sZ));
 }
 
 glm::mat4 SceneTransform::createTransform(const glm::vec3& pos, const glm::quat& rotation, const glm::vec3& scale) {

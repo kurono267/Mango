@@ -19,8 +19,8 @@ public:
 
     void create() override;
 
-    void setUniformBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage) override;
-    void setStorageBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage) override;
+    void setUniformBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage, size_t offset = 0, int size = -1) override;
+    void setStorageBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage, size_t offset = 0, int size = -1) override;
 
     void setTexture(const spTextureView &texture, const Sampler &sampler, size_t binding,
                     const ShaderStage &stage) override;
@@ -38,11 +38,13 @@ private:
     std::vector<vk::DescriptorBufferInfo> _descBufferInfos;
 
     struct UBOBinding {
-        UBOBinding(const Uniform& _buffer, size_t _binding, const vk::ShaderStageFlags& _stage, const vk::DescriptorType& _descType);
+        UBOBinding(const Uniform& _buffer, size_t _binding, const vk::ShaderStageFlags& _stage, const vk::DescriptorType& _descType, size_t offset, size_t size);
         Uniform buffer;
         size_t    binding;
         vk::ShaderStageFlags stage;
         vk::DescriptorType   descType;
+		size_t offset;
+        size_t size;
     };
     struct SamplerBinding {
         SamplerBinding(const spTextureViewVK& _textureView, const vk::Sampler& _sampler, size_t _binding,
