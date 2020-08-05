@@ -14,6 +14,12 @@ struct BBox {
     BBox();
     BBox(const BBox& a);
 
+    void setMin(const glm::vec3& min);
+    void setMax(const glm::vec3& max);
+
+    glm::vec3 getMin() const;
+    glm::vec3 getMax() const;
+
 	/**
 	 * Expand bounding box with bounding box
 	 * @param min - min of box

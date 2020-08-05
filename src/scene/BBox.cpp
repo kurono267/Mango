@@ -60,3 +60,19 @@ std::ostream& operator<<(std::ostream& stream, const BBox& box){
 	stream << "BBox min " << glm::to_string(box.min) << " max " << glm::to_string(box.max);
 	return stream;
 }
+
+void BBox::setMin(const glm::vec3& _min) {
+	min = glm::vec4(_min,1.0f);
+}
+
+void BBox::setMax(const glm::vec3& _max) {
+	max = glm::vec4(_max,1.0f);
+}
+
+glm::vec3 BBox::getMin() const {
+	return glm::vec3(min);
+}
+
+glm::vec3 BBox::getMax() const {
+	return glm::vec3(max);
+}
