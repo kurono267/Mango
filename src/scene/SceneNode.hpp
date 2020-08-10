@@ -16,7 +16,8 @@
 namespace mango {
 
 struct NodeData {
-	glm::mat4 world;
+	glm::mat4 world; // 64 bytes
+	uint32_t alignment[48]; // 256-64
 };
 
 struct CameraData {
