@@ -40,7 +40,7 @@ set(MANGO_SRC
         scene/BVH.cpp
         scene/BVH.hpp
         unified/RenderTarget.cpp
-        unified/RenderTarget.hpp)
+        unified/RenderTarget.hpp unified/Timer.cpp unified/Timer.hpp)
 
 set(MANGO_VK
         vk/InstanceVK.cpp

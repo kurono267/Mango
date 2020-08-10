@@ -25,6 +25,7 @@
 #include "unified/Utils.hpp"
 #include "unified/Image.hpp"
 #include "unified/RenderTarget.hpp"
+#include "unified/Timer.hpp"
 
 #include "scene/Camera.hpp"
 #include "scene/SceneNode.hpp"
