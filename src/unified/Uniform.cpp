@@ -3,6 +3,7 @@
 //
 
 #include "Uniform.hpp"
+#include "../api/Instance.hpp"
 
 namespace mango {
 
@@ -10,11 +11,13 @@ Uniform::Uniform() : _is(false), _size(0) {}
 
 Uniform::~Uniform(){}
 
-void Uniform::create(spDevice device,const size_t& size,const void* data){
+void Uniform::create(const size_t& size, BufferType type,const void* data){
     _size = size;
 
-    _cpu = device->createBuffer(BufferType::Uniform | BufferType::Storage,MemoryType::HOST,size);
-    _gpu = device->createBuffer(BufferType::Uniform | BufferType::Storage,MemoryType::DEVICE,size);
+    auto device = Instance::device();
+
+    _cpu = device->createBuffer(type,MemoryType::HOST,size);
+    _gpu = device->createBuffer(type,MemoryType::DEVICE,size);
 
     _is = true;
 
@@ -28,6 +31,10 @@ void Uniform::set(const size_t& size,const void* data){
         _cpu->set(size,data);
         _cpu->copy(_gpu);
     } else throw std::logic_error("Uniform failed: wrong set data, buffer don't exist");
+}
+
+void Uniform::update() {
+	_cpu->copy(_gpu);
 }
 
 spBuffer Uniform::getBuffer(){

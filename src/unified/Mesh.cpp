@@ -26,9 +26,9 @@ sVertex::sVertex(const float& px,const float& py,const float& pz,const float& u,
 	pos(px,py,pz),uv(u,v),normal(nx,ny,nz)
 {}
 
-void Mesh::draw(const spCommandBuffer& cmd, int indexCount){
+void Mesh::draw(const spCommandBuffer& cmd, int indexCount, int instanceCount, int firstInstance){
 	bind(cmd);
-	cmd->drawIndexed(indexCount>=0?indexCount:indicesCount());
+	cmd->drawIndexed(indexCount>=0?indexCount:indicesCount(),instanceCount>=0?instanceCount:1,firstInstance);
 }
 
 void Mesh::bind(const spCommandBuffer& cmd) {

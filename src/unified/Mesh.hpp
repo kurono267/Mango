@@ -36,7 +36,7 @@ class Mesh {
 			updateIndices();
 		}
 		void create(const spDevice& device, size_t vertexBufferSize, size_t indexBufferSize, size_t vertexSize, size_t indexSize);
-		void draw(const spCommandBuffer& cmd, int indexCount = -1);
+		void draw(const spCommandBuffer& cmd, int indexCount = -1, int instanceCount = -1, int firstInstance = 0);
 		void bind(const spCommandBuffer& cmd);
 
 		size_t vertexBufferSize();

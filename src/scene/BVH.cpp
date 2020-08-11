@@ -73,7 +73,7 @@ BVH::BVH(const spMesh& mesh) {
 
 	_nodes[rootId] = root;
 
-	_storageBuffer.create(Instance::device(),sizeof(BVHNode)*_nodes.size(),_nodes.data());
+	_storageBuffer.create(sizeof(BVHNode)*_nodes.size(),BufferType::Storage,_nodes.data());
 }
 
 BVH::~BVH(){}

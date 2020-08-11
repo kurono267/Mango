@@ -18,8 +18,10 @@ class Uniform {
 
         virtual ~Uniform();
 
-        void create(spDevice device, const size_t &size, const void *data = nullptr);
+        void create(const size_t &size, BufferType type = BufferType::Uniform, const void *data = nullptr);
         void set(const size_t &size, const void *data);
+
+        void update();
 
         spBuffer getBuffer();
         spBuffer getCPUBuffer();

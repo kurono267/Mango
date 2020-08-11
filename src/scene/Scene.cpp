@@ -22,6 +22,21 @@ spSceneNode Scene::getCameraNode() const {
 	return finded;
 }
 
+void Scene::setUpdated(bool isUpdated) {
+	rootNode->run([isUpdated](const spSceneNode& node, bool& isStop){
+		node->setUpdated(isUpdated);
+	});
+}
+
+bool Scene::getUpdated() {
+	bool isUpdated = false;
+	rootNode->run([&isUpdated](const spSceneNode& node, bool& isStop){
+		isUpdated = node->isUpdated();
+		isStop = isUpdated;
+	});
+	return isUpdated;
+}
+
 std::shared_ptr<Scene> Scene::create() {
 	return std::make_shared<Scene>();
 }

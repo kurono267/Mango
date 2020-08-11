@@ -16,6 +16,9 @@ class Scene {
 
 		spSceneNode getCameraNode() const;
 
+		void setUpdated(bool isUpdated);
+		bool getUpdated();
+
 		spTexture background;
 		spTexture environmentLight;
 		spSceneNode rootNode;

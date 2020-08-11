@@ -50,6 +50,7 @@ SceneNode::~SceneNode(){
 void SceneNode::addChild(const SceneNode::ptr &child) {
 	_childs.push_back(child);
 	child->_parent = this;
+	setUpdated(true);
 }
 
 std::vector<SceneNode::ptr> &SceneNode::getChilds() {
@@ -118,7 +119,7 @@ Uniform mango::createCameraUniform(const spSceneNode& cameraNode) {
 	auto device = Instance::device();
 
 	Uniform cameraUniform;
-	cameraUniform.create(device,sizeof(CameraData));
+	cameraUniform.create(sizeof(CameraData),BufferType::Uniform);
 	if(cameraNode)updateCameraUniform(cameraNode,cameraUniform);
 	return cameraUniform;
 }
