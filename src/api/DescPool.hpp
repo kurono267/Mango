@@ -15,6 +15,8 @@ typedef std::shared_ptr<DescSet> spDescSet;
 
 class DescPool {
 	public:
+		virtual ~DescPool() = default;
+		
 		virtual std::vector<spDescSet> create(size_t count) = 0;
 		virtual spDescSet create() = 0;
 

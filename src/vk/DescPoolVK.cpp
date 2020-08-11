@@ -16,18 +16,27 @@ DescPoolVK::DescPoolVK(size_t numDescSets,const mango::spDescLayout &layout) : D
 
 	std::vector<vk::DescriptorPoolSize>         poolSizes;
 	for(const auto& entry : layout->getEntries()){
-		poolSizes.emplace_back(descTypeFromMango(entry.type),1);
+		poolSizes.emplace_back(descTypeFromMango(entry.type),numDescSets);
 	}
 
 	vk::DescriptorPoolCreateInfo poolInfo(vk::DescriptorPoolCreateFlags() | vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet,numDescSets,poolSizes.size(),poolSizes.data());
 	_pool = vk_device.createDescriptorPool(poolInfo);
 }
 
+DescPoolVK::~DescPoolVK() {
+	auto vk_device = Instance::device<DeviceVK>()->getDevice();
+	vk_device.destroyDescriptorPool(_pool);
+}
+
 std::vector<spDescSet> DescPoolVK::create(size_t count) {
 	auto vk_device = Instance::device<DeviceVK>()->getDevice();
 
 	vk::DescriptorSetLayout layout = _layout->getLayout();
-	vk::DescriptorSetAllocateInfo allocInfo(_pool,count,&layout);
+	std::vector<vk::DescriptorSetLayout> layouts(count);
+	for(int i = 0;i<count;++i){
+		layouts[i] = layout;
+	}
+	vk::DescriptorSetAllocateInfo allocInfo(_pool,count,layouts.data());
 
 	std::vector<spDescSet> results(count);
 	auto descSetList = vk_device.allocateDescriptorSets(allocInfo);
@@ -45,6 +54,10 @@ spDescSet DescPoolVK::create() {
 
 spDescLayout DescPoolVK::getLayout() {
 	return _layout;
+}
+
+vk::DescriptorPool DescPoolVK::getPool() {
+	return _pool;
 }
 
 }

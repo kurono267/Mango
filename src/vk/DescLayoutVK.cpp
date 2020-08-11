@@ -11,6 +11,11 @@ using namespace mango;
 
 namespace mango::vulkan {
 
+DescLayoutVK::~DescLayoutVK() {
+	auto vk_device = Instance::device<DeviceVK>()->getDevice();
+	vk_device.destroyDescriptorSetLayout(_layout);
+}
+
 void DescLayoutVK::create() {
     auto vk_device = Instance::device<DeviceVK>()->getDevice();
 

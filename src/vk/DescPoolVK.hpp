@@ -11,14 +11,16 @@
 
 namespace mango::vulkan {
 
-class DescPoolVK : public DescPool, public std::enable_shared_from_this<DescPoolVK> {
+class DescPoolVK final : public DescPool, public std::enable_shared_from_this<DescPoolVK> {
     public:
         DescPoolVK(size_t numDescSets,const mango::spDescLayout &layout);
+        ~DescPoolVK() final;
 
         std::vector<spDescSet> create(size_t count) final;
         spDescSet create() final;
 
         spDescLayout getLayout() final;
+        vk::DescriptorPool getPool();
 	protected:
 		vk::DescriptorPool _pool;
 		spDescLayoutVK _layout;

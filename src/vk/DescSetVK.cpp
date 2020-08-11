@@ -8,6 +8,7 @@
 #include <set>
 #include <iostream>
 #include "../api/Instance.hpp"
+#include "DescPoolVK.hpp"
 
 namespace mango::vulkan {
 
@@ -19,7 +20,7 @@ DescSetVK::DescSetVK(const vk::DescriptorSet &descSet, const spDescPool& pool) :
 
 DescSetVK::~DescSetVK() {
 	std::cout << "~DescSetVK" << std::endl;
-	/*auto vk_device = Instance::device<DeviceVK>()->getDevice();
+	auto vk_device = Instance::device<DeviceVK>()->getDevice();
 
 	std::set<vk::Sampler> samplerSet;
 	for(auto s : _samplerBinds){
@@ -30,9 +31,8 @@ DescSetVK::~DescSetVK() {
 		vk_device.destroySampler(s);
 	}
 
-	vk_device.freeDescriptorSets(_descPool,1,&_descSet);
-	vk_device.destroyDescriptorPool(_descPool);
-	vk_device.destroyDescriptorSetLayout(_descLayout);*/
+	auto pool = std::dynamic_pointer_cast<DescPoolVK>(_descPool);
+	vk_device.freeDescriptorSets(pool->getPool(),1,&_descSet);
 }
 /*
 void DescSetVK::create(){

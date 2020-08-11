@@ -10,8 +10,10 @@
 
 namespace mango::vulkan {
 
-class DescLayoutVK : public DescLayout {
+class DescLayoutVK final : public DescLayout {
 	public:
+		~DescLayoutVK() final;
+
 		void create() final;
 
 		vk::DescriptorSetLayout getLayout();
