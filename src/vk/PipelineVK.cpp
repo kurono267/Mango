@@ -102,7 +102,7 @@ PipelineVK::PipelineVK(const mango::PipelineInfo &rp) : Pipeline(rp) {
 		auto c = constants[i];
 		_vkConstants.push_back(vk::PushConstantRange(vulkan::shaderStageVK(c.stage),c.offset,c.size));
 	}
-	setDescSet(_renderPattern.getDescSets());
+	setDescLayouts(_renderPattern.getDescLayouts());
 	create();
 }
 
@@ -210,13 +210,11 @@ vk::Pipeline PipelineVK::getVK(){
 	return _pipeline;
 }
 
-void PipelineVK::setDescSet(const std::vector<mango::spDescSet> &descSets) {
+void PipelineVK::setDescLayouts(const std::vector<spDescLayout> &descLayouts) {
 	_descLayouts.clear();
-	_descSet.clear();
-	for(auto d : descSets){
-		auto descSetVK = std::dynamic_pointer_cast<DescSetVK>(d);
-		_descSet.push_back(descSetVK);
-		_descLayouts.push_back(descSetVK->getLayout());
+	for(auto d : descLayouts){
+		auto layoutVK = std::dynamic_pointer_cast<DescLayoutVK>(d);
+		_descLayouts.push_back(layoutVK->getLayout());
 	}
 
 	_pipelineLayoutInfo = vk::PipelineLayoutCreateInfo(
@@ -224,9 +222,9 @@ void PipelineVK::setDescSet(const std::vector<mango::spDescSet> &descSets) {
 			static_cast<uint32_t>(_descLayouts.size()), _descLayouts.data(), _vkConstants.size(), _vkConstants.empty()? nullptr:_vkConstants.data());
 }
 
-void PipelineVK::setDescSet(const mango::spDescSet &descSet) {
+void PipelineVK::setDescLayouts(const mango::spDescLayout &descSet) {
 	_descLayouts.resize(1);
-	_descLayouts[0] = std::dynamic_pointer_cast<DescSetVK>(descSet)->getLayout();
+	_descLayouts[0] = std::dynamic_pointer_cast<DescLayoutVK>(descSet)->getLayout();
 	_pipelineLayoutInfo = vk::PipelineLayoutCreateInfo(
 			vk::PipelineLayoutCreateFlags(),
 			static_cast<uint32_t>(_descLayouts.size()), _descLayouts.data(),_vkConstants.size(), _vkConstants.empty()? nullptr:_vkConstants.data());

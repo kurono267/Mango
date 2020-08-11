@@ -22,10 +22,17 @@ class TestApp : public BaseApp {
 			_texture = checkboardTexture(1280,720,100);
             auto textureView = _texture->createTextureView();
 
-			_descSet = device->createDescSet();
+            auto descLayout = device->createDescLayout();
+            descLayout->set(DescType::Uniform,0,ShaderStage::Fragment);
+            descLayout->set(DescType::Texture,1,ShaderStage::Fragment);
+            descLayout->create();
+
+            auto descPool = device->createDescPool(1,descLayout);
+            _descSet = descPool->create();
+
 			_descSet->setUniformBuffer(_color,0,ShaderStage::Fragment);
 			_descSet->setTexture(textureView,Sampler(),1,ShaderStage::Fragment);
-            _descSet->create();
+            _descSet->write();
 
             auto screenRTs = device->getScreenRenderTargets();
 
@@ -34,7 +41,7 @@ class TestApp : public BaseApp {
 			rp.scissor(glm::ivec2(0),mainWnd->frameSize());
 			rp.addShader(ShaderStage::Vertex,"../glsl/test.vert");
 			rp.addShader(ShaderStage::Fragment,"../glsl/test.frag");
-			rp.setDescSet(_descSet);
+			rp.setDescLayout(descLayout);
 			rp.setRenderPass(screenRTs[0]->renderPass());
 
 			_main = device->createPipeline(rp);

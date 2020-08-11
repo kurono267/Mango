@@ -13,9 +13,13 @@ namespace mango::vulkan {
 
 DescSetVK::DescSetVK() {}
 
+DescSetVK::DescSetVK(const vk::DescriptorSet &descSet, const spDescPool& pool) : _descSet(descSet), _descPool(pool) {
+
+}
+
 DescSetVK::~DescSetVK() {
 	std::cout << "~DescSetVK" << std::endl;
-	auto vk_device = Instance::device<DeviceVK>()->getDevice();
+	/*auto vk_device = Instance::device<DeviceVK>()->getDevice();
 
 	std::set<vk::Sampler> samplerSet;
 	for(auto s : _samplerBinds){
@@ -28,9 +32,9 @@ DescSetVK::~DescSetVK() {
 
 	vk_device.freeDescriptorSets(_descPool,1,&_descSet);
 	vk_device.destroyDescriptorPool(_descPool);
-	vk_device.destroyDescriptorSetLayout(_descLayout);
+	vk_device.destroyDescriptorSetLayout(_descLayout);*/
 }
-
+/*
 void DescSetVK::create(){
     // Create Decription Set Layout
     std::vector<vk::DescriptorSetLayoutBinding> layoutBinds;
@@ -82,7 +86,9 @@ void DescSetVK::create(){
         descWrites.push_back(vk::WriteDescriptorSet(_descSet,s.binding,0,1,s.descType,&_descImageInfos[_descImageInfos.size()-1],nullptr,nullptr));
     }
     vk_device.updateDescriptorSets(descWrites,nullptr);
-}
+}*/
+
+
 
 void DescSetVK::setUniformBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage, size_t offset, int size){
     _uboBinds.emplace_back(buffer,binding,shaderStageVK(stage),vk::DescriptorType::eUniformBuffer,offset,size<0?buffer.size():size);
@@ -104,7 +110,25 @@ void DescSetVK::setTexture(const spTextureView &texture, const Sampler &sampler,
     _samplerBinds.emplace_back(internalTextureView,createSampler(sampler),binding,shaderStageVK(stage),vk::DescriptorType::eCombinedImageSampler,internalTexture->getImageLayout());
 }
 
-    DescSetVK::UBOBinding::UBOBinding(const Uniform &_buffer, size_t _binding, const vk::ShaderStageFlags &_stage,
+void DescSetVK::write() {
+	auto vk_device = Instance::device<DeviceVK>()->getDevice();
+
+	std::vector<vk::WriteDescriptorSet>         descWrites;
+	_descBufferInfos.resize(_uboBinds.size());
+	for(auto u : _uboBinds){
+		auto internalBuffer = std::dynamic_pointer_cast<BufferVK>(u.buffer.getBuffer());
+		_descBufferInfos.emplace_back(internalBuffer->getVKBuffer(),u.offset,u.size);
+		descWrites.emplace_back(_descSet,u.binding,0,1,u.descType,nullptr,&_descBufferInfos[_descBufferInfos.size()-1],nullptr);
+	}
+	_descImageInfos.resize(_samplerBinds.size());
+	for(auto s : _samplerBinds){
+		_descImageInfos.emplace_back(s.sampler, s.textureView->getView(), s.layout);
+		descWrites.emplace_back(_descSet,s.binding,0,1,s.descType,&_descImageInfos[_descImageInfos.size()-1],nullptr,nullptr);
+	}
+	vk_device.updateDescriptorSets(descWrites,nullptr);
+}
+
+DescSetVK::UBOBinding::UBOBinding(const Uniform &_buffer, size_t _binding, const vk::ShaderStageFlags &_stage,
                                   const vk::DescriptorType &_descType, size_t _offset, size_t _size)
   : buffer(_buffer),binding(_binding),stage(_stage),descType(_descType), offset(_offset), size(_size)
   {}

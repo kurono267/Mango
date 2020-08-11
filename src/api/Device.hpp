@@ -19,6 +19,8 @@ class Texture;
 class Framebuffer;
 class CommandBuffer;
 class DescSet;
+class DescLayout;
+class DescPool;
 class Compute;
 class RenderTarget;
 
@@ -37,6 +39,8 @@ typedef std::shared_ptr<Framebuffer> spFramebuffer;
 typedef std::shared_ptr<CommandBuffer> spCommandBuffer;
 typedef std::shared_ptr<Semaphore> spSemaphore;
 typedef std::shared_ptr<DescSet> spDescSet;
+typedef std::shared_ptr<DescLayout> spDescLayout;
+typedef std::shared_ptr<DescPool> spDescPool;
 typedef std::shared_ptr<Compute> spCompute;
 typedef std::shared_ptr<RenderTarget> spRenderTarget;
 
@@ -58,7 +62,8 @@ class Device {
 		virtual spRenderPass createRenderPass() = 0;
 		virtual spPipeline createPipeline(const PipelineInfo& rp) = 0;
 		virtual spBuffer createBuffer(const BufferType& type,const MemoryType& memory,const size_t& size,void* data = nullptr) = 0;
-		virtual spDescSet createDescSet() = 0;
+		virtual spDescLayout createDescLayout() = 0;
+		virtual spDescPool createDescPool(size_t numDescSets, const spDescLayout& layout) = 0;
 		virtual spCommandBuffer createCommandBuffer() = 0;
 		virtual spSemaphore createSemaphore() = 0;
 		virtual spFramebuffer createFramebuffer(const glm::ivec2& size) = 0;

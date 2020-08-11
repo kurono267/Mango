@@ -15,6 +15,8 @@
 #include "api/Pipeline.hpp"
 #include "api/Texture.hpp"
 #include "api/Utils.hpp"
+#include "api/DescLayout.hpp"
+#include "api/DescPool.hpp"
 #include "api/DescSet.hpp"
 #include "api/CommandBuffer.hpp"
 #include "api/Utils.hpp"

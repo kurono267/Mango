@@ -37,10 +37,17 @@ bool App::init() {
 	_texture = checkboardTexture( 1280, 720, 100);
 	auto texView = _texture->createTextureView();
 
-	_descSet = device->createDescSet();
+	auto descLayout = device->createDescLayout();
+	descLayout->set(DescType::Uniform,0,ShaderStage::Vertex);
+	descLayout->set(DescType::Texture,1,ShaderStage::Fragment);
+	descLayout->create();
+
+	auto descPool = device->createDescPool(1,descLayout);
+
+	_descSet = descPool->create();
 	_descSet->setUniformBuffer(_cameraUniform, 0, ShaderStage::Vertex);
 	_descSet->setTexture(texView, Sampler(), 1, ShaderStage::Fragment);
-	_descSet->create();
+	_descSet->write();
 
 	auto screenRTs = device->getScreenRenderTargets();
 
@@ -49,7 +56,7 @@ bool App::init() {
     rp.scissor(glm::ivec2(0), mainWnd->frameSize());
     rp.addShader(ShaderStage::Vertex, "../glsl/cube.vert");
     rp.addShader(ShaderStage::Fragment, "../glsl/cube.frag");
-    rp.setDescSet(_descSet);
+    rp.setDescLayout(descLayout);
 	rp.setRenderPass(screenRTs[0]->renderPass());
 
     _main = device->createPipeline(rp);

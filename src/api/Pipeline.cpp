@@ -162,8 +162,8 @@ const spRenderPass &PipelineInfo::getRenderPass() const {
 	return _renderPass;
 }
 
-const std::vector<spDescSet>& PipelineInfo::getDescSets() const {
-	return _descSets;
+const std::vector<spDescLayout>& PipelineInfo::getDescLayouts() const {
+	return _descLayouts;
 }
 
 void PipelineInfo::addShader(const ShaderStage &type, const std::string &filename) {
@@ -174,13 +174,13 @@ void PipelineInfo::setRenderPass(const spRenderPass &rp) {
 	_renderPass = rp;
 }
 
-void PipelineInfo::setDescSet(const std::vector<spDescSet> &descSets) {
-	_descSets = descSets;
+void PipelineInfo::setDescLayout(const std::vector<spDescLayout>& descLayouts) {
+	_descLayouts = descLayouts;
 }
 
-void PipelineInfo::setDescSet(const spDescSet &descSet) {
-	_descSets.resize(1);
-	_descSets[0] = descSet;
+void PipelineInfo::setDescLayout(const spDescLayout& descLayout) {
+	_descLayouts.resize(1);
+	_descLayouts[0] = descLayout;
 }
 
 void RenderPass::addAttachment(const Attachment& a){

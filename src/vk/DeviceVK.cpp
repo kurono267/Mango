@@ -13,6 +13,7 @@
 #include "DescSetVK.hpp"
 #include "ComputeVK.hpp"
 #include "../unified/RenderTarget.hpp"
+#include "DescPoolVK.hpp"
 
 using namespace mango::vulkan;
 using namespace mango;
@@ -360,9 +361,12 @@ uint32_t DeviceVK::nextScreen(const mango::spSemaphore& signal){
 	return _device.acquireNextImageKHR(_swapchain->getSwapchain(),std::numeric_limits<uint64_t>::max(),signalSemaphores,nullptr).value;
 }
 
-mango::spDescSet DeviceVK::createDescSet() {
-    spDescSet descSet = std::make_shared<DescSetVK>();
-    return descSet;
+spDescLayout DeviceVK::createDescLayout() {
+	return std::make_shared<DescLayoutVK>();
+}
+
+spDescPool DeviceVK::createDescPool(size_t numDescSets, const spDescLayout& layout) {
+	return std::make_shared<DescPoolVK>(numDescSets,layout);
 }
 
 void DeviceVK::waitIdle() {

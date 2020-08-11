@@ -24,15 +24,29 @@ class TestApp : public BaseApp {
             _computeTexture = device->createTexture(1280,720,1,Format::R16G16B16A16Unorm,TextureType::Input | TextureType::Storage);
             auto computeTexView = _computeTexture->createTextureView();
 
-			_descSet = device->createDescSet();
+            auto descLayout = device->createDescLayout();
+            descLayout->set(DescType::Uniform,0,ShaderStage::Fragment);
+            descLayout->set(DescType::Texture,1,ShaderStage::Fragment);
+            descLayout->create();
+
+            auto descPool = device->createDescPool(1,descLayout);
+
+			_descSet = descPool->create();
 			_descSet->setUniformBuffer(_color,0,ShaderStage::Fragment);
 			_descSet->setTexture(computeTexView,Sampler(),1,ShaderStage::Fragment);
-            _descSet->create();
+            _descSet->write();
 
-            _computeSet = device->createDescSet();
+            auto computeLayout = device->createDescLayout();
+            computeLayout->set(DescType::StorageTexture,0,ShaderStage::Compute);
+            computeLayout->set(DescType::StorageTexture,1,ShaderStage::Compute);
+            computeLayout->create();
+
+            auto computePool = device->createDescPool(1,computeLayout);
+
+            _computeSet = computePool->create();
 			_computeSet->setStorageTexture(texView,Sampler(),0,ShaderStage::Compute);
             _computeSet->setStorageTexture(computeTexView,Sampler(),1,ShaderStage::Compute);
-            _computeSet->create();
+            _computeSet->write();
 
             _compute = device->createCompute("../glsl/compute.glsl",{_computeSet});
 
@@ -43,7 +57,7 @@ class TestApp : public BaseApp {
 			rp.scissor(glm::ivec2(0),mainWnd->frameSize());
 			rp.addShader(ShaderStage::Vertex,"../glsl/test.vert");
 			rp.addShader(ShaderStage::Fragment,"../glsl/test.frag");
-			rp.setDescSet(_descSet);
+			rp.setDescLayout(descLayout);
 			rp.setRenderPass(screenRTs[0]->renderPass());
 
 			_main = device->createPipeline(rp);

@@ -9,15 +9,16 @@
 #include "default.hpp"
 #include "DeviceVK.hpp"
 #include "TextureVK.hpp"
+#include "../api/DescPool.hpp"
+#include "DescLayoutVK.hpp"
 
 namespace mango::vulkan {
 
 class DescSetVK : public mango::DescSet {
 public:
     DescSetVK();
+    DescSetVK(const vk::DescriptorSet& descSet, const spDescPool& pool);
     ~DescSetVK() override;
-
-    void create() override;
 
     void setUniformBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage, size_t offset = 0, int size = -1) override;
     void setStorageBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage, size_t offset = 0, int size = -1) override;
@@ -27,12 +28,16 @@ public:
 	void setStorageTexture(const spTextureView &texture, const Sampler &sampler, size_t binding,
 			        const ShaderStage &stage) override;
 
+	void write() final;
+
     vk::DescriptorSet getSet(){return _descSet;}
-    vk::DescriptorSetLayout getLayout(){return _descLayout;}
+    vk::DescriptorSetLayout getLayout(){
+    	spDescLayoutVK layout = std::dynamic_pointer_cast<DescLayoutVK>(_descPool->getLayout());
+    	return layout->getLayout();
+    }
 private:
-    vk::DescriptorSetLayout _descLayout;
     vk::DescriptorSet       _descSet;
-    vk::DescriptorPool      _descPool;
+    spDescPool _descPool;
 
     std::vector<vk::DescriptorImageInfo>  _descImageInfos;
     std::vector<vk::DescriptorBufferInfo> _descBufferInfos;

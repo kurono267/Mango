@@ -49,15 +49,14 @@ class PipelineVK : public mango::Pipeline {
 		void addShader(const ShaderStage& type,const std::string& filename); // Bascily import glsl
 		void setRenderPass(const std::shared_ptr<RenderPass>& rp);
 
-		void setDescSet(const std::vector<spDescSet> &descSets);
-		void setDescSet(const spDescSet &descSet);
+		void setDescLayouts(const std::vector<spDescLayout> &descLayouts);
+		void setDescLayouts(const spDescLayout &descLayouts);
 
 		void create();
 	private:
 		std::vector<vk::PipelineShaderStageCreateInfo> _shaders;
 		vk::PipelineViewportStateCreateInfo      _viewportState;
 
-		std::vector<std::shared_ptr<DescSetVK>> _descSet;
 		std::vector<vk::DescriptorSetLayout> _descLayouts;
 		std::vector<vk::PushConstantRange> _vkConstants;
 		vk::PipelineLayoutCreateInfo _pipelineLayoutInfo;

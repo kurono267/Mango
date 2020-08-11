@@ -134,7 +134,7 @@ class PipelineInfo {
 		const std::unordered_map<ShaderStage,std::string>& getShaders() const;
 		const spRenderPass& getRenderPass() const;
 
-		const std::vector<spDescSet>& getDescSets() const;
+		const std::vector<spDescLayout>& getDescLayouts() const;
 
 		const VertexBinding& getVertexBinding() const;
 		const std::vector<VertexAttrib>& getVertexAttribs() const;
@@ -145,8 +145,8 @@ class PipelineInfo {
 	 	void addShader(const ShaderStage& type,const std::string& filename); // Bascily import glsl
 	 	void setRenderPass(const spRenderPass& rp);
 
-	 	void setDescSet(const std::vector<spDescSet>& descSets);
-	 	void setDescSet(const spDescSet& descSet);
+	 	void setDescLayout(const std::vector<spDescLayout>& descLayouts);
+	 	void setDescLayout(const spDescLayout& descLayout);
 	private:
 		PrimitiveTopology _topology;
 		Viewport          _viewport;
@@ -164,7 +164,7 @@ class PipelineInfo {
 
 		std::unordered_map<ShaderStage,std::string> _shaders;
 		spRenderPass _renderPass;
-		std::vector<spDescSet> _descSets;
+		std::vector<spDescLayout> _descLayouts;
 
 		VertexBinding _vertexBinding;
 		std::vector<VertexAttrib> _vertexAttribs;

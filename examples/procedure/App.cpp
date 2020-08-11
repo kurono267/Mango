@@ -12,9 +12,15 @@ bool App::init() {
 
 	_noise2d = createRandomTexture2D(512,512);
 
-    _descSet = device->createDescSet();
+	auto descLayout = device->createDescLayout();
+	descLayout->set(DescType::Texture,0,ShaderStage::Fragment);
+	descLayout->create();
+
+	auto descPool = device->createDescPool(1,descLayout);
+
+    _descSet = descPool->create();
     _descSet->setTexture(_noise2d->createTextureView(),Sampler(Filter::Nearest,Filter::Nearest),0,ShaderStage::Fragment);
-    _descSet->create();
+    _descSet->write();
 
     auto screenRTs = device->getScreenRenderTargets();
 
@@ -23,7 +29,7 @@ bool App::init() {
     rp.scissor(glm::ivec2(0), mainWnd->frameSize());
     rp.addShader(ShaderStage::Vertex, "../glsl/procedure/main.vert");
     rp.addShader(ShaderStage::Fragment, "../glsl/procedure/main.frag");
-    rp.setDescSet(_descSet);
+    rp.setDescLayout(descLayout);
     rp.setRenderPass(screenRTs[0]->renderPass());
 
     _main = device->createPipeline(rp);
