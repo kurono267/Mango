@@ -8,8 +8,8 @@ using namespace mango::vulkan;
 
 vk::Viewport mango::vulkan::viewportVK(const mango::Viewport& _mango){
 	vk::Viewport _vk;
-	_vk.x = _mango.start.x; _vk.y = _mango.start.y;
-	_vk.width = _mango.size.x; _vk.height = _mango.size.y;
+	_vk.x = _mango.start.x; _vk.y = _mango.size.y-_mango.start.y;
+	_vk.width = _mango.size.x; _vk.height = -_mango.size.y;
 	_vk.minDepth = _mango.minDepth; _vk.maxDepth = _mango.maxDepth;
 	return _vk;
 }

@@ -19,7 +19,8 @@ using namespace mango::vulkan;
 using namespace mango;
 
 const std::vector<const char*> deviceExtensions = {
-	VK_KHR_SWAPCHAIN_EXTENSION_NAME
+	VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+	VK_KHR_MAINTENANCE1_EXTENSION_NAME
 };
 
 struct QueueFamilyIndices {
