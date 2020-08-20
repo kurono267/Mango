@@ -2,7 +2,7 @@
 // Created by kurono267 on 2018-12-07.
 //
 
-#include <scene/Assets.hpp>
+#include "../../../../src/scene/Assets.hpp"
 #include "App.hpp"
 
 struct Data {

@@ -37,8 +37,6 @@ set(MANGO_SRC
         scene/Scene.hpp
         scene/Material.cpp
         scene/Material.hpp
-        scene/Assets.cpp
-        scene/Assets.hpp
         scene/SceneNode.cpp
         scene/SceneNode.hpp
         scene/Geometry.cpp

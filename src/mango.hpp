@@ -32,7 +32,6 @@
 #include "scene/Camera.hpp"
 #include "scene/SceneNode.hpp"
 #include "scene/Scene.hpp"
-#include "scene/Assets.hpp"
 #include "scene/BVH.hpp"
 
 #ifdef MANGO_VULKAN
