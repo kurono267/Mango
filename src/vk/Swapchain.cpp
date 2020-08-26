@@ -30,7 +30,7 @@ vk::SurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormat
 	}
 	std::cout << "Selected swap surface " << std::endl;
 	for (const auto& availableFormat : availableFormats) {
-		if (availableFormat.format == vk::Format::eR16G16B16A16Sfloat && availableFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) { // TODO Improve selection format of swapchain
+		if (availableFormat.format == vk::Format::eA2R10G10B10UnormPack32 && availableFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) { // TODO Improve selection format of swapchain
 			std::cout << swapSurfaceFormatString(availableFormat) << std::endl;
 			return availableFormat;
 		}
