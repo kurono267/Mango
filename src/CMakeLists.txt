@@ -33,8 +33,6 @@ set(MANGO_SRC
         scene/Camera.hpp
         scene/SceneTransform.cpp
         scene/SceneTransform.hpp
-        scene/Scene.cpp
-        scene/Scene.hpp
         scene/Material.cpp
         scene/Material.hpp
         scene/SceneNode.cpp
