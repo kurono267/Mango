@@ -66,6 +66,11 @@ class RenderPass {
 
 		void addAttachment(const Attachment& a);
 
+		size_t attachmentsCount() const;
+		const Attachment& attachment(size_t id) const;
+
+		const std::vector<Attachment>& attachments() const;
+
 		virtual void create(const bool isPresent = false) = 0;
 	protected:
 		std::vector<Attachment> _attachments;

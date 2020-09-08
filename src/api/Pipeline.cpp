@@ -186,3 +186,15 @@ void PipelineInfo::setDescLayout(const spDescLayout& descLayout) {
 void RenderPass::addAttachment(const Attachment& a){
 	_attachments.push_back(a);
 }
+
+size_t RenderPass::attachmentsCount() const {
+	return _attachments.size();
+}
+
+const Attachment& RenderPass::attachment(size_t id) const {
+	return _attachments[id];
+}
+
+const std::vector<Attachment>& RenderPass::attachments() const {
+	return _attachments;
+}
