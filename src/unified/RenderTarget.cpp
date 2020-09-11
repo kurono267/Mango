@@ -25,12 +25,12 @@ RenderTarget::RenderTarget(const int width, const int height) {
 
 RenderTarget::RenderTarget(const spFramebuffer& framebuffer, const spRenderPass& renderPass) : _framebuffer(framebuffer),_renderPass(renderPass),_isFinished(true){}
 
-void RenderTarget::attach(const spTextureView &view) {
+void RenderTarget::attach(const spTextureView &view, bool isDepth) {
 	if(_isFinished){
 		throw std::logic_error("RenderTarget::attach Try to attach to finished RenderTarget");
 	}
 	_framebuffer->attachment(view);
-	_renderPass->addAttachment(Attachment(view->getTexture()->format(),false,_lastAttachment));
+	_renderPass->addAttachment(Attachment(view->getTexture()->format(),isDepth,_lastAttachment));
 	_lastAttachment++;
 }
 

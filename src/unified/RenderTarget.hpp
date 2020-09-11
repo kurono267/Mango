@@ -20,7 +20,7 @@ class RenderTarget {
 		RenderTarget(const int width, const int height);
 		RenderTarget(const spFramebuffer& framebuffer, const spRenderPass& renderPass);
 
-		void attach(const spTextureView& view);
+		void attach(const spTextureView& view, bool isDepth = false);
 		void attachDepth();
 
 		void finish();
