@@ -35,6 +35,7 @@ class BufferVK : public Buffer {
 
 		vk::DeviceMemory _memory;
 		vk::Buffer _buffer;
+		MemoryType _memoryType;
 
 		size_t _size;
 };

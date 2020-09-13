@@ -5,6 +5,7 @@
 #include "SceneNode.hpp"
 #include "../api/Instance.hpp"
 #include "../api/DescSet.hpp"
+#include "../unified/Timer.hpp"
 
 using namespace mango;
 
@@ -127,11 +128,13 @@ Uniform mango::createCameraUniform(const spSceneNode& cameraNode) {
 void mango::updateCameraUniform(const spSceneNode& cameraNode, Uniform& uniform) {
 	if(!cameraNode->getCamera())throw std::logic_error("updateCameraUniform: Node don't contains camera");
 	CameraData data;
-	data.view = cameraNode->getWorldTransform();
-	data.proj = cameraNode->getCamera()->getProj();
-	data.viewProj = data.proj*data.view;
-	data.invView = glm::inverse(data.view);
-	data.invProj = glm::inverse(data.proj);
+	auto view = cameraNode->getWorldTransform();
+	auto proj = cameraNode->getCamera()->getProj();
+	data.view = view;
+	data.proj = proj;
+	data.viewProj = proj*view;
+	data.invView = glm::inverse(view);
+	data.invProj = glm::inverse(proj);
 
 	uniform.set(sizeof(CameraData),&data);
 }

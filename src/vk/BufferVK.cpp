@@ -9,34 +9,40 @@
 using namespace mango::vulkan;
 
 void BufferVK::create(const BufferType &type,const MemoryType& memory,const size_t &size,void* data) {
+	_memoryType = memory;
 	std::cout << "BufferVK::create" << std::endl;
 	_size = size;
+	vk::BufferUsageFlags usage;
+	if((uint32_t)type & (uint32_t)BufferType::Vertex){
+		usage |= vk::BufferUsageFlagBits::eVertexBuffer;
+	}
+	if((uint32_t)type & (uint32_t)BufferType::Index){
+		usage |= vk::BufferUsageFlagBits::eIndexBuffer;
+	}
+	if((uint32_t)type & (uint32_t)BufferType::Uniform){
+		usage |= vk::BufferUsageFlagBits::eUniformBuffer;
+	}
+	if((uint32_t)type & (uint32_t)BufferType::Storage) {
+		usage |= vk::BufferUsageFlagBits::eStorageBuffer;
+	}
 	if(memory == MemoryType::HOST){
 		createBuffer(size,
-					 vk::BufferUsageFlagBits::eTransferSrc,
+					 vk::BufferUsageFlagBits::eTransferSrc | usage,
 					 vk::MemoryPropertyFlagBits::eHostVisible |
 					 vk::MemoryPropertyFlagBits::eHostCoherent,
 					 _buffer,_memory);
 		if(data)set(data,size,_memory);
 	} else if(memory == MemoryType::DEVICE){
-		vk::BufferUsageFlags gpuUsage;
-		if((uint32_t)type & (uint32_t)BufferType::Vertex){
-			gpuUsage |= vk::BufferUsageFlagBits::eVertexBuffer;
-		}
-		if((uint32_t)type & (uint32_t)BufferType::Index){
-			gpuUsage |= vk::BufferUsageFlagBits::eIndexBuffer;
-		}
-		if((uint32_t)type & (uint32_t)BufferType::Uniform){
-			gpuUsage |= vk::BufferUsageFlagBits::eUniformBuffer;
-		}
-		if((uint32_t)type & (uint32_t)BufferType::Storage) {
-			gpuUsage |= vk::BufferUsageFlagBits::eStorageBuffer;
-		}
-
 		createBuffer(size,
-					 vk::BufferUsageFlagBits::eTransferDst | gpuUsage,
+					 vk::BufferUsageFlagBits::eTransferDst | usage,
 					 vk::MemoryPropertyFlagBits::eDeviceLocal,
 					 _buffer,_memory);
+	} else if(memory == MemoryType::DEVICE_HOST) {
+		createBuffer(size,
+			   		usage,
+			   		vk::MemoryPropertyFlagBits::eDeviceLocal | vk::MemoryPropertyFlagBits::eHostVisible,
+			   		_buffer, _memory);
+		if(data)set(data,size,_memory);
 	}
 }
 
@@ -49,6 +55,9 @@ void BufferVK::set(const void* src,const size_t& size,const vk::DeviceMemory& ds
 	auto vkDevice = Instance::device<DeviceVK>()->getDevice();
 	void* map_data = vkDevice.mapMemory(dst,0,(vk::DeviceSize)size);
 		memcpy(map_data,src,size);
+	if(_memoryType == MemoryType::DEVICE_HOST){
+		vkDevice.flushMappedMemoryRanges(vk::MappedMemoryRange(_memory,0,size));
+	}
 	vkDevice.unmapMemory(dst);
 }
 

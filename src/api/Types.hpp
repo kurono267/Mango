@@ -462,7 +462,8 @@ BufferType operator |(BufferType lhs, BufferType rhs);
 
 enum class MemoryType {
 	HOST,
-	DEVICE
+	DEVICE,
+	DEVICE_HOST
 };
 
 enum class TextureType : unsigned {

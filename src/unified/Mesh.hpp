@@ -74,9 +74,6 @@ class Mesh {
 
 		BBox getBoundingBox();
 
-		Uniform getVertexBuffer();
-		Uniform getIndexBuffer();
-
 		void genNormals(); // TODO need improve
 	protected:
 		spBuffer _vbHost;

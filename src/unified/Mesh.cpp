@@ -65,14 +65,6 @@ void Mesh::unmapIndices() {
 	_ibHost->unmap();
 }
 
-Uniform Mesh::getVertexBuffer() {
-	return Uniform(_vbHost,_vbDevice);
-}
-
-Uniform Mesh::getIndexBuffer() {
-	return Uniform(_ibHost,_ibDevice);
-}
-
 void Mesh::genNormals() {
 	sVertex* vertices = mapVertices();
 	uint32_t* indices = mapIndices();
