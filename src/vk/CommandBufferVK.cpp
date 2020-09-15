@@ -115,6 +115,10 @@ CommandBufferVK::~CommandBufferVK() {
 	}
 }
 
+void CommandBufferVK::reset() {
+	if(_cmd)_cmd.reset(vk::CommandBufferResetFlagBits::eReleaseResources);
+}
+
 vk::CommandBuffer CommandBufferVK::getVK(){
 	return _cmd;
 }

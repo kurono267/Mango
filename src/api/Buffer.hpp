@@ -13,6 +13,8 @@
 
 namespace mango {
 
+class CommandBuffer;
+
 struct VertexAttrib {
 	VertexAttrib() = default;
 	VertexAttrib(const uint32_t& l,const uint32_t& b,const Format& f,const uint32_t& o) : location(l), binding(b), format(f), offset(o){}
@@ -60,7 +62,7 @@ class Buffer {
 		virtual ~Buffer() = default;
 
 		virtual void set(const size_t& size,const void* data) = 0;
-		virtual void copy(const std::shared_ptr<Buffer>& dst) = 0;
+		virtual void copy(const std::shared_ptr<Buffer>& dst, const std::shared_ptr<CommandBuffer>& cmd = nullptr) = 0;
 
 		virtual size_t size() = 0;
 		virtual void* map() = 0;

@@ -19,7 +19,7 @@ class BufferVK : public Buffer {
 		void create(const BufferType &type,const MemoryType& memory,const size_t &size,void* data = nullptr);
 		void set(const size_t &size, const void *data) final;
 
-		void copy(const spBuffer& dst) final;
+		void copy(const spBuffer& dst, const spCommandBuffer& cmd) final;
 
 		size_t size() final;
 		void* map() final;
@@ -30,7 +30,7 @@ class BufferVK : public Buffer {
 		void createBuffer(vk::DeviceSize size,vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties,
 							vk::Buffer& buffer,vk::DeviceMemory& memory);
 
-		void copy(const vk::Buffer& src,const vk::Buffer& dst,const size_t& size);
+		void copy(const vk::Buffer& src,const vk::Buffer& dst,const size_t& size, const spCommandBuffer& cmd);
 		void set(const void* data,const size_t& size,const vk::DeviceMemory& dst);
 
 		vk::DeviceMemory _memory;
@@ -38,6 +38,8 @@ class BufferVK : public Buffer {
 		MemoryType _memoryType;
 
 		size_t _size;
+
+		void* _mappedData;
 };
 
 uint32_t findMemoryType(vk::PhysicalDevice pDevice,uint32_t typeFilter, vk::MemoryPropertyFlags properties);

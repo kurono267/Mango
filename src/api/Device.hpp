@@ -31,6 +31,19 @@ class Semaphore {
 		virtual ~Semaphore() = default;
 };
 
+const uint64_t MaxFenceTimeout = 500*1000*1000ul; // 5 seconds
+
+class Fence {
+	public:
+		Fence() = default;
+		virtual ~Fence() = default;
+
+		virtual void reset() = 0;
+		virtual void wait(uint64_t timeout = MaxFenceTimeout) = 0;
+
+		virtual bool status() = 0;
+};
+
 typedef std::shared_ptr<RenderPass> spRenderPass;
 typedef std::shared_ptr<Pipeline> spPipeline;
 typedef std::shared_ptr<Buffer> spBuffer;
@@ -38,6 +51,7 @@ typedef std::shared_ptr<Texture> spTexture;
 typedef std::shared_ptr<Framebuffer> spFramebuffer;
 typedef std::shared_ptr<CommandBuffer> spCommandBuffer;
 typedef std::shared_ptr<Semaphore> spSemaphore;
+typedef std::shared_ptr<Fence> spFence;
 typedef std::shared_ptr<DescSet> spDescSet;
 typedef std::shared_ptr<DescLayout> spDescLayout;
 typedef std::shared_ptr<DescPool> spDescPool;
@@ -66,6 +80,7 @@ class Device {
 		virtual spDescPool createDescPool(size_t numDescSets, const spDescLayout& layout) = 0;
 		virtual spCommandBuffer createCommandBuffer() = 0;
 		virtual spSemaphore createSemaphore() = 0;
+		virtual spFence createFence(bool status) = 0;
 		virtual spFramebuffer createFramebuffer(const glm::ivec2& size) = 0;
 		virtual spFramebuffer createFramebuffer(const int width, const int height) = 0;
 		virtual spCompute createCompute(const std::string& filename, const std::vector<spDescSet>& descSets) = 0;
@@ -85,7 +100,8 @@ class Device {
 		/// @param cmd command buffer
 		/// @param waitForIt semaphore waited before execute command buffer
 		/// @param result semaphore changed when execute complete
-		virtual void submit(const spCommandBuffer& cmd, const spSemaphore& waitForIt, const spSemaphore& result) = 0;
+		/// @param fence fence for sync cpu
+		virtual void submit(const spCommandBuffer& cmd, const spSemaphore& waitForIt, const spSemaphore& result, const mango::spFence& fence = nullptr) = 0;
 		/// Present screen
 		/// @param screen Screen ID
 		/// @param signal semaphore changed when execute complete
@@ -94,7 +110,7 @@ class Device {
 		/// Get next screen ID
 		/// @param semaphore changed when screen available
 		/// @return screen ID
-		virtual uint32_t nextScreen(const spSemaphore& signal) = 0;
+		virtual uint32_t nextScreen(const spSemaphore& signal,const spFence& fence = nullptr) = 0;
 
 		/// Wait when all executed command buffer finished
 		virtual void waitIdle() = 0;

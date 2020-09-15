@@ -46,19 +46,15 @@ void BufferVK::create(const BufferType &type,const MemoryType& memory,const size
 	}
 }
 
-void BufferVK::copy(const spBuffer& dst){
+void BufferVK::copy(const spBuffer& dst, const spCommandBuffer& cmd){
 	auto vkBuffer = std::dynamic_pointer_cast<BufferVK>(dst);
-	copy(_buffer,vkBuffer->_buffer,_size);
+	copy(_buffer,vkBuffer->_buffer,_size,cmd);
 }
 
 void BufferVK::set(const void* src,const size_t& size,const vk::DeviceMemory& dst){
-	auto vkDevice = Instance::device<DeviceVK>()->getDevice();
-	void* map_data = vkDevice.mapMemory(dst,0,(vk::DeviceSize)size);
+	void* map_data = map();
 		memcpy(map_data,src,size);
-	if(_memoryType == MemoryType::DEVICE_HOST){
-		vkDevice.flushMappedMemoryRanges(vk::MappedMemoryRange(_memory,0,size));
-	}
-	vkDevice.unmapMemory(dst);
+	unmap();
 }
 
 void BufferVK::set(const size_t &size, const void *data) {
@@ -81,17 +77,20 @@ void BufferVK::createBuffer(vk::DeviceSize size,vk::BufferUsageFlags usage, vk::
 	vkDevice.bindBufferMemory(buffer,memory, 0);
 }
 
-void BufferVK::copy(const vk::Buffer& src,const vk::Buffer& dst,const size_t& size){
+void BufferVK::copy(const vk::Buffer& src,const vk::Buffer& dst,const size_t& size, const spCommandBuffer& cmd){
 	auto impDevice = Instance::device<DeviceVK>();
-	auto commands = beginSingle(impDevice->getDevice(),impDevice->getCommandPool());
+	vk::CommandBuffer commands;
+	if(!cmd)commands = beginSingle(impDevice->getDevice(),impDevice->getCommandPool());
+	else commands = std::static_pointer_cast<CommandBufferVK>(cmd)->getVK();
 		commands.copyBuffer(src,dst,vk::BufferCopy(0,0,size));
-	endSingle(impDevice->getDevice(),impDevice->getGraphicsQueue(),impDevice->getCommandPool(),commands);
+	if(!cmd)endSingle(impDevice->getDevice(),impDevice->getGraphicsQueue(),impDevice->getCommandPool(),commands);
 }
 
 BufferVK::~BufferVK() {
 	std::cout << "~BufferVK" << std::endl;
 	auto impDevice = Instance::device<DeviceVK>();
 	auto vkDevice = impDevice->getDevice();
+	if(_mappedData)vkDevice.unmapMemory(_memory);
 	if(_memory)vkDevice.freeMemory(_memory);
 	if(_buffer)vkDevice.destroyBuffer(_buffer);
 }
@@ -105,24 +104,43 @@ size_t BufferVK::size() {
 }
 
 void *BufferVK::map() {
+	if(_memoryType == MemoryType::DEVICE)return nullptr;
 	auto vkDevice = Instance::device<DeviceVK>()->getDevice();
-	return vkDevice.mapMemory(_memory,0,(vk::DeviceSize)_size);
+	if(!_mappedData){
+		_mappedData = vkDevice.mapMemory(_memory,0,(vk::DeviceSize)_size);
+	}
+	/*if(_memoryType == MemoryType::DEVICE_HOST){
+		vkDevice.invalidateMappedMemoryRanges(vk::MappedMemoryRange(_memory,0,_size));
+	}*/
+	return _mappedData;
 }
 
 void BufferVK::unmap() {
+	if(_memoryType == MemoryType::DEVICE || _memoryType == MemoryType::HOST)return;
 	auto vkDevice = Instance::device<DeviceVK>()->getDevice();
-	vkDevice.unmapMemory(_memory);
+	vkDevice.flushMappedMemoryRanges(vk::MappedMemoryRange(_memory,0,_size));
 }
 
-uint32_t mango::vulkan::findMemoryType(vk::PhysicalDevice pDevice,uint32_t typeFilter, vk::MemoryPropertyFlags properties) {
-	vk::PhysicalDeviceMemoryProperties memProperties = pDevice.getMemoryProperties();
+uint32_t mango::vulkan::findMemoryType(vk::PhysicalDevice pDevice,
+					   uint32_t memoryTypeBitsRequirement,
+					   vk::MemoryPropertyFlags requiredProperties) {
+	vk::PhysicalDeviceMemoryProperties pMemoryProperties = pDevice.getMemoryProperties();
 
-	for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
-		if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
-			return i;
-		}
+	const uint32_t memoryCount = pMemoryProperties.memoryTypeCount;
+	for (uint32_t memoryIndex = 0; memoryIndex < memoryCount; ++memoryIndex) {
+		const uint32_t memoryTypeBits = (1 << memoryIndex);
+		const bool isRequiredMemoryType = memoryTypeBitsRequirement & memoryTypeBits;
+
+		const vk::MemoryPropertyFlags properties =
+				pMemoryProperties.memoryTypes[memoryIndex].propertyFlags;
+		const bool hasRequiredProperties =
+				(properties & requiredProperties) == requiredProperties;
+
+		if (isRequiredMemoryType && hasRequiredProperties)
+			return static_cast<uint32_t>(memoryIndex);
 	}
 
+	// failed to find memory type
 	throw std::runtime_error("failed to find suitable memory type!");
 }
 

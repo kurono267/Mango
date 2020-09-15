@@ -8,15 +8,23 @@
 
 using namespace mango;
 
-void Mesh::create(const spDevice& device, size_t vertexBufferSize, size_t indexBufferSize, size_t vertexSize, size_t indexSize) {
+void Mesh::create(const spDevice& device, size_t vertexBufferSize, size_t indexBufferSize, size_t vertexSize, size_t indexSize, MeshType type) {
 	_vertexSize = vertexSize;
 	_indexSize = indexSize;
+	_type = type;
 
-	_vbHost = device->createBuffer(BufferType::Vertex | BufferType::Storage,MemoryType::HOST,vertexBufferSize);
-	_vbDevice = device->createBuffer(BufferType::Vertex | BufferType::Storage,MemoryType::DEVICE,vertexBufferSize);
+	_vbHost = device->createBuffer(BufferType::Vertex | BufferType::Storage,type==MeshType::Static?MemoryType::HOST:MemoryType::DEVICE_HOST,vertexBufferSize);
 
-	_ibHost = device->createBuffer(BufferType::Index | BufferType::Storage,MemoryType::HOST,indexBufferSize);
-	_ibDevice = device->createBuffer(BufferType::Index | BufferType::Storage,MemoryType::DEVICE,indexBufferSize);
+	_ibHost = device->createBuffer(BufferType::Index | BufferType::Storage,type==MeshType::Static?MemoryType::HOST:MemoryType::DEVICE_HOST,indexBufferSize);
+
+	if(type == MeshType::Static) {
+		_vbDevice = device->createBuffer(BufferType::Vertex | BufferType::Storage, MemoryType::DEVICE,
+										 vertexBufferSize);
+		_ibDevice = device->createBuffer(BufferType::Index | BufferType::Storage, MemoryType::DEVICE, indexBufferSize);
+	} else {
+		_vbDevice = _vbHost;
+		_ibDevice = _ibHost;
+	}
 }
 
 sVertex::sVertex(const glm::vec3& pos_,const glm::vec2& uv_,const glm::vec3& normal_)
@@ -37,12 +45,12 @@ void Mesh::bind(const spCommandBuffer& cmd) {
 	else cmd->bindIndexBuffer(_ibDevice);
 }
 
-void Mesh::updateVertices() {
-	_vbHost->copy(_vbDevice);
+void Mesh::updateVertices(const spCommandBuffer& cmd) {
+	if(_type == MeshType::Static)_vbHost->copy(_vbDevice,cmd);
 }
 
-void Mesh::updateIndices() {
-	_ibHost->copy(_ibDevice);
+void Mesh::updateIndices(const spCommandBuffer& cmd) {
+	if(_type == MeshType::Static)_ibHost->copy(_ibDevice,cmd);
 }
 
 BBox Mesh::getBoundingBox() {
