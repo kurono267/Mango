@@ -49,8 +49,8 @@ class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
 	    spBuffer createBuffer(const BufferType& type,const MemoryType& memory,const size_t& size,void* data) final;
 
 		spTexture createTexture(int width, int height, int miplevels,
-								const Format &format, const TextureType &type) final;
-		spTexture createTexture3D(int width, int height, int depth, int miplevels, const Format& format, const TextureType& type) final;
+								const Format &format, const TextureUsage& usage) final;
+		spTexture createTexture3D(int width, int height, int depth, int miplevels, const Format& format, const TextureUsage& usage) final;
 		spTexture createTexture() final;
 
 		spFramebuffer createFramebuffer(const glm::ivec2& size) final;

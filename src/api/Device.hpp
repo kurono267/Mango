@@ -86,8 +86,8 @@ class Device {
 		virtual spCompute createCompute(const std::string& filename, const std::vector<spDescSet>& descSets) = 0;
 
 		virtual spTexture createTexture(int width,int height,
-										int miplevels, const Format& format,const TextureType& type) = 0;
-		virtual spTexture createTexture3D(int width, int height, int depth, int miplevels, const Format& format, const TextureType& type) = 0;
+										int miplevels, const Format& format, const TextureUsage& usage) = 0;
+		virtual spTexture createTexture3D(int width, int height, int depth, int miplevels, const Format& format, const TextureUsage& usage) = 0;
 		virtual spTexture createTexture() = 0;
 
 		virtual glm::ivec2 getScreenSize() = 0;

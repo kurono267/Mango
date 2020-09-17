@@ -51,6 +51,9 @@ vk::PipelineBindPoint pipelineBindPointVK(const PipelineBindPoint& _mango);
 vk::AttachmentLoadOp attachmentLoadOpVK(const AttachmentLoad& _mango);
 vk::AttachmentStoreOp attachmentStoreOpVK(const AttachmentStore& _mango);
 
+vk::ImageUsageFlags imageUsageVK(const TextureUsage& usage);
+vk::ImageLayout imageLayoutVK(const TextureLayout& layout);
+
 };
 
 #endif //MANGO_CONVERTVK_HPP

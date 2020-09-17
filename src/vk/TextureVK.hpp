@@ -16,22 +16,21 @@ class TextureVK : public Texture {
 		TextureVK() = default;
 		~TextureVK() final;
 
-		void create(int width, int height,int miplevels,const Format& format, const TextureType &type) override;
-	    void create(int width,int height,int miplevels,const Format& format,const TextureType &type,const vk::Image& image);
-		void create3D(int width,int height, int depth, int miplevels, const Format& format, const TextureType& type) final;
-	    virtual void createCubeMap(int width, int height, int mipLevels, const Format& format, const TextureType& type) final;
+		void create(int width, int height,int miplevels,const Format& format, const TextureUsage& usage) override;
+	    void create(int width,int height,int miplevels,const Format& format,const TextureUsage& usage,const vk::Image& image);
+		void create3D(int width,int height, int depth, int miplevels, const Format& format, const TextureUsage& usage) final;
+	    virtual void createCubeMap(int width, int height, int mipLevels, const Format& format, const TextureUsage& usage) final;
 
 		spTextureView createTextureView(const ComponentMapping& componentMapping = ComponentMapping(),int minLayer = 0, int maxLayer = -1,int minLevel = 0,int maxLevel = -1) override;
 		spTextureView createTextureViewCubeMap(const ComponentMapping& componentMapping = ComponentMapping(),int minLayer = 0, int maxLayer = -1,int minLevel = 0,int maxLevel = -1) override;
 
 	    void set(const spBuffer &buffer) override;
 
-	    void transition(const vk::ImageLayout& newLayout);
+		void transition(const TextureLayout& layout,const spCommandBuffer& cmd = nullptr) final;
 
         void setBuffer(const spBuffer& buffer, const glm::ivec3& size, const uint& mipLevel, const uint& layer, const uint& offsetBuffer);
 
         vk::Image getImage();
-        vk::ImageLayout getImageLayout();
 protected:
 		void createVK(const vk::ImageCreateFlags& flags,const vk::ImageType& imageType,const vk::Extent3D& extent3D,const int layers, const int mipLevels, const vk::Format& format, const vk::ImageUsageFlags& usage,const vk::ImageLayout& layout);
 protected:
@@ -39,9 +38,10 @@ protected:
 		vk::DeviceMemory _memory;
 		vk::CommandPool _pool;
 		vk::Queue _queue;
-		vk::ImageLayout _layout;
 		vk::ImageType _imageType;
 		bool _isOwned;
+
+		void createInternal(vk::ImageType type,int width,int height, int depth, int miplevels, int layers, const Format& format, const TextureUsage& usage);
 };
 
 class TextureViewVK : public TextureView {

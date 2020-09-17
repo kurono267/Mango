@@ -52,14 +52,13 @@ private:
         size_t size;
     };
     struct SamplerBinding {
-        SamplerBinding(const spTextureViewVK& _textureView, const vk::Sampler& _sampler, size_t _binding,
-                const vk::ShaderStageFlags& _stage, const vk::DescriptorType& _descType, const vk::ImageLayout& _layout);
-		spTextureViewVK textureView;
-        vk::Sampler   sampler;
+        SamplerBinding(const std::vector<vk::DescriptorImageInfo>& _images, size_t _binding,
+                const vk::ShaderStageFlags& _stage, const vk::DescriptorType& _descType);
         size_t    binding;
         vk::ShaderStageFlags stage;
         vk::DescriptorType   descType;
-        vk::ImageLayout      layout;
+        std::vector<vk::DescriptorImageInfo> images;
+        std::vector<spTextureViewVK> textureViews;
     };
     std::vector<UBOBinding>     _uboBinds;
     std::vector<SamplerBinding> _samplerBinds;

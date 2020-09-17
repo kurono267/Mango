@@ -109,8 +109,8 @@ void Swapchain::create(const vk::SurfaceKHR& surface,const glm::ivec2& size,
 	auto imageVK = vkDevice.getSwapchainImagesKHR(_swapchain);
 	for(auto i : imageVK){
 		auto tex = std::make_shared<TextureVK>();
-		tex->create(extent.width,extent.height,1,formatVK2Mango(surfaceFormat.format),TextureType::Output,i);
-		tex->transition(vk::ImageLayout::ePresentSrcKHR);
+		tex->create(extent.width,extent.height,1,formatVK2Mango(surfaceFormat.format),TextureUsage::ColorAttachment | TextureUsage::Sampled,i);
+		tex->transition(TextureLayout::PresentSrcKHR);
 		_images.push_back(tex);
 		_imageViews.push_back(tex->createTextureView());
 	}

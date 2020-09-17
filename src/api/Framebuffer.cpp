@@ -16,7 +16,7 @@ void Framebuffer::attachment(const spTextureView &imageView) {
 void Framebuffer::depth() {
 	auto device = Instance::device();
 	auto depthFormat = device->getDepthFormat();
-	_depthBuffer = device->createTexture(_size.x,_size.y,1,depthFormat,TextureType::DepthStencil);
+	_depthBuffer = device->createTexture(_size.x,_size.y,1,depthFormat,TextureUsage::DepthStencilAttachment | TextureUsage::Sampled);
 	_depthView = _depthBuffer->createTextureView();
 	_attachments.push_back(_depthView);
 }

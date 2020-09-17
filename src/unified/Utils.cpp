@@ -26,14 +26,14 @@ spTexture checkboardTexture(uint32_t width, uint32_t height, uint32_t step) {
     }
     buffer->unmap();
 
-    spTexture texture = device->createTexture(width,height,1,Format::R32G32B32A32Sfloat,TextureType::Input | TextureType::Storage);
+    spTexture texture = device->createTexture(width,height,1,Format::R32G32B32A32Sfloat,TextureUsage::TransferDst | TextureUsage::Sampled);
     texture->set(buffer);
     return texture;
 }
 
 spTexture createSinglePixelTexture(float value) {
 	auto device = Instance::device();
-	spTexture texture = device->createTexture(1,1,1,Format::R32Sfloat,TextureType::Input);
+	spTexture texture = device->createTexture(1,1,1,Format::R32Sfloat,TextureUsage::TransferDst | TextureUsage::Sampled);
 	spBuffer buffer = device->createBuffer(BufferType::CPU,MemoryType::HOST,sizeof(float),(void*)&value);
 	texture->set(buffer);
 	return texture;
@@ -41,7 +41,7 @@ spTexture createSinglePixelTexture(float value) {
 
 spTexture createSinglePixelTexture(const glm::vec4 &value) {
 	auto device = Instance::device();
-	spTexture texture = device->createTexture(1,1,1,Format::R32G32B32A32Sfloat,TextureType::Input);
+	spTexture texture = device->createTexture(1,1,1,Format::R32G32B32A32Sfloat,TextureUsage::TransferDst | TextureUsage::Sampled);
 	spBuffer buffer = device->createBuffer(BufferType::CPU,MemoryType::HOST,sizeof(glm::vec4),(void*)&value);
 	texture->set(buffer);
 	return texture;
@@ -49,7 +49,7 @@ spTexture createSinglePixelTexture(const glm::vec4 &value) {
 
 spTexture createRandomTexture2D(const int width, const int height){
 	spDevice device = Instance::device();
-	spTexture texture = device->createTexture(width,height,1,Format::R32G32B32A32Sfloat,TextureType::Input);
+	spTexture texture = device->createTexture(width,height,1,Format::R32G32B32A32Sfloat,TextureUsage::TransferDst | TextureUsage::Sampled);
 
 	spBuffer buffer = device->createBuffer(BufferType::CPU,MemoryType::HOST,width*height*sizeof(glm::vec4));
 	glm::vec4* data = (glm::vec4*)buffer->map();

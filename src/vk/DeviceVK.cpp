@@ -235,15 +235,15 @@ mango::spRenderPass DeviceVK::createRenderPass(){
 }
 
 mango::spTexture DeviceVK::createTexture(int width, int height, int miplevels, const mango::Format &format,
-                                  const TextureType &type) {
+										 const TextureUsage& usage) {
 	auto texture = std::make_shared<TextureVK>();
-	texture->create(width,height,miplevels,format,type);
+	texture->create(width,height,miplevels,format,usage);
 	return texture;
 }
 
-mango::spTexture DeviceVK::createTexture3D(int width, int height, int depth, int miplevels, const Format& format, const TextureType& type) {
+mango::spTexture DeviceVK::createTexture3D(int width, int height, int depth, int miplevels, const Format& format, const TextureUsage& usage) {
 	auto texture = std::make_shared<TextureVK>();
-	texture->create3D(width,height,depth,miplevels,format,type);
+	texture->create3D(width,height,depth,miplevels,format,usage);
 	return texture;
 }
 
@@ -304,7 +304,7 @@ void DeviceVK::createScreen(){
 		framebuffer->depth();
 
 		auto depthTexture = std::dynamic_pointer_cast<TextureVK>(framebuffer->getDepthTexture());
-		depthTexture->transition(vk::ImageLayout::eDepthStencilAttachmentOptimal);
+		depthTexture->transition(TextureLayout::DepthStencilAttachmentOptimal);
 
 		framebuffer->finish(screenRenderPass);
 
