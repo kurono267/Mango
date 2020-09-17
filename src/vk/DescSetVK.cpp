@@ -45,21 +45,21 @@ void DescSetVK::setStorageBuffer(const Uniform &buffer, size_t binding, const Sh
 	_uboBinds.emplace_back(buffer,binding,shaderStageVK(stage),vk::DescriptorType::eStorageBuffer,offset,size<0?buffer.size():size);
 }
 
+void DescSetVK::setStorageTexture(const std::vector<spTextureView> &textures, const Sampler &sampler, size_t binding, const ShaderStage &stage) {
+	_samplerBinds.emplace_back(textures,sampler,binding,shaderStageVK(stage),vk::DescriptorType::eStorageImage);
+}
+
 void DescSetVK::setStorageTexture(const spTextureView &texture, const Sampler &sampler, size_t binding, const ShaderStage &stage) {
-	auto internalTextureView = std::dynamic_pointer_cast<TextureViewVK>(texture);
-	auto internalTexture = std::dynamic_pointer_cast<TextureVK>(texture->getTexture());
-	std::vector<vk::DescriptorImageInfo> images = {vk::DescriptorImageInfo(createSampler(sampler), internalTextureView->getView(), imageLayoutVK(internalTexture->layout()))};
-	_samplerBinds.emplace_back(images,binding,shaderStageVK(stage),vk::DescriptorType::eStorageImage);
+	setStorageTexture(std::vector<spTextureView>({texture}),sampler,binding,stage);
+}
+
+void DescSetVK::setTexture(const std::vector<spTextureView>& textures, const Sampler& sampler, size_t binding, const ShaderStage& stage) {
+	_samplerBinds.emplace_back(textures,sampler,binding,shaderStageVK(stage),vk::DescriptorType::eCombinedImageSampler);
 }
 
 void DescSetVK::setTexture(const spTextureView &texture, const Sampler &sampler, size_t binding,
                            const ShaderStage &stage){
-    auto internalTextureView = std::dynamic_pointer_cast<TextureViewVK>(texture);
-    auto internalTexture = std::dynamic_pointer_cast<TextureVK>(texture->getTexture());
-	std::vector<vk::DescriptorImageInfo> images = {vk::DescriptorImageInfo(createSampler(sampler), internalTextureView->getView(), imageLayoutVK(internalTexture->layout()))};
-	SamplerBinding samplerBinding(images,binding,shaderStageVK(stage),vk::DescriptorType::eCombinedImageSampler);
-	samplerBinding.textureViews = {internalTextureView};
-    _samplerBinds.emplace_back(samplerBinding);
+    setTexture(std::vector<spTextureView>({texture}),sampler,binding,stage);
 }
 
 void DescSetVK::write() {
@@ -83,9 +83,15 @@ DescSetVK::UBOBinding::UBOBinding(const Uniform &_buffer, size_t _binding, const
   : buffer(_buffer),binding(_binding),stage(_stage),descType(_descType), offset(_offset), size(_size)
   {}
 
-DescSetVK::SamplerBinding::SamplerBinding(const std::vector<vk::DescriptorImageInfo>& _images, size_t _binding,
+DescSetVK::SamplerBinding::SamplerBinding(const std::vector<spTextureView>& _views, const Sampler& _sampler, size_t _binding,
 						  const vk::ShaderStageFlags& _stage, const vk::DescriptorType& _descType)
-  : images(_images), binding(_binding), stage(_stage), descType(_descType)
-  {}
+  : views(_views),binding(_binding), stage(_stage), descType(_descType)
+  {
+	for(int i = 0;i<views.size();++i){
+		auto view = std::dynamic_pointer_cast<TextureViewVK>(views[i]);
+		auto texture = std::dynamic_pointer_cast<TextureVK>(view->getTexture());
+		images.emplace_back(createSampler(_sampler), view->getView(), imageLayoutVK(texture->layout()));
+	}
+  }
 
 }
