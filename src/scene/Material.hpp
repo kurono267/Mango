@@ -21,16 +21,13 @@ class Material {
 
 		void setAlbedo(const glm::vec4& value);
 		void setAlbedo(const spTexture& texture);
-		void setRoughnessFactor(const float& value);
+		void setMetallicRoughness(const float metallic,const float roughness);
 		void setMetallicRoughness(const spTexture& texture);
-		void setMetallicFactor(const float& value);
 
 		uint32_t getID();
 		void setID(const uint32_t& id);
 
 		spTexture getAlbedo();
-		float getMetallicFactor();
-		float getRoughnessFactor();
 		spTexture getMetallicRoughness();
 	protected:
 		spTexture _albedo;

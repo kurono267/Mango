@@ -39,6 +39,14 @@ spTexture createSinglePixelTexture(float value) {
 	return texture;
 }
 
+spTexture createSinglePixelTexture(const glm::vec2& value) {
+	auto device = Instance::device();
+	spTexture texture = device->createTexture(1,1,1,Format::R32G32Sfloat,TextureUsage::TransferDst | TextureUsage::Sampled);
+	spBuffer buffer = device->createBuffer(BufferType::CPU,MemoryType::HOST,sizeof(glm::vec2),(void*)&value);
+	texture->set(buffer);
+	return texture;
+}
+
 spTexture createSinglePixelTexture(const glm::vec4 &value) {
 	auto device = Instance::device();
 	spTexture texture = device->createTexture(1,1,1,Format::R32G32B32A32Sfloat,TextureUsage::TransferDst | TextureUsage::Sampled);

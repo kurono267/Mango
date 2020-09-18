@@ -93,7 +93,7 @@ class Mesh {
 
 typedef std::shared_ptr<Mesh> spMesh;
 
-spMesh createQuad();
+spMesh createQuad(const glm::vec2& uvScale = glm::vec2(1,1));
 spMesh createCube();
 spMesh createSphere(const int segments);
 

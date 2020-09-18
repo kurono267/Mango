@@ -100,6 +100,8 @@ class Texture : public std::enable_shared_from_this<Texture> {
 		inline Format format() { return _format; }
 
 		virtual void transition(const TextureLayout& layout,const spCommandBuffer& cmd = nullptr) = 0;
+
+		virtual void generationMipMaps() = 0;
 	protected:
 		int _width;
 		int _height;

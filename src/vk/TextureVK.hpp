@@ -30,6 +30,8 @@ class TextureVK : public Texture {
 
         void setBuffer(const spBuffer& buffer, const glm::ivec3& size, const uint& mipLevel, const uint& layer, const uint& offsetBuffer);
 
+        void generationMipMaps() final;
+
         vk::Image getImage();
 protected:
 		void createVK(const vk::ImageCreateFlags& flags,const vk::ImageType& imageType,const vk::Extent3D& extent3D,const int layers, const int mipLevels, const vk::Format& format, const vk::ImageUsageFlags& usage,const vk::ImageLayout& layout);

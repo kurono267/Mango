@@ -114,7 +114,7 @@ size_t Mesh::indexBufferSize() {
 	return _ibHost->size();
 }
 
-spMesh mango::createQuad(){
+spMesh mango::createQuad(const glm::vec2& uvScale){
 	auto device = Instance::device();
 
 	std::vector<sVertex> vdata = {
@@ -122,13 +122,13 @@ spMesh mango::createQuad(){
 					0.0f, 0.0f,
 					0.f,0.f,1.f), 	 // Texcoord
 			sVertex(-1.0, -1.0, 0.0f,// Pos
-					0.0f, 1.0f,
+					0.0f, uvScale.y,
 					0.f,0.f,1.f),     // Texcoord
 			sVertex(1.0, -1.0, 0.0f, // Pos
-					1.0, 1.0,
+					uvScale.x, uvScale.y,
 					0.f,0.f,1.f),       // Texcoord
 			sVertex(1.0, 1.0, 0.0f,  // Pos
-					1.0, 0.0f,
+					uvScale.x, 0.0f,
 					0.f,0.f,1.f)};     // Texcoord
 
 	std::vector<uint32_t> idata = {0,1,2,/*First*/2,3,0/*Second triangle*/};
