@@ -54,6 +54,14 @@ void SceneNode::addChild(const SceneNode::ptr &child) {
 	setUpdated(true);
 }
 
+void SceneNode::setUpdated(bool isUpdated) {
+	_isUpdated = isUpdated;
+	for(int i = 0;i<_childs.size();++i){
+		auto child = _childs[i];
+		child->setUpdated(_isUpdated);
+	}
+}
+
 std::vector<SceneNode::ptr> &SceneNode::getChilds() {
 	return _childs;
 }

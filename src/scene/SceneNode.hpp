@@ -61,6 +61,8 @@ class SceneNode : public SceneTransform,public std::enable_shared_from_this<Scen
 		glm::mat4 getWorldTransform();
 
 		void run(const std::function<void(const ptr& node, bool& stop)>& func,bool isRunForThis = true);
+
+		void setUpdated(bool isUpdated) override;
 	protected:
 		std::vector<ptr> _childs;
 		mutable SceneNode* _parent;

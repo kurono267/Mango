@@ -15,7 +15,7 @@ class SceneTransform {
 		~SceneTransform();
 
 		bool isUpdated();
-		void setUpdated(bool isUpdated);
+		virtual void setUpdated(bool isUpdated);
 
 		glm::mat4 transform() const;
 		glm::vec3 pos() const;
