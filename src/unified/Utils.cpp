@@ -77,4 +77,40 @@ spTexture createRandomTexture2D(const int width, const int height){
 	return texture;
 }
 
+Format formatByComponentsDepth(int components,int depth,bool srgb) {
+	if(components == 1){
+		if(depth == 8){
+			return srgb?Format::R8Srgb:Format::R8Unorm;
+		} else if(depth == 16){
+			return Format::R16Sfloat;
+		} else if(depth == 32){
+			return Format::R32Sfloat;
+		}
+	} else if(components == 2){
+		if(depth == 8){
+			return srgb?Format::R8G8Srgb:Format::R8G8Unorm;
+		} else if(depth == 16){
+			return Format::R16G16Sfloat;
+		} else if(depth == 32){
+			return Format::R32G32Sfloat;
+		}
+	} else if(components == 3){
+		if(depth == 8){
+			return srgb?Format::R8G8B8Srgb:Format::R8G8B8Unorm;
+		} else if(depth == 16){
+			return Format::R16G16B16Sfloat;
+		} else if(depth == 32){
+			return Format::R32G32B32Sfloat;
+		}
+	} else if(components == 4){
+		if(depth == 8){
+			return srgb?Format::R8G8B8A8Srgb:Format::R8G8B8A8Unorm;
+		} else if(depth == 16){
+			return Format::R16G16B16A16Sfloat;
+		} else if(depth == 32){
+			return Format::R32G32B32A32Sfloat;
+		}
+	}
+}
+
 }

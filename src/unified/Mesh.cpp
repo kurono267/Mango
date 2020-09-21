@@ -53,6 +53,17 @@ void Mesh::updateIndices(const spCommandBuffer& cmd) {
 	if(_type == MeshType::Static)_ibHost->copy(_ibDevice,cmd);
 }
 
+void Mesh::updateBoundingBox() {
+	_bbox = BBox();
+	sVertex* vertices = mapVertices();
+	int vertexCount = verticesCount();
+	for(int i = 0;i<vertexCount;++i){
+		const sVertex& vertex = vertices[i];
+		_bbox.expand(vertex.pos);
+	}
+	unmapVertices();
+}
+
 BBox Mesh::getBoundingBox() {
 	return _bbox;
 }

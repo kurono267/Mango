@@ -16,6 +16,8 @@ spTexture createSinglePixelTexture(const glm::vec4& value);
 
 spTexture createRandomTexture2D(const int width, const int height);
 
+Format formatByComponentsDepth(int components,int depth,bool srgb);
+
 }
 
 #endif //MANGO_UTILS_HPP

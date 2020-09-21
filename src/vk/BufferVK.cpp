@@ -10,7 +10,7 @@ using namespace mango::vulkan;
 
 void BufferVK::create(const BufferType &type,const MemoryType& memory,const size_t &size,void* data) {
 	_memoryType = memory;
-	std::cout << "BufferVK::create" << std::endl;
+	//std::cout << "BufferVK::create" << std::endl;
 	_size = size;
 	vk::BufferUsageFlags usage;
 	if((uint32_t)type & (uint32_t)BufferType::Vertex){
@@ -87,7 +87,7 @@ void BufferVK::copy(const vk::Buffer& src,const vk::Buffer& dst,const size_t& si
 }
 
 BufferVK::~BufferVK() {
-	std::cout << "~BufferVK" << std::endl;
+	//std::cout << "~BufferVK" << std::endl;
 	auto impDevice = Instance::device<DeviceVK>();
 	auto vkDevice = impDevice->getDevice();
 	if(_mappedData)vkDevice.unmapMemory(_memory);

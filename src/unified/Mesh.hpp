@@ -77,6 +77,7 @@ class Mesh {
 		void updateVertices(const spCommandBuffer& cmd = nullptr);
 		void updateIndices(const spCommandBuffer& cmd = nullptr);
 
+		void updateBoundingBox();
 		BBox getBoundingBox();
 
 		void genNormals(); // TODO need improve
