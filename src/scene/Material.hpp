@@ -21,7 +21,8 @@ class Material {
 
 		void setAlbedo(const glm::vec4& value);
 		void setAlbedo(const spTexture& texture);
-		void setMetallicRoughness(const float metallic,const float roughness);
+		void setMetallic(const float metallic);
+		void setRoughness(const float roughness);
 		void setMetallicRoughness(const spTexture& texture);
 
 		uint32_t getID();
@@ -29,15 +30,12 @@ class Material {
 
 		spTexture getAlbedo();
 		spTexture getMetallicRoughness();
+		float getRoughness();
+		float getMetallic();
 	protected:
 		spTexture _albedo;
-		union {
-			struct {
-				float _roughnessFactor;
-				float _metallicFactor;
-			};
-			glm::vec2 _factors;
-		};
+		float _roughness = 1.f;
+		float _metallic = 1.f;
 		spTexture _metallicRoughness;
 
 		uint32_t _id;
