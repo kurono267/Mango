@@ -111,6 +111,7 @@ Format formatByComponentsDepth(int components,int depth,bool srgb) {
 			return Format::R32G32B32A32Sfloat;
 		}
 	}
+	return Format::Undefined;
 }
 
 }
