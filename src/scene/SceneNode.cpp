@@ -54,16 +54,24 @@ void SceneNode::addChild(const SceneNode::ptr &child) {
 	setUpdated(true);
 }
 
+std::vector<SceneNode::ptr> &SceneNode::getChilds() {
+	return _childs;
+}
+
+void SceneNode::setJoints(const std::vector<SceneNode::ptr>& joints) {
+	_joints = joints;
+}
+
+std::vector<SceneNode::ptr>& SceneNode::getJoints() {
+	return _joints;
+}
+
 void SceneNode::setUpdated(bool isUpdated) {
 	_isUpdated = isUpdated;
 	for(int i = 0;i<_childs.size();++i){
 		auto child = _childs[i];
 		child->setUpdated(_isUpdated);
 	}
-}
-
-std::vector<SceneNode::ptr> &SceneNode::getChilds() {
-	return _childs;
 }
 
 SceneNode* SceneNode::getParent() {

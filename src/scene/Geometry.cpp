@@ -6,7 +6,9 @@
 
 using namespace mango;
 
-Geometry::Geometry(const mango::spMesh &mesh, const mango::spMaterial &material) : _mesh(mesh), _material(material) {
+namespace mango {
+
+Geometry::Geometry(const spMesh &mesh, const spMaterial &material) : _mesh(mesh), _material(material) {
 
 }
 
@@ -18,14 +20,24 @@ void Geometry::setMaterial(const mango::spMaterial &material) {
 	_material = material;
 }
 
-spMesh mango::Geometry::getMesh() {
+void Geometry::setSkin(const spSkin &skin) {
+	_skin = skin;
+}
+
+spMesh Geometry::getMesh() {
 	return _mesh;
 }
 
-spMaterial mango::Geometry::getMaterial() {
+spMaterial Geometry::getMaterial() {
 	return _material;
 }
 
+spSkin Geometry::getSkin() {
+	return _skin;
+}
+
 std::shared_ptr<Geometry> Geometry::create(const spMesh &mesh, const spMaterial &material) {
-	return std::make_shared<Geometry>(mesh,material);
+	return std::make_shared<Geometry>(mesh, material);
+}
+
 }
