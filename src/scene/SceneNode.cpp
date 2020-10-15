@@ -103,9 +103,13 @@ spCamera SceneNode::getCamera() {
 }
 
 glm::mat4 SceneNode::getWorldTransform() {
-	if(!_parent)return _transform;
-	glm::mat4 transform = _transform*_parent->getWorldTransform();
-	return transform;
+	auto t = _transform;
+	auto p = _parent;
+	while(p){
+		t = p->transform()*t;
+		p = p->getParent();
+	}
+	return t;
 }
 
 void SceneNode::run(const std::function<void(const ptr &, bool &)> &func, bool isRunForThis) {
@@ -126,7 +130,7 @@ BBox SceneNode::boundingBox() {
 	}
 	for(auto& child : _childs){
 		auto childBox = child->boundingBox();
-		childBox = childBox.applyTransform(child->transform());
+		childBox = childBox.applyTransform(getWorldTransform());
 		box.expand(child->boundingBox());
 	}
 	return box;
