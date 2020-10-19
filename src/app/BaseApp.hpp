@@ -25,9 +25,6 @@ class BaseApp {
 		virtual bool onTouch(const glm::vec2& coord, const glm::vec2& deltacoord){
 			return true;
 		}
-		virtual bool onTouchMove(const glm::vec2& coord, const glm::vec2& deltacoord){
-			return true;
-		}
 		virtual bool onMove(const glm::vec2& coord, const glm::vec2& deltacoord) {
 			return true;
 		}

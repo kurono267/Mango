@@ -61,13 +61,11 @@ class MainAppGLFW : public MainApp,std::enable_shared_from_this<MainAppGLFW> {
 			if(button == GLFW_MOUSE_BUTTON_LEFT) {
 				if (action == GLFW_PRESS) {
 					glm::vec2 curr(x,y);
-					glm::vec2 delta = curr-app->_prevMousePos;
 					auto now = std::chrono::system_clock::now();
-					float dt = std::chrono::duration<float>(now-app->_prevMouseTime).count();
 					app->_prevMouseTime = now;
-					app->_prevMousePos = glm::vec2(x,y);
+					app->_prevMousePos = curr;
 					app->_prevMouseTime = std::chrono::system_clock::now();
-					app->_app->onTouch(glm::vec2(x,y),delta*dt);
+					app->_app->onTouch(curr,glm::vec2(0.f));
 				}
 			}
 		}
@@ -82,7 +80,7 @@ class MainAppGLFW : public MainApp,std::enable_shared_from_this<MainAppGLFW> {
 			app->_prevMouseTime = now;
 			int leftButtonStatus = glfwGetMouseButton(app->_window,GLFW_MOUSE_BUTTON_LEFT);
 			if(leftButtonStatus == GLFW_PRESS){
-				app->_app->onTouchMove(curr,delta*dt);
+				app->_app->onTouch(curr,delta*dt);
 			}
 			if(leftButtonStatus == GLFW_RELEASE){
 				app->_app->onMove(curr,delta*dt);

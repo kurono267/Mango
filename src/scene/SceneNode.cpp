@@ -98,6 +98,13 @@ spGeometry SceneNode::getGeometry() {
 	return _geometry;
 }
 
+void SceneNode::setName(const std::string& name) {
+	_name = name;
+}
+std::string SceneNode::getName() {
+	return _name;
+}
+
 spCamera SceneNode::getCamera() {
 	return _camera;
 }
