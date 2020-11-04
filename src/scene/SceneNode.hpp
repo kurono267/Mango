@@ -45,9 +45,6 @@ class SceneNode : public SceneTransform,public std::enable_shared_from_this<Scen
 		void addChild(const ptr& child);
 		std::vector<ptr>& getChilds();
 
-		void setJoints(const std::vector<ptr>& joints);
-		std::vector<ptr>& getJoints();
-
 		void setRenderType(uint32_t renderType);
 		uint32_t getRenderType();
 
@@ -78,7 +75,6 @@ class SceneNode : public SceneTransform,public std::enable_shared_from_this<Scen
 
 		spCamera _camera;
 		spGeometry _geometry;
-		std::vector<ptr> _joints;
 
 		uint32_t _renderType = 0;
 };
