@@ -7,6 +7,7 @@
 
 #include "../unified/Mesh.hpp"
 #include "Material.hpp"
+#include "Skin.hpp"
 
 namespace mango {
 
@@ -26,11 +27,16 @@ class Geometry {
 		/// Set material
 		/// @param material - Material
 		void setMaterial(const spMaterial& material);
+		/// Set skin
+		/// @param skin - Skin
+		void setSkin(const spSkin& skin);
 
 		/// Get mesh
 		spMesh getMesh();
 		/// Get material
 		spMaterial getMaterial();
+		/// Get skin
+		spSkin getSkin();
 
 		/// Construct shared pointer of Geometry
 		/// @param mesh - Mesh
@@ -39,6 +45,7 @@ class Geometry {
 	protected:
 		spMesh _mesh;
 		spMaterial _material;
+		spSkin _skin;
 };
 
 typedef std::shared_ptr<Geometry> spGeometry;

@@ -13,6 +13,8 @@
 
 namespace mango {
 
+class CommandBuffer;
+
 struct VertexAttrib {
 	VertexAttrib() = default;
 	VertexAttrib(const uint32_t& l,const uint32_t& b,const Format& f,const uint32_t& o) : location(l), binding(b), format(f), offset(o){}
@@ -37,19 +39,21 @@ struct sVertex {
 	alignas(16) glm::vec3 normal;
 	alignas(16) glm::vec2 uv;
 	alignas(16) glm::vec3 tangent = glm::vec3(0.0f);
-	alignas(16) glm::vec3 binormal = glm::vec3(0.0f);
+	alignas(16) glm::vec4 joints = glm::vec4(0.f);
+	alignas(16) glm::vec4 weights = glm::vec4(0.f);
 
 	static VertexBinding bindingDesc(){
 		return VertexBinding(0,sizeof(sVertex));
 	}
 
 	static std::vector<VertexAttrib> attributes(){
-		std::vector<VertexAttrib> attrs(5);
+		std::vector<VertexAttrib> attrs(6);
 		attrs[0] = VertexAttrib(0,0,Format::R32G32B32Sfloat,offsetof(sVertex,pos));
 		attrs[1] = VertexAttrib(1,0,Format::R32G32B32Sfloat,offsetof(sVertex,normal));
 		attrs[2] = VertexAttrib(2,0,Format::R32G32Sfloat,offsetof(sVertex,uv));
 		attrs[3] = VertexAttrib(3,0,Format::R32G32B32Sfloat,offsetof(sVertex,tangent));
-		attrs[4] = VertexAttrib(4,0,Format::R32G32B32Sfloat,offsetof(sVertex,binormal));
+		attrs[4] = VertexAttrib(4,0,Format::R32G32B32A32Sfloat,offsetof(sVertex,joints));
+		attrs[5] = VertexAttrib(5,0,Format::R32G32B32A32Sfloat,offsetof(sVertex,weights));
 		return attrs;
 	}
 };
@@ -60,7 +64,7 @@ class Buffer {
 		virtual ~Buffer() = default;
 
 		virtual void set(const size_t& size,const void* data) = 0;
-		virtual void copy(const std::shared_ptr<Buffer>& dst) = 0;
+		virtual void copy(const std::shared_ptr<Buffer>& dst, const std::shared_ptr<CommandBuffer>& cmd = nullptr) = 0;
 
 		virtual size_t size() = 0;
 		virtual void* map() = 0;

@@ -277,11 +277,11 @@ std::string mango::to_string(Format value) {
     }
 }
 
-TextureType mango::operator |(TextureType lhs, TextureType rhs)
+TextureUsage mango::operator |(TextureUsage lhs, TextureUsage rhs)
 {
-	return static_cast<TextureType> (
-			static_cast<std::underlying_type<TextureType>::type>(lhs) |
-			static_cast<std::underlying_type<TextureType>::type>(rhs)
+	return static_cast<TextureUsage> (
+			static_cast<std::underlying_type<TextureUsage>::type>(lhs) |
+			static_cast<std::underlying_type<TextureUsage>::type>(rhs)
 	);
 }
 

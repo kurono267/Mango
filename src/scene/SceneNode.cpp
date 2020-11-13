@@ -5,6 +5,7 @@
 #include "SceneNode.hpp"
 #include "../api/Instance.hpp"
 #include "../api/DescSet.hpp"
+#include "../unified/Timer.hpp"
 
 using namespace mango;
 
@@ -57,6 +58,14 @@ std::vector<SceneNode::ptr> &SceneNode::getChilds() {
 	return _childs;
 }
 
+void SceneNode::setUpdated(bool isUpdated) {
+	_isUpdated = isUpdated;
+	for(int i = 0;i<_childs.size();++i){
+		auto child = _childs[i];
+		child->setUpdated(_isUpdated);
+	}
+}
+
 SceneNode* SceneNode::getParent() {
 	return _parent;
 }
@@ -81,14 +90,25 @@ spGeometry SceneNode::getGeometry() {
 	return _geometry;
 }
 
+void SceneNode::setName(const std::string& name) {
+	_name = name;
+}
+std::string SceneNode::getName() {
+	return _name;
+}
+
 spCamera SceneNode::getCamera() {
 	return _camera;
 }
 
 glm::mat4 SceneNode::getWorldTransform() {
-	if(!_parent)return _transform;
-	glm::mat4 transform = _transform*_parent->getWorldTransform();
-	return transform;
+	auto t = _transform;
+	auto p = _parent;
+	while(p){
+		t = p->transform()*t;
+		p = p->getParent();
+	}
+	return t;
 }
 
 void SceneNode::run(const std::function<void(const ptr &, bool &)> &func, bool isRunForThis) {
@@ -109,7 +129,7 @@ BBox SceneNode::boundingBox() {
 	}
 	for(auto& child : _childs){
 		auto childBox = child->boundingBox();
-		childBox = childBox.applyTransform(child->transform());
+		childBox = childBox.applyTransform(getWorldTransform());
 		box.expand(child->boundingBox());
 	}
 	return box;
@@ -127,11 +147,13 @@ Uniform mango::createCameraUniform(const spSceneNode& cameraNode) {
 void mango::updateCameraUniform(const spSceneNode& cameraNode, Uniform& uniform) {
 	if(!cameraNode->getCamera())throw std::logic_error("updateCameraUniform: Node don't contains camera");
 	CameraData data;
-	data.view = cameraNode->getWorldTransform();
-	data.proj = cameraNode->getCamera()->getProj();
-	data.viewProj = data.proj*data.view;
-	data.invView = glm::inverse(data.view);
-	data.invProj = glm::inverse(data.proj);
+	auto view = cameraNode->getWorldTransform();
+	auto proj = cameraNode->getCamera()->getProj();
+	data.view = view;
+	data.proj = proj;
+	data.viewProj = proj*view;
+	data.invView = glm::inverse(view);
+	data.invProj = glm::inverse(proj);
 
 	uniform.set(sizeof(CameraData),&data);
 }

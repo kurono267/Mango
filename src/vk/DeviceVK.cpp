@@ -46,7 +46,7 @@ QueueFamilyIndices queueFamilies(const vk::PhysicalDevice& device,const vk::Surf
 
 		vk::Bool32 presentSupport = device.getSurfaceSupportKHR(i,surface);
 
-		if(queueFamily.queueCount > 0 && presentSupport){
+		if(indices.presentFamily == -1 && queueFamily.queueCount > 0 && presentSupport){
 			indices.presentFamily = i;
 		}
 
@@ -60,6 +60,9 @@ QueueFamilyIndices queueFamilies(const vk::PhysicalDevice& device,const vk::Surf
 
 		i++;
 	}
+	std::cout << "graphicsFamily " << indices.graphicsFamily << std::endl;
+	std::cout << "presentFamily " << indices.presentFamily << std::endl;
+
 
 	return indices;
 }
@@ -156,7 +159,7 @@ void DeviceVK::createLogicalDevice(){
 	QueueFamilyIndices indices = queueFamilies(_pDevice,_surface);
 
 	std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos;
-	std::set<int> uniqueQueueFamilies = {indices.graphicsFamily, indices.presentFamily};
+	std::set<int> uniqueQueueFamilies = {indices.graphicsFamily, indices.presentFamily, indices.computeFamily};
 
 	float queuePriority = 1.0f;
 	for(int queueFamily : uniqueQueueFamilies){
@@ -232,15 +235,15 @@ mango::spRenderPass DeviceVK::createRenderPass(){
 }
 
 mango::spTexture DeviceVK::createTexture(int width, int height, int miplevels, const mango::Format &format,
-                                  const TextureType &type) {
+										 const TextureUsage& usage) {
 	auto texture = std::make_shared<TextureVK>();
-	texture->create(width,height,miplevels,format,type);
+	texture->create(width,height,miplevels,format,usage);
 	return texture;
 }
 
-mango::spTexture DeviceVK::createTexture3D(int width, int height, int depth, int miplevels, const Format& format, const TextureType& type) {
+mango::spTexture DeviceVK::createTexture3D(int width, int height, int depth, int miplevels, const Format& format, const TextureUsage& usage) {
 	auto texture = std::make_shared<TextureVK>();
-	texture->create3D(width,height,depth,miplevels,format,type);
+	texture->create3D(width,height,depth,miplevels,format,usage);
 	return texture;
 }
 
@@ -301,7 +304,7 @@ void DeviceVK::createScreen(){
 		framebuffer->depth();
 
 		auto depthTexture = std::dynamic_pointer_cast<TextureVK>(framebuffer->getDepthTexture());
-		depthTexture->transition(vk::ImageLayout::eDepthStencilAttachmentOptimal);
+		depthTexture->transition(TextureLayout::DepthStencilAttachmentOptimal);
 
 		framebuffer->finish(screenRenderPass);
 
@@ -318,11 +321,16 @@ mango::spSemaphore DeviceVK::createSemaphore(){
 	return semaphore;
 }
 
+mango::spFence DeviceVK::createFence(bool status) {
+	auto fence = std::make_shared<FenceVK>(status);
+	return fence;
+}
+
 spCompute DeviceVK::createCompute(const std::string& filename, const std::vector<spDescSet>& descSets) {
 	return std::make_shared<ComputeVK>(filename,descSets);
 }
 
-void DeviceVK::submit(const mango::spCommandBuffer& cmd, const mango::spSemaphore& waitForIt, const mango::spSemaphore& result){
+void DeviceVK::submit(const mango::spCommandBuffer& cmd, const mango::spSemaphore& waitForIt, const mango::spSemaphore& result, const mango::spFence& fence){
 	auto cmd_vk = std::dynamic_pointer_cast<CommandBufferVK>(cmd)->getVK();
 
 	auto waitVK = std::dynamic_pointer_cast<SemaphoreVK>(waitForIt);
@@ -339,7 +347,7 @@ void DeviceVK::submit(const mango::spCommandBuffer& cmd, const mango::spSemaphor
 		1, signalSemaphores
 	);
 
-	_graphicsQueue.submit(submitInfo, nullptr);
+	_graphicsQueue.submit(submitInfo, fence?std::static_pointer_cast<FenceVK>(fence)->getVK(): nullptr);
 }
 
 void DeviceVK::present(uint32_t screen, const mango::spSemaphore& signal){
@@ -356,10 +364,10 @@ void DeviceVK::present(uint32_t screen, const mango::spSemaphore& signal){
 	_presentQueue.presentKHR(presentInfo);
 }
 
-uint32_t DeviceVK::nextScreen(const mango::spSemaphore& signal){
+uint32_t DeviceVK::nextScreen(const mango::spSemaphore& signal,const spFence& fence){
 	vk::Semaphore signalSemaphores = std::dynamic_pointer_cast<SemaphoreVK>(signal)->getVK();
 
-	return _device.acquireNextImageKHR(_swapchain->getSwapchain(),std::numeric_limits<uint64_t>::max(),signalSemaphores,nullptr).value;
+	return _device.acquireNextImageKHR(_swapchain->getSwapchain(),std::numeric_limits<uint64_t>::max(),signalSemaphores,fence?std::static_pointer_cast<FenceVK>(fence)->getVK(): nullptr).value;
 }
 
 spDescLayout DeviceVK::createDescLayout() {
@@ -391,10 +399,50 @@ SemaphoreVK::SemaphoreVK() {
 }
 
 SemaphoreVK::~SemaphoreVK() {
-	std::cout << "~SemaphoreVK" << std::endl;
 	Instance::device<DeviceVK>()->getDevice().destroySemaphore(_semaphore);
 }
 
 vk::Semaphore SemaphoreVK::getVK(){
 	return _semaphore;
+}
+
+FenceVK::FenceVK(bool status) {
+	auto device = Instance::device<DeviceVK>();
+	auto vkDevice = device->getDevice();
+
+	vk::FenceCreateInfo fenceCreateInfo;
+	if(status)fenceCreateInfo.flags = vk::FenceCreateFlagBits::eSignaled;
+	_fence = vkDevice.createFence(fenceCreateInfo);
+}
+
+FenceVK::~FenceVK() {
+	auto device = Instance::device<DeviceVK>();
+	auto vkDevice = device->getDevice();
+
+	vkDevice.destroyFence(_fence);
+}
+
+vk::Fence& FenceVK::getVK() {
+	return _fence;
+}
+
+void FenceVK::reset() {
+	auto device = Instance::device<DeviceVK>();
+	auto vkDevice = device->getDevice();
+
+	vkDevice.resetFences(_fence);
+}
+
+void FenceVK::wait(uint64_t timeout) {
+	auto device = Instance::device<DeviceVK>();
+	auto vkDevice = device->getDevice();
+
+	vkDevice.waitForFences(_fence,true,timeout);
+}
+
+bool FenceVK::status() {
+	auto device = Instance::device<DeviceVK>();
+	auto vkDevice = device->getDevice();
+
+	return vkDevice.getFenceStatus(_fence)==vk::Result::eSuccess;
 }

@@ -49,6 +49,8 @@ class CommandBufferVK : public CommandBuffer {
 		void setViewport(const glm::ivec2& size, const glm::ivec2& offset = glm::ivec2(0)) final;
 		void setScissor(const glm::ivec2& size, const glm::ivec2& offset = glm::ivec2(0)) final;
 
+		void reset() final;
+
 		void create();
 
 		vk::CommandBuffer getVK();

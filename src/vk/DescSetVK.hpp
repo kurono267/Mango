@@ -23,6 +23,9 @@ public:
     void setUniformBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage, size_t offset = 0, int size = -1) override;
     void setStorageBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage, size_t offset = 0, int size = -1) override;
 
+	void setTexture(const std::vector<spTextureView>& textures, const Sampler& sampler, size_t binding, const ShaderStage& stage) final;
+	void setStorageTexture(const std::vector<spTextureView> &texture, const Sampler &sampler, size_t binding, const ShaderStage &stage) final;
+
     void setTexture(const spTextureView &texture, const Sampler &sampler, size_t binding,
                     const ShaderStage &stage) override;
 	void setStorageTexture(const spTextureView &texture, const Sampler &sampler, size_t binding,
@@ -52,14 +55,13 @@ private:
         size_t size;
     };
     struct SamplerBinding {
-        SamplerBinding(const spTextureViewVK& _textureView, const vk::Sampler& _sampler, size_t _binding,
-                const vk::ShaderStageFlags& _stage, const vk::DescriptorType& _descType, const vk::ImageLayout& _layout);
-		spTextureViewVK textureView;
-        vk::Sampler   sampler;
+        SamplerBinding(const std::vector<spTextureView>& _views, const Sampler& _sampler, size_t _binding,
+                const vk::ShaderStageFlags& _stage, const vk::DescriptorType& _descType);
         size_t    binding;
         vk::ShaderStageFlags stage;
         vk::DescriptorType   descType;
-        vk::ImageLayout      layout;
+        std::vector<vk::DescriptorImageInfo> images;
+        std::vector<spTextureView> views;
     };
     std::vector<UBOBinding>     _uboBinds;
     std::vector<SamplerBinding> _samplerBinds;

@@ -49,14 +49,15 @@ class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
 	    spBuffer createBuffer(const BufferType& type,const MemoryType& memory,const size_t& size,void* data) final;
 
 		spTexture createTexture(int width, int height, int miplevels,
-								const Format &format, const TextureType &type) final;
-		spTexture createTexture3D(int width, int height, int depth, int miplevels, const Format& format, const TextureType& type) final;
+								const Format &format, const TextureUsage& usage) final;
+		spTexture createTexture3D(int width, int height, int depth, int miplevels, const Format& format, const TextureUsage& usage) final;
 		spTexture createTexture() final;
 
 		spFramebuffer createFramebuffer(const glm::ivec2& size) final;
 		spFramebuffer createFramebuffer(const int width, const int height) final;
 		spCommandBuffer createCommandBuffer() final;
 		spSemaphore createSemaphore() final;
+		spFence createFence(bool status) final;
 
 		glm::ivec2 getScreenSize() final;
 
@@ -66,10 +67,10 @@ class DeviceVK : public Device, public std::enable_shared_from_this<DeviceVK> {
 
 		std::vector<spRenderTarget> getScreenRenderTargets() final;
 
-		void submit(const spCommandBuffer& cmd, const spSemaphore& waitForIt, const spSemaphore& result) final;
+		void submit(const spCommandBuffer& cmd, const spSemaphore& waitForIt, const spSemaphore& result, const mango::spFence& fence = nullptr) final;
 		void present(uint32_t screen, const spSemaphore& signal) final;
 
-		uint32_t nextScreen(const spSemaphore& signal) final;
+		uint32_t nextScreen(const spSemaphore& signal,const spFence& fence) final;
 
 	    void waitIdle() final;
 private:
@@ -113,5 +114,20 @@ class SemaphoreVK : public mango::Semaphore {
 };
 
 typedef std::shared_ptr<SemaphoreVK> spSemaphoreVK;
+
+class FenceVK : public mango::Fence {
+	public:
+		FenceVK(bool status);
+		~FenceVK();
+
+		vk::Fence& getVK();
+
+		void reset() final;
+		void wait(uint64_t timeout) final;
+
+		bool status() final;
+	protected:
+		vk::Fence _fence;
+};
 
 };

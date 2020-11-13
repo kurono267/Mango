@@ -82,9 +82,9 @@ class Texture : public std::enable_shared_from_this<Texture> {
 		virtual ~Texture() = default;
 
 		virtual void create(int width,int height,
-							int mipLevels, const Format& format,const TextureType& type) = 0;
-		virtual void create3D(int width,int height, int depth, int miplevels, const Format& format, const TextureType& type) = 0;
-		virtual void createCubeMap(int width, int height, int mipLevels, const Format& format, const TextureType& type) = 0;
+							int mipLevels, const Format& format, const TextureUsage& usage) = 0;
+		virtual void create3D(int width,int height, int depth, int miplevels, const Format& format, const TextureUsage& usage) = 0;
+		virtual void createCubeMap(int width, int height, int mipLevels, const Format& format, const TextureUsage& usage) = 0;
 
 		virtual spTextureView createTextureView(const ComponentMapping& componentMapping = ComponentMapping(),int minLayer = 0, int maxLayer = -1,int minLevel = 0,int maxLevel = -1) = 0;
 		virtual spTextureView createTextureViewCubeMap(const ComponentMapping& componentMapping = ComponentMapping(),int minLayer = 0, int maxLayer = -1,int minLevel = 0,int maxLevel = -1) = 0;
@@ -95,8 +95,13 @@ class Texture : public std::enable_shared_from_this<Texture> {
 		inline int height() { return _height; }
 		inline int depth() { return _depth; }
 		inline int mipLevels() { return _mipLevels; }
-		inline TextureType type() { return _type; }
+		inline TextureUsage type() { return _usage; }
+		inline TextureLayout layout() { return _layout; }
 		inline Format format() { return _format; }
+
+		virtual void transition(const TextureLayout& layout,const spCommandBuffer& cmd = nullptr) = 0;
+
+		virtual void generationMipMaps() = 0;
 	protected:
 		int _width;
 		int _height;
@@ -104,7 +109,8 @@ class Texture : public std::enable_shared_from_this<Texture> {
 		int _layers = 1;
 		int _mipLevels;
 		Format _format;
-		TextureType _type;
+		TextureUsage _usage;
+		TextureLayout _layout;
 };
 
 inline bool hasDepthComponent(Format format) {

@@ -462,17 +462,49 @@ BufferType operator |(BufferType lhs, BufferType rhs);
 
 enum class MemoryType {
 	HOST,
-	DEVICE
+	DEVICE,
+	DEVICE_HOST
 };
 
-enum class TextureType : unsigned {
-	Input = 0x1,
-	Output = 0x2,
-	DepthStencil = 0x4,
-	Storage = 0x8
+enum class TextureUsage : unsigned {
+	TransferSrc = 1 << 0,
+	TransferDst = 1 << 1,
+	Sampled = 1 << 2,
+	Storage = 1 << 3,
+	ColorAttachment = 1 << 4,
+	DepthStencilAttachment = 1 << 5,
+	TransientAttachment = 1 << 6,
+	InputAttachment = 1 << 7
 };
 
-TextureType operator |(TextureType lhs, TextureType rhs);
+TextureUsage operator |(TextureUsage lhs, TextureUsage rhs);
+
+enum class TextureLayout : unsigned {
+	Undefined = 0,
+	General,
+	ColorAttachmentOptimal,
+	DepthStencilAttachmentOptimal,
+	DepthStencilReadOnlyOptimal,
+	ShaderReadOnlyOptimal,
+	TransferSrcOptimal,
+	TransferDstOptimal,
+	Preinitialized,
+	DepthReadOnlyStencilAttachmentOptimal,
+	DepthAttachmentStencilReadOnlyOptimal,
+	DepthAttachmentOptimal,
+	DepthReadOnlyOptimal,
+	StencilAttachmentOptimal,
+	StencilReadOnlyOptimal,
+	PresentSrcKHR,
+	SharedPresentKHR,
+	FragmentDensityMapOptimalEXT,
+	DepthAttachmentOptimalKHR,
+	DepthAttachmentStencilReadOnlyOptimalKHR,
+	DepthReadOnlyOptimalKHR,
+	DepthReadOnlyStencilAttachmentOptimalKHR,
+	StencilAttachmentOptimalKHR,
+	StencilReadOnlyOptimalKHR
+};
 
 enum class Filter {
 	Nearest,

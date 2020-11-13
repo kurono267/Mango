@@ -53,6 +53,9 @@ class SceneNode : public SceneTransform,public std::enable_shared_from_this<Scen
 		void setCamera(const spCamera& camera);
 		void setGeometry(const spGeometry& geometry);
 
+		void setName(const std::string& name);
+		std::string getName();
+
 		BBox boundingBox();
 
 		spGeometry getGeometry();
@@ -61,9 +64,14 @@ class SceneNode : public SceneTransform,public std::enable_shared_from_this<Scen
 		glm::mat4 getWorldTransform();
 
 		void run(const std::function<void(const ptr& node, bool& stop)>& func,bool isRunForThis = true);
+
+		void setUpdated(bool isUpdated) override;
 	protected:
 		std::vector<ptr> _childs;
 		mutable SceneNode* _parent;
+
+		uint32_t _nodeIndex;
+		std::string _name;
 
 		spCamera _camera;
 		spGeometry _geometry;

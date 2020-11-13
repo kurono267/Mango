@@ -15,19 +15,24 @@
 
 namespace mango {
 
+enum class MeshType {
+	Static,
+	Dynamic
+};
+
 class Mesh {
 	public:
 		Mesh() = default;
 		virtual ~Mesh() = default;
 
 		template<typename VertexType = sVertex, typename IndexType = uint32_t>
-		void create(const spDevice& device, const std::vector<VertexType>& vertices,const std::vector<IndexType>& indices){
+		void create(const spDevice& device, const std::vector<VertexType>& vertices,const std::vector<IndexType>& indices, MeshType type = MeshType::Static){
 			_bbox = BBox();
 			for(auto& vertex : vertices){
 				_bbox.expand(vertex.pos);
 			}
 
-			create(device,vertices.size()*sizeof(VertexType),indices.size()*sizeof(IndexType),sizeof(VertexType),sizeof(IndexType));
+			create(device,vertices.size()*sizeof(VertexType),indices.size()*sizeof(IndexType),sizeof(VertexType),sizeof(IndexType),type);
 
 			fillVertices(vertices);
 			fillIndices(indices);
@@ -35,7 +40,7 @@ class Mesh {
 			updateVertices();
 			updateIndices();
 		}
-		void create(const spDevice& device, size_t vertexBufferSize, size_t indexBufferSize, size_t vertexSize, size_t indexSize);
+		void create(const spDevice& device, size_t vertexBufferSize, size_t indexBufferSize, size_t vertexSize, size_t indexSize, MeshType type = MeshType::Static);
 		void draw(const spCommandBuffer& cmd, int indexCount = -1, int instanceCount = -1, int firstInstance = 0);
 		void bind(const spCommandBuffer& cmd);
 
@@ -69,13 +74,11 @@ class Mesh {
 			unmapIndices();
 		}
 
-		void updateVertices();
-		void updateIndices();
+		void updateVertices(const spCommandBuffer& cmd = nullptr);
+		void updateIndices(const spCommandBuffer& cmd = nullptr);
 
+		void updateBoundingBox();
 		BBox getBoundingBox();
-
-		Uniform getVertexBuffer();
-		Uniform getIndexBuffer();
 
 		void genNormals(); // TODO need improve
 	protected:
@@ -86,11 +89,12 @@ class Mesh {
 		size_t _vertexSize;
 		size_t _indexSize;
 		BBox _bbox;
+		MeshType _type;
 };
 
 typedef std::shared_ptr<Mesh> spMesh;
 
-spMesh createQuad();
+spMesh createQuad(const glm::vec2& uvScale = glm::vec2(1,1));
 spMesh createCube();
 spMesh createSphere(const int segments);
 

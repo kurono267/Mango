@@ -8,15 +8,23 @@
 
 using namespace mango;
 
-void Mesh::create(const spDevice& device, size_t vertexBufferSize, size_t indexBufferSize, size_t vertexSize, size_t indexSize) {
+void Mesh::create(const spDevice& device, size_t vertexBufferSize, size_t indexBufferSize, size_t vertexSize, size_t indexSize, MeshType type) {
 	_vertexSize = vertexSize;
 	_indexSize = indexSize;
+	_type = type;
 
-	_vbHost = device->createBuffer(BufferType::Vertex | BufferType::Storage,MemoryType::HOST,vertexBufferSize);
-	_vbDevice = device->createBuffer(BufferType::Vertex | BufferType::Storage,MemoryType::DEVICE,vertexBufferSize);
+	_vbHost = device->createBuffer(BufferType::Vertex | BufferType::Storage,type==MeshType::Static?MemoryType::HOST:MemoryType::DEVICE_HOST,vertexBufferSize);
 
-	_ibHost = device->createBuffer(BufferType::Index | BufferType::Storage,MemoryType::HOST,indexBufferSize);
-	_ibDevice = device->createBuffer(BufferType::Index | BufferType::Storage,MemoryType::DEVICE,indexBufferSize);
+	_ibHost = device->createBuffer(BufferType::Index | BufferType::Storage,type==MeshType::Static?MemoryType::HOST:MemoryType::DEVICE_HOST,indexBufferSize);
+
+	if(type == MeshType::Static) {
+		_vbDevice = device->createBuffer(BufferType::Vertex | BufferType::Storage, MemoryType::DEVICE,
+										 vertexBufferSize);
+		_ibDevice = device->createBuffer(BufferType::Index | BufferType::Storage, MemoryType::DEVICE, indexBufferSize);
+	} else {
+		_vbDevice = _vbHost;
+		_ibDevice = _ibHost;
+	}
 }
 
 sVertex::sVertex(const glm::vec3& pos_,const glm::vec2& uv_,const glm::vec3& normal_)
@@ -37,12 +45,23 @@ void Mesh::bind(const spCommandBuffer& cmd) {
 	else cmd->bindIndexBuffer(_ibDevice);
 }
 
-void Mesh::updateVertices() {
-	_vbHost->copy(_vbDevice);
+void Mesh::updateVertices(const spCommandBuffer& cmd) {
+	if(_type == MeshType::Static)_vbHost->copy(_vbDevice,cmd);
 }
 
-void Mesh::updateIndices() {
-	_ibHost->copy(_ibDevice);
+void Mesh::updateIndices(const spCommandBuffer& cmd) {
+	if(_type == MeshType::Static)_ibHost->copy(_ibDevice,cmd);
+}
+
+void Mesh::updateBoundingBox() {
+	_bbox = BBox();
+	sVertex* vertices = mapVertices();
+	int vertexCount = verticesCount();
+	for(int i = 0;i<vertexCount;++i){
+		const sVertex& vertex = vertices[i];
+		_bbox.expand(vertex.pos);
+	}
+	unmapVertices();
 }
 
 BBox Mesh::getBoundingBox() {
@@ -63,14 +82,6 @@ size_t Mesh::indicesCount() {
 
 void Mesh::unmapIndices() {
 	_ibHost->unmap();
-}
-
-Uniform Mesh::getVertexBuffer() {
-	return Uniform(_vbHost,_vbDevice);
-}
-
-Uniform Mesh::getIndexBuffer() {
-	return Uniform(_ibHost,_ibDevice);
 }
 
 void Mesh::genNormals() {
@@ -114,7 +125,7 @@ size_t Mesh::indexBufferSize() {
 	return _ibHost->size();
 }
 
-spMesh mango::createQuad(){
+spMesh mango::createQuad(const glm::vec2& uvScale){
 	auto device = Instance::device();
 
 	std::vector<sVertex> vdata = {
@@ -122,13 +133,13 @@ spMesh mango::createQuad(){
 					0.0f, 0.0f,
 					0.f,0.f,1.f), 	 // Texcoord
 			sVertex(-1.0, -1.0, 0.0f,// Pos
-					0.0f, 1.0f,
+					0.0f, uvScale.y,
 					0.f,0.f,1.f),     // Texcoord
 			sVertex(1.0, -1.0, 0.0f, // Pos
-					1.0, 1.0,
+					uvScale.x, uvScale.y,
 					0.f,0.f,1.f),       // Texcoord
 			sVertex(1.0, 1.0, 0.0f,  // Pos
-					1.0, 0.0f,
+					uvScale.x, 0.0f,
 					0.f,0.f,1.f)};     // Texcoord
 
 	std::vector<uint32_t> idata = {0,1,2,/*First*/2,3,0/*Second triangle*/};

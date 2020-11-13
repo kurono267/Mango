@@ -31,7 +31,7 @@ bool App::init() {
 	_cameraOrbit = std::make_shared<SceneNode>();
 	_cameraOrbit->addChild(_cameraNode);
 
-    _cameraUniform.create(device,sizeof(Data));
+    _cameraUniform.create(sizeof(Data));
     updateCameraUniform(_cameraNode);
 
 	_texture = checkboardTexture( 1280, 720, 100);

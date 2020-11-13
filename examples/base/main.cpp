@@ -17,7 +17,7 @@ class TestApp : public BaseApp {
 			std::cout << device->deviceName() << std::endl;
 
 			glm::vec4 colorValue(0.5f,0.5f,1.0f,1.0f);
-			_color.create(device,sizeof(glm::vec4),&colorValue);
+			_color.create(sizeof(glm::vec4),BufferType::Uniform,&colorValue);
 
 			_texture = checkboardTexture(1280,720,100);
             auto textureView = _texture->createTextureView();
