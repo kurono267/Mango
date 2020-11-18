@@ -12,6 +12,7 @@
  */
 struct BBox {
     BBox();
+    BBox(const glm::vec3& min, const glm::vec3& max);
     BBox(const BBox& a);
 
     void setMin(const glm::vec3& min);
