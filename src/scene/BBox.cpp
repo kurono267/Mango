@@ -79,3 +79,7 @@ glm::vec3 BBox::getMin() const {
 glm::vec3 BBox::getMax() const {
 	return glm::vec3(max);
 }
+
+glm::vec3 BBox::getSize() const {
+	return getMax()-getMin();
+}

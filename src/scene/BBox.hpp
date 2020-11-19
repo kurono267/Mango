@@ -21,6 +21,8 @@ struct BBox {
     glm::vec3 getMin() const;
     glm::vec3 getMax() const;
 
+    glm::vec3 getSize() const;
+
 	/**
 	 * Expand bounding box with bounding box
 	 * @param min - min of box
