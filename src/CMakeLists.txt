@@ -73,5 +73,7 @@ set(MANGO_VK
 
 add_definitions(-DMVK_CONFIG_FULL_IMAGE_VIEW_SWIZZLE=1)
 
+message(${MANGO_INCLUDE})
 add_library(mango SHARED ${MANGO_SRC} ${MANGO_VK})
+target_include_directories(mango PUBLIC ${MANGO_INCLUDE})
 target_link_libraries(mango glfw vulkan shaderc_combined stdc++)
