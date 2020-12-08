@@ -147,12 +147,13 @@ Uniform mango::createCameraUniform(const spSceneNode& cameraNode) {
 void mango::updateCameraUniform(const spSceneNode& cameraNode, Uniform& uniform) {
 	if(!cameraNode->getCamera())throw std::logic_error("updateCameraUniform: Node don't contains camera");
 	CameraData data;
-	auto view = cameraNode->getWorldTransform();
+	auto camera2world = cameraNode->getWorldTransform();
+	auto world2camera = glm::inverse(camera2world);
 	auto proj = cameraNode->getCamera()->getProj();
-	data.view = view;
+	data.view = world2camera;
 	data.proj = proj;
-	data.viewProj = proj*view;
-	data.invView = glm::inverse(view);
+	data.viewProj = proj*world2camera;
+	data.invView = camera2world;
 	data.invProj = glm::inverse(proj);
 
 	uniform.set(sizeof(CameraData),&data);
