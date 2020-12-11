@@ -42,7 +42,7 @@ set(MANGO_SRC
         scene/BBox.cpp
         scene/BBox.hpp
         scene/BVH.cpp
-        scene/BVH.hpp scene/Skin.cpp scene/Skin.hpp)
+        scene/BVH.hpp scene/Skin.cpp scene/Skin.hpp scene/Light.cpp scene/Light.hpp)
 
 set(MANGO_VK
         vk/InstanceVK.cpp

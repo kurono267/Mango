@@ -13,6 +13,11 @@ SceneNode::SceneNode() {
 	_parent = nullptr;
 }
 
+SceneNode::SceneNode(const spLight& light) {
+	_parent = nullptr;
+	_light = light;
+}
+
 SceneNode::SceneNode(const spCamera &camera) {
 	_parent = nullptr;
 	_camera = camera;
@@ -29,6 +34,10 @@ SceneNode::SceneNode(const spMesh &mesh, const spMaterial &material) {
 }
 
 std::shared_ptr<SceneNode> SceneNode::create() {
+	return std::make_shared<SceneNode>();
+}
+
+std::shared_ptr<SceneNode> SceneNode::create(const spLight &light) {
 	return std::make_shared<SceneNode>();
 }
 
@@ -84,6 +93,14 @@ void SceneNode::setCamera(const spCamera &camera) {
 
 void SceneNode::setGeometry(const spGeometry &geometry) {
 	_geometry = geometry;
+}
+
+void SceneNode::setLight(const spLight &light) {
+	_light = light;
+}
+
+spLight SceneNode::getLight() {
+	return _light;
 }
 
 spGeometry SceneNode::getGeometry() {

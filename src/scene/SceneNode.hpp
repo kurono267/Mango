@@ -12,6 +12,7 @@
 #include "Geometry.hpp"
 #include "BBox.hpp"
 #include "../unified/Uniform.hpp"
+#include "Light.hpp"
 
 namespace mango {
 
@@ -31,11 +32,13 @@ class SceneNode : public SceneTransform,public std::enable_shared_from_this<Scen
 	typedef std::shared_ptr<SceneNode> ptr;
 	public:
 		SceneNode();
+		SceneNode(const spLight& light);
 		SceneNode(const spCamera& camera);
 		SceneNode(const spGeometry& geometry);
 		SceneNode(const spMesh& mesh, const spMaterial& material);
 
 		static std::shared_ptr<SceneNode> create();
+		static std::shared_ptr<SceneNode> create(const spLight& light);
 		static std::shared_ptr<SceneNode> create(const spCamera& camera);
 		static std::shared_ptr<SceneNode> create(const spGeometry& geometry);
 		static std::shared_ptr<SceneNode> create(const spMesh& mesh, const spMaterial& material = nullptr);
@@ -52,6 +55,7 @@ class SceneNode : public SceneTransform,public std::enable_shared_from_this<Scen
 
 		void setCamera(const spCamera& camera);
 		void setGeometry(const spGeometry& geometry);
+		void setLight(const spLight& light);
 
 		void setName(const std::string& name);
 		std::string getName();
@@ -60,6 +64,7 @@ class SceneNode : public SceneTransform,public std::enable_shared_from_this<Scen
 
 		spGeometry getGeometry();
 		spCamera getCamera();
+		spLight getLight();
 
 		glm::mat4 getWorldTransform();
 
@@ -70,11 +75,12 @@ class SceneNode : public SceneTransform,public std::enable_shared_from_this<Scen
 		std::vector<ptr> _childs;
 		mutable SceneNode* _parent;
 
-		uint32_t _nodeIndex;
+		uint32_t _nodeIndex = 0;
 		std::string _name;
 
-		spCamera _camera;
-		spGeometry _geometry;
+		spCamera _camera = nullptr;
+		spGeometry _geometry = nullptr;
+		spLight _light = nullptr;
 
 		uint32_t _renderType = 0;
 };
