@@ -23,7 +23,7 @@ void Uniform::create(const size_t& size, BufferType type,const void* data){
 }
 
 void Uniform::set(const size_t& size,const void* data){
-    if(_size != size)throw std::logic_error("Uniform failed: different size");
+    if(_size < size)throw std::logic_error("Uniform set failed: size more than buffer");
     else if(!data)throw std::logic_error("Data is nullptr");
     else if(_is){
     	_buffer->set(size,data);

@@ -83,7 +83,7 @@ void Swapchain::create(const vk::SurfaceKHR& surface,const glm::ivec2& size,
 
 	createInfo.setMinImageCount(imageCount);
 	createInfo.setImageFormat(surfaceFormat.format);
-	createInfo.setImageColorSpace(vk::ColorSpaceKHR::eSrgbNonlinear);
+	createInfo.setImageColorSpace(surfaceFormat.colorSpace);
 	createInfo.setImageExtent(extent);
 	createInfo.setImageArrayLayers(1);
 	createInfo.setImageUsage(vk::ImageUsageFlagBits::eColorAttachment);

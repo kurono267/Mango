@@ -38,7 +38,7 @@ std::shared_ptr<SceneNode> SceneNode::create() {
 }
 
 std::shared_ptr<SceneNode> SceneNode::create(const spLight &light) {
-	return std::make_shared<SceneNode>();
+	return std::make_shared<SceneNode>(light);
 }
 
 std::shared_ptr<SceneNode> SceneNode::create(const spCamera& camera) {
