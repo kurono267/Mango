@@ -17,15 +17,15 @@ enum LightType {
 
 class Light {
 	public:
-		Light(const LightType& type, const glm::vec3& color, bool isCastShadow, float radius);
+		Light(const LightType& type, const glm::vec3& color, bool isCastShadow, float power);
 
-		static std::shared_ptr<Light> createPointLight(const glm::vec3& color, bool isCastShadow, float radius);
-		static std::shared_ptr<Light> createDirLight(const glm::vec3& color, bool isCastShadow);
-		static std::shared_ptr<Light> createSkyLight(bool isCastShadow);
+		static std::shared_ptr<Light> createPointLight(const glm::vec3& color, bool isCastShadow, float power);
+		static std::shared_ptr<Light> createDirLight(const glm::vec3& color, bool isCastShadow, float power);
+		static std::shared_ptr<Light> createSkyLight(bool isCastShadow, float power);
 
 		LightType type;
 		glm::vec3 color;
-		float radius;
+		float power;
 		bool 	  isCastShadow;
 };
 
