@@ -37,12 +37,12 @@ set(MANGO_SRC
         scene/Material.hpp
         scene/SceneNode.cpp
         scene/SceneNode.hpp
-        scene/Geometry.cpp
-        scene/Geometry.hpp
+        scene/Renderable.cpp
+        scene/Renderable.hpp
         scene/BBox.cpp
         scene/BBox.hpp
         scene/BVH.cpp
-        scene/BVH.hpp scene/Skin.cpp scene/Skin.hpp scene/Light.cpp scene/Light.hpp)
+        scene/BVH.hpp scene/Skin.cpp scene/Skin.hpp scene/Light.cpp scene/Light.hpp scene/Context.cpp scene/Context.hpp)
 
 set(MANGO_VK
         vk/InstanceVK.cpp

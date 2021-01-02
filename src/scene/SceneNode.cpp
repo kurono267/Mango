@@ -9,48 +9,32 @@
 
 using namespace mango;
 
-SceneNode::SceneNode() {
-	_parent = nullptr;
-}
-
-SceneNode::SceneNode(const spLight& light) {
-	_parent = nullptr;
-	_light = light;
-}
-
-SceneNode::SceneNode(const spCamera &camera) {
-	_parent = nullptr;
-	_camera = camera;
-}
-
-SceneNode::SceneNode(const mango::spGeometry &geometry) {
-	_parent = nullptr;
-	_geometry = geometry;
-}
-
-SceneNode::SceneNode(const spMesh &mesh, const spMaterial &material) {
-	_parent = nullptr;
-	_geometry = Geometry::create(mesh,material);
-}
+SceneNode::SceneNode(const spEntity& entity) : _entity(entity) {}
 
 std::shared_ptr<SceneNode> SceneNode::create() {
 	return std::make_shared<SceneNode>();
 }
 
 std::shared_ptr<SceneNode> SceneNode::create(const spLight &light) {
-	return std::make_shared<SceneNode>(light);
+	spEntity entity = Entity::create();
+	entity->addComponent(light);
+	return std::make_shared<SceneNode>(entity);
 }
 
 std::shared_ptr<SceneNode> SceneNode::create(const spCamera& camera) {
-	return std::make_shared<SceneNode>(camera);
+	spEntity entity = Entity::create();
+	entity->addComponent(camera);
+	return std::make_shared<SceneNode>(entity);
 }
 
-std::shared_ptr<SceneNode> SceneNode::create(const spGeometry& geometry){
-	return std::make_shared<SceneNode>(geometry);
+std::shared_ptr<SceneNode> SceneNode::create(const spRenderable& renderable){
+	spEntity entity = Entity::create();
+	entity->addComponent(renderable);
+	return std::make_shared<SceneNode>(entity);
 }
 
 std::shared_ptr<SceneNode> SceneNode::create(const spMesh& mesh, const spMaterial& material) {
-	return std::make_shared<SceneNode>(mesh,material);
+	return create(Renderable::create(mesh,material));
 }
 
 SceneNode::~SceneNode(){
@@ -79,43 +63,11 @@ SceneNode* SceneNode::getParent() {
 	return _parent;
 }
 
-void SceneNode::setRenderType(uint32_t renderType) {
-	_renderType = renderType;
-}
-
-uint32_t SceneNode::getRenderType() {
-	return _renderType;
-}
-
-void SceneNode::setCamera(const spCamera &camera) {
-	_camera = camera;
-}
-
-void SceneNode::setGeometry(const spGeometry &geometry) {
-	_geometry = geometry;
-}
-
-void SceneNode::setLight(const spLight &light) {
-	_light = light;
-}
-
-spLight SceneNode::getLight() {
-	return _light;
-}
-
-spGeometry SceneNode::getGeometry() {
-	return _geometry;
-}
-
 void SceneNode::setName(const std::string& name) {
 	_name = name;
 }
 std::string SceneNode::getName() {
 	return _name;
-}
-
-spCamera SceneNode::getCamera() {
-	return _camera;
 }
 
 glm::mat4 SceneNode::getWorldTransform() {
@@ -141,8 +93,11 @@ void SceneNode::run(const std::function<void(const ptr &, bool &)> &func, bool i
 
 BBox SceneNode::boundingBox() {
 	BBox box;
-	if(_geometry && _geometry->getMesh()){
-		box.expand(_geometry->getMesh()->getBoundingBox());
+	if(_entity->hasComponent<spRenderable>()){
+		auto geometry = _entity->getComponent<spRenderable>();
+		if(geometry->getMesh()){
+			box.expand(geometry->getMesh()->getBoundingBox());
+		}
 	}
 	for(auto& child : _childs){
 		auto childBox = child->boundingBox();
@@ -152,26 +107,40 @@ BBox SceneNode::boundingBox() {
 	return box;
 }
 
-Uniform mango::createCameraUniform(const spSceneNode& cameraNode) {
+void SceneNode::setEntity(const spEntity &entity) {
+	_entity = entity;
+}
+
+spEntity SceneNode::getEntity() {
+	return _entity;
+}
+
+namespace mango {
+
+Uniform createCameraUniform(const spSceneNode &cameraNode) {
 	auto device = Instance::device();
 
 	Uniform cameraUniform;
-	cameraUniform.create(sizeof(CameraData),BufferType::Uniform);
-	if(cameraNode)updateCameraUniform(cameraNode,cameraUniform);
+	cameraUniform.create(sizeof(CameraData), BufferType::Uniform);
+	if (cameraNode)updateCameraUniform(cameraNode, cameraUniform);
 	return cameraUniform;
 }
 
-void mango::updateCameraUniform(const spSceneNode& cameraNode, Uniform& uniform) {
-	if(!cameraNode->getCamera())throw std::logic_error("updateCameraUniform: Node don't contains camera");
+void updateCameraUniform(const spSceneNode &cameraNode, Uniform &uniform) {
+	if (!cameraNode->getEntity())throw std::logic_error("updateCameraUniform: Node don't contains entity");
+	auto entity = cameraNode->getEntity();
+	if (!entity->hasComponent<spCamera>())throw std::logic_error("updateCameraUniform: Node don't contains camera");
 	CameraData data;
 	auto camera2world = cameraNode->getWorldTransform();
 	auto world2camera = glm::inverse(camera2world);
-	auto proj = cameraNode->getCamera()->getProj();
+	auto proj = entity->getComponent<spCamera>()->getProj();
 	data.view = world2camera;
 	data.proj = proj;
-	data.viewProj = proj*world2camera;
+	data.viewProj = proj * world2camera;
 	data.invView = camera2world;
 	data.invProj = glm::inverse(proj);
 
-	uniform.set(sizeof(CameraData),&data);
+	uniform.set(sizeof(CameraData), &data);
+}
+
 }

@@ -12,14 +12,22 @@
 namespace mango {
 
 /// Geometry consist of mesh and material
-class Geometry {
+class Renderable {
 	public:
 		/// Default constructor
-		Geometry() = default;
+		Renderable() = default;
 		/// Construct Geometry with Mesh and Material
 		/// @param mesh - Mesh
 		/// @param material - Material
-		Geometry(const spMesh& mesh, const spMaterial& material);
+		Renderable(const spMesh& mesh, const spMaterial& material);
+
+		/// Set render type
+		/// @param render type
+		void setRenderType(uint32_t renderType);
+
+		/// Get render type
+		/// @return render type
+		uint32_t getRenderType();
 
 		/// Set mesh
 		/// @param mesh - Mesh
@@ -41,14 +49,15 @@ class Geometry {
 		/// Construct shared pointer of Geometry
 		/// @param mesh - Mesh
 		/// @param material - Material
-		static std::shared_ptr<Geometry> create(const spMesh& mesh = nullptr, const spMaterial& material = nullptr);
+		static std::shared_ptr<Renderable> create(const spMesh& mesh = nullptr, const spMaterial& material = nullptr);
 	protected:
 		spMesh _mesh;
 		spMaterial _material;
 		spSkin _skin;
+		uint32_t _renderType = 0;
 };
 
-typedef std::shared_ptr<Geometry> spGeometry;
+typedef std::shared_ptr<Renderable> spRenderable;
 
 }
 
