@@ -63,8 +63,8 @@ private:
         std::vector<vk::DescriptorImageInfo> images;
         std::vector<spTextureView> views;
     };
-    std::vector<UBOBinding>     _uboBinds;
-    std::vector<SamplerBinding> _samplerBinds;
+    std::unordered_map<int,UBOBinding>     _uboBinds;
+    std::unordered_map<int,SamplerBinding> _samplerBinds;
 };
 
 }

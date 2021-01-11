@@ -24,7 +24,7 @@ DescSetVK::~DescSetVK() {
 
 	std::set<vk::Sampler> samplerSet;
 	for(const auto& s : _samplerBinds){
-		for(const auto& img : s.images){
+		for(const auto& img : s.second.images){
 			samplerSet.insert(img.sampler);
 		}
 	}
@@ -38,15 +38,29 @@ DescSetVK::~DescSetVK() {
 }
 
 void DescSetVK::setUniformBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage, size_t offset, int size){
-    _uboBinds.emplace_back(buffer,binding,shaderStageVK(stage),vk::DescriptorType::eUniformBuffer,offset,size<0?buffer.size():size);
+    _uboBinds.emplace(binding,UBOBinding(buffer,binding,shaderStageVK(stage),vk::DescriptorType::eUniformBuffer,offset,size<0?buffer.size():size));
 }
 
 void DescSetVK::setStorageBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage, size_t offset, int size){
-	_uboBinds.emplace_back(buffer,binding,shaderStageVK(stage),vk::DescriptorType::eStorageBuffer,offset,size<0?buffer.size():size);
+	_uboBinds.emplace(binding,UBOBinding(buffer,binding,shaderStageVK(stage),vk::DescriptorType::eStorageBuffer,offset,size<0?buffer.size():size));
 }
 
 void DescSetVK::setStorageTexture(const std::vector<spTextureView> &textures, const Sampler &sampler, size_t binding, const ShaderStage &stage) {
-	_samplerBinds.emplace_back(textures,sampler,binding,shaderStageVK(stage),vk::DescriptorType::eStorageImage);
+	auto samplerItr = _samplerBinds.find(binding);
+	SamplerBinding samplerBinding(textures,sampler,binding,shaderStageVK(stage),vk::DescriptorType::eStorageImage);
+	if(samplerItr != _samplerBinds.end()){
+		auto vk_device = Instance::device<DeviceVK>()->getDevice();
+		std::set<vk::Sampler> samplerSet;
+		for(const auto& img : samplerItr->second.images){
+			samplerSet.insert(img.sampler);
+		}
+
+		for(auto s : samplerSet){
+			vk_device.destroySampler(s);
+		}
+
+		samplerItr->second = samplerBinding;
+	} else _samplerBinds.emplace(binding,samplerBinding);
 }
 
 void DescSetVK::setStorageTexture(const spTextureView &texture, const Sampler &sampler, size_t binding, const ShaderStage &stage) {
@@ -54,7 +68,21 @@ void DescSetVK::setStorageTexture(const spTextureView &texture, const Sampler &s
 }
 
 void DescSetVK::setTexture(const std::vector<spTextureView>& textures, const Sampler& sampler, size_t binding, const ShaderStage& stage) {
-	_samplerBinds.emplace_back(textures,sampler,binding,shaderStageVK(stage),vk::DescriptorType::eCombinedImageSampler);
+	auto samplerItr = _samplerBinds.find(binding);
+	SamplerBinding samplerBinding(textures,sampler,binding,shaderStageVK(stage),vk::DescriptorType::eCombinedImageSampler);
+	if(samplerItr != _samplerBinds.end()){
+		auto vk_device = Instance::device<DeviceVK>()->getDevice();
+		std::set<vk::Sampler> samplerSet;
+		for(const auto& img : samplerItr->second.images){
+			samplerSet.insert(img.sampler);
+		}
+
+		for(auto s : samplerSet){
+			vk_device.destroySampler(s);
+		}
+
+		samplerItr->second = samplerBinding;
+	} else _samplerBinds.emplace(binding,samplerBinding);
 }
 
 void DescSetVK::setTexture(const spTextureView &texture, const Sampler &sampler, size_t binding,
@@ -67,12 +95,14 @@ void DescSetVK::write() {
 
 	std::vector<vk::WriteDescriptorSet>         descWrites;
 	_descBufferInfos.resize(_uboBinds.size());
-	for(auto u : _uboBinds){
+	for(auto uItr : _uboBinds){
+		auto u = uItr.second;
 		auto internalBuffer = std::dynamic_pointer_cast<BufferVK>(u.buffer.getBuffer());
 		_descBufferInfos.emplace_back(internalBuffer->getVKBuffer(),u.offset,u.size);
 		descWrites.emplace_back(_descSet,u.binding,0,1,u.descType,nullptr,&_descBufferInfos[_descBufferInfos.size()-1],nullptr);
 	}
-	for(const auto& s : _samplerBinds){
+	for(const auto& sItr : _samplerBinds){
+		const auto& s = sItr.second;
 		descWrites.emplace_back(_descSet,s.binding,0,s.images.size(),s.descType,s.images.data(),nullptr,nullptr);
 	}
 	vk_device.updateDescriptorSets(descWrites,nullptr);
