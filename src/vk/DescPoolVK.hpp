@@ -13,17 +13,26 @@ namespace mango::vulkan {
 
 class DescPoolVK final : public DescPool, public std::enable_shared_from_this<DescPoolVK> {
     public:
-        DescPoolVK(size_t numDescSets,const mango::spDescLayout &layout);
+        DescPoolVK(const mango::spDescLayout &layout, size_t poolSize = DescPoolMin);
         ~DescPoolVK() final;
 
-        std::vector<spDescSet> create(size_t count) final;
-        spDescSet create() final;
+        virtual spDescSet get(size_t id) final;
 
         spDescLayout getLayout() final;
-        vk::DescriptorPool getPool();
 	protected:
-		vk::DescriptorPool _pool;
+		struct DescSetStore {
+			spDescSet set;
+			vk::DescriptorPool pool;
+		};
+
+		std::vector<vk::DescriptorPool> _pool;
+		std::vector<DescSetStore> _sets;
 		spDescLayoutVK _layout;
+		size_t _poolSize;
+	private:
+		vk::DescriptorPool createPool(const spDescLayout& layout, size_t count);
+		void appendDescSets(const vk::DescriptorPool& pool, size_t count);
+		void increasePool(size_t count);
 };
 
 }

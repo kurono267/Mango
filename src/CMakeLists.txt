@@ -14,7 +14,6 @@ set(MANGO_SRC
         api/Utils.cpp
         api/CommandBuffer.hpp
         api/DescSet.hpp
-        api/DescPool.cpp
         api/DescPool.hpp
         api/DescLayout.cpp
         api/DescLayout.hpp

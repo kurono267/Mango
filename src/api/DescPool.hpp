@@ -13,12 +13,13 @@ namespace mango {
 class DescSet;
 typedef std::shared_ptr<DescSet> spDescSet;
 
+constexpr int DescPoolMin = 2;
+
 class DescPool {
 	public:
 		virtual ~DescPool() = default;
-		
-		virtual std::vector<spDescSet> create(size_t count) = 0;
-		virtual spDescSet create() = 0;
+
+		virtual spDescSet get(size_t id) = 0;
 
 		virtual spDescLayout getLayout() = 0;
 	protected:

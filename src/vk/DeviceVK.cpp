@@ -376,7 +376,7 @@ spDescLayout DeviceVK::createDescLayout() {
 }
 
 spDescPool DeviceVK::createDescPool(size_t numDescSets, const spDescLayout& layout) {
-	return std::make_shared<DescPoolVK>(numDescSets,layout);
+	return std::make_shared<DescPoolVK>(layout,numDescSets);
 }
 
 void DeviceVK::waitIdle() {

@@ -14,7 +14,7 @@ namespace mango::vulkan {
 
 DescSetVK::DescSetVK() {}
 
-DescSetVK::DescSetVK(const vk::DescriptorSet &descSet, const spDescPool& pool) : _descSet(descSet), _descPool(pool) {
+DescSetVK::DescSetVK(const vk::DescriptorSet &descSet, const vk::DescriptorSetLayout& layout) : _descSet(descSet),_layout(layout) {
 
 }
 
@@ -32,9 +32,6 @@ DescSetVK::~DescSetVK() {
 	for(auto s : samplerSet){
 		vk_device.destroySampler(s);
 	}
-
-	auto pool = std::dynamic_pointer_cast<DescPoolVK>(_descPool);
-	vk_device.freeDescriptorSets(pool->getPool(),1,&_descSet);
 }
 
 void DescSetVK::setUniformBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage, size_t offset, int size){

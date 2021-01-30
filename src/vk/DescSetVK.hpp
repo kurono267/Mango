@@ -17,7 +17,7 @@ namespace mango::vulkan {
 class DescSetVK : public mango::DescSet {
 public:
     DescSetVK();
-    DescSetVK(const vk::DescriptorSet& descSet, const spDescPool& pool);
+    DescSetVK(const vk::DescriptorSet& descSet, const vk::DescriptorSetLayout& layout);
     ~DescSetVK() override;
 
     void setUniformBuffer(const Uniform &buffer, size_t binding, const ShaderStage &stage, size_t offset = 0, int size = -1) override;
@@ -35,12 +35,11 @@ public:
 
     vk::DescriptorSet getSet(){return _descSet;}
     vk::DescriptorSetLayout getLayout(){
-    	spDescLayoutVK layout = std::dynamic_pointer_cast<DescLayoutVK>(_descPool->getLayout());
-    	return layout->getLayout();
+    	return _layout;
     }
 private:
     vk::DescriptorSet       _descSet;
-    spDescPool _descPool;
+    vk::DescriptorSetLayout _layout;
 
     std::vector<vk::DescriptorImageInfo>  _descImageInfos;
     std::vector<vk::DescriptorBufferInfo> _descBufferInfos;
