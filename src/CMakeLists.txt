@@ -17,6 +17,8 @@ set(MANGO_SRC
         api/DescPool.hpp
         api/DescLayout.cpp
         api/DescLayout.hpp
+        api/ShaderCode.cpp
+        api/ShaderCode.hpp
         unified/Mesh.cpp
         unified/Mesh.hpp
         unified/Utils.cpp

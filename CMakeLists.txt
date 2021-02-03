@@ -26,4 +26,5 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 link_directories($ENV{VULKAN_SDK}/lib)
 
 add_subdirectory(src)
-add_subdirectory(examples)
+#add_subdirectory(examples)
+add_subdirectory(tests)
