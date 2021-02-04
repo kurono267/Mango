@@ -338,14 +338,14 @@ void DeviceVK::submit(const mango::spCommandBuffer& cmd, const mango::spSemaphor
 	auto signalVK = std::dynamic_pointer_cast<SemaphoreVK>(result);
 
 	vk::Semaphore waitSemaphores[] = {waitVK?waitVK->getVK(): nullptr};
-	vk::Semaphore signalSemaphores[] = {signalVK->getVK()};
+	vk::Semaphore signalSemaphores[] = {signalVK?signalVK->getVK(): nullptr};
 	vk::PipelineStageFlags waitStages[] = {vk::PipelineStageFlagBits::eColorAttachmentOutput};
 
 	vk::SubmitInfo submitInfo(
 		waitVK?1:0, waitVK?waitSemaphores: nullptr,
 		waitStages,
 		1, &cmd_vk,
-		1, signalSemaphores
+		signalSemaphores[0]?1:0, signalSemaphores
 	);
 
 	_graphicsQueue.submit(submitInfo, fence?std::static_pointer_cast<FenceVK>(fence)->getVK(): nullptr);
@@ -354,10 +354,10 @@ void DeviceVK::submit(const mango::spCommandBuffer& cmd, const mango::spSemaphor
 void DeviceVK::present(uint32_t screen, const mango::spSemaphore& signal){
 	vk::SwapchainKHR swapChains[] = {_swapchain->getSwapchain()};
 
-	vk::Semaphore signalSemaphores[] = {std::dynamic_pointer_cast<SemaphoreVK>(signal)->getVK()};
+	vk::Semaphore signalSemaphores[] = {signal?std::dynamic_pointer_cast<SemaphoreVK>(signal)->getVK():nullptr};
 
 	vk::PresentInfoKHR presentInfo(
-		1, signalSemaphores,
+		signal?1:0, signalSemaphores,
 		1, swapChains,
 		&screen
 	);
@@ -439,6 +439,9 @@ void FenceVK::wait(uint64_t timeout) {
 	auto vkDevice = device->getDevice();
 
 	vkDevice.waitForFences(_fence,true,timeout);
+	if(!status()){
+		std::cerr << "Wait over but Fence still in use" << std::endl;
+	}
 }
 
 bool FenceVK::status() {
