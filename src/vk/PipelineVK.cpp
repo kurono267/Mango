@@ -186,10 +186,12 @@ void PipelineVK::create() {
 
 	auto vk_assembly = vk::PipelineInputAssemblyStateCreateInfo(vk::PipelineInputAssemblyStateCreateFlags(),topologyVK(_renderPattern.getTopology()));
 
+	vk::PipelineTessellationStateCreateInfo tessInfo(vk::PipelineTessellationStateCreateFlags(),3);
+
 	vk::GraphicsPipelineCreateInfo pipelineInfo(vk::PipelineCreateFlags(),
 		_shaders.size(),_shaders.data(),
 		&vertexInputInfo,&vk_assembly,
-		nullptr,
+		&tessInfo,
 		&_viewportState,
 		&vk_rasterizer,
 		&vk_multisampling,

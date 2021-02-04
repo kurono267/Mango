@@ -175,6 +175,7 @@ void DeviceVK::createLogicalDevice(){
 	deviceFeatures.samplerAnisotropy = true;
 	deviceFeatures.tessellationShader = true;
 	deviceFeatures.multiViewport = true;
+	deviceFeatures.fragmentStoresAndAtomics = true;
 	//deviceFeatures.geometryShader = true; // MoltenVK doesn't support geometry shader feature
 
 	vk::DeviceCreateInfo createInfo;
@@ -186,6 +187,11 @@ void DeviceVK::createLogicalDevice(){
 
 	createInfo.setPpEnabledExtensionNames(deviceExtensions.data());
 	createInfo.setEnabledExtensionCount(deviceExtensions.size());
+
+	vk::PhysicalDeviceDescriptorIndexingFeatures indexingFeatures;
+	indexingFeatures.runtimeDescriptorArray = true;
+
+	createInfo.pNext = &indexingFeatures;
 
 	if (enableValidationLayers) {
 		createInfo.setEnabledLayerCount(validationLayers.size());
