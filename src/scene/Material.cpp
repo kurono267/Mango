@@ -21,14 +21,14 @@ void Material::setAlbedo(const spTexture &texture) {
 }
 
 void Material::setAlbedo(const glm::vec4 &value) {
-	setAlbedo(createSinglePixelTexture(value));
+	_albedoColor = value;//setAlbedo(createSinglePixelTexture(value));
 }
 
 void Material::setMetallicRoughness(const spTexture& texture) {
 	_metallicRoughness = texture;
 }
 
-uint32_t Material::getID() {
+uint32_t Material::getID() const {
 	return _id;
 }
 
@@ -36,12 +36,8 @@ void Material::setID(const uint32_t& id) {
 	_id = id;
 }
 
-spTexture Material::getAlbedo() {
-	return _albedo;
-}
-
-spTexture Material::getMetallicRoughness() {
-	return _metallicRoughness;
+glm::vec4 Material::getAlbedo() {
+	return _albedoColor;
 }
 
 void Material::setMetallic(const float metallic) {
@@ -52,10 +48,18 @@ void Material::setRoughness(const float roughness) {
 	_roughness = roughness;
 }
 
-float Material::getRoughness() {
+float Material::getRoughness() const {
 	return _roughness;
 }
 
-float Material::getMetallic() {
+float Material::getMetallic() const {
 	return _metallic;
+}
+
+spTexture Material::getAlbedoTexture() {
+	return _albedo;
+}
+
+spTexture Material::getMetallicRoughnessTexture() {
+	return _metallicRoughness;
 }
