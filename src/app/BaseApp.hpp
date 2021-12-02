@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "../api/default.hpp"
+#include "../third_party.hpp"
 
 namespace mango {
 
@@ -25,16 +25,17 @@ class BaseApp {
 		virtual bool onTouch(const glm::vec2& coord, const glm::vec2& deltacoord){
 			return true;
 		}
-		virtual bool onMove(const glm::vec2& coord, const glm::vec2& deltacoord) {
+		virtual bool onTouchDown(const glm::vec2& coord){
 			return true;
 		}
 		virtual bool onMouseRight(const glm::vec2& coord){
 			return true;
 		}
-		virtual bool onScroll(const glm::vec2& offset, const float dt){
+		virtual bool onScroll(const glm::vec2& offset){
 			return true;
 		}
 		virtual bool onExit() = 0;
+		virtual void onResize(const int width, const int height){}
 
 		std::weak_ptr<MainApp> mainApp;
 	protected: // Main access level

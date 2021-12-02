@@ -1,80 +1,11 @@
-set(MANGO_SRC
-        app/MainApp.cpp
-        app/MainAppGLFW.cpp
-        api/Pipeline.cpp
-        api/Buffer.hpp
-        api/Instance.cpp
-        api/Compute.cpp
-        api/Compute.hpp
-        api/Texture.hpp
-        api/Framebuffer.hpp
-        api/Pipeline.cpp
-        api/Framebuffer.cpp
-        api/Utils.hpp
-        api/Utils.cpp
-        api/CommandBuffer.hpp
-        api/DescSet.hpp
-        api/DescPool.hpp
-        api/DescLayout.cpp
-        api/DescLayout.hpp
-        api/ShaderCode.cpp
-        api/ShaderCode.hpp
-        unified/Mesh.cpp
-        unified/Mesh.hpp
-        unified/Utils.cpp
-        unified/Utils.hpp
-        unified/Image.cpp
-        unified/Uniform.cpp
-        unified/Uniform.hpp
-        unified/RenderTarget.cpp
-        unified/RenderTarget.hpp
-        unified/Timer.cpp
-        unified/Timer.hpp
-        scene/Camera.cpp
-        scene/Camera.hpp
-        scene/SceneTransform.cpp
-        scene/SceneTransform.hpp
-        scene/Material.cpp
-        scene/Material.hpp
-        scene/SceneNode.cpp
-        scene/SceneNode.hpp
-        scene/Renderable.cpp
-        scene/Renderable.hpp
-        scene/BBox.cpp
-        scene/BBox.hpp
-        scene/BVH.cpp
-        scene/BVH.hpp scene/Skin.cpp scene/Skin.hpp scene/Light.cpp scene/Light.hpp scene/Context.cpp scene/Context.hpp)
-
-set(MANGO_VK
-        vk/InstanceVK.cpp
-        vk/DeviceVK.cpp
-        vk/Swapchain.cpp
-        vk/PipelineVK.cpp
-        vk/PipelineVK.hpp
-        vk/ConvertVK.hpp
-        vk/ConvertVK.cpp
-        vk/BufferVK.cpp
-        vk/BufferVK.hpp
-        vk/TextureVK.cpp
-        vk/TextureVK.hpp
-        vk/FramebufferVK.cpp
-        vk/FramebufferVK.hpp
-        vk/CommandBufferVK.cpp
-        vk/CommandBufferVK.hpp
-        vk/DescSetVK.cpp
-        vk/DescSetVK.hpp
-        vk/ComputeVK.cpp
-        vk/ComputeVK.hpp
-        vk/ShaderVK.cpp
-        vk/ShaderVK.hpp
-        vk/DescLayoutVK.cpp
-        vk/DescLayoutVK.hpp
-        vk/DescPoolVK.cpp
-        vk/DescPoolVK.hpp)
-
 add_definitions(-DMVK_CONFIG_FULL_IMAGE_VIEW_SWIZZLE=1)
 
-message(${MANGO_INCLUDE})
-add_library(mango SHARED ${MANGO_SRC} ${MANGO_VK})
+add_subdirectory(gpu/vulkan)
+add_subdirectory(gpu/metal)
+
+add_library(mango SHARED
+        gpu/GPUInit.hpp
+        gpu/GPU.hpp
+        gpu/GPU.cpp)
 target_include_directories(mango PUBLIC ${MANGO_INCLUDE})
-target_link_libraries(mango glfw vulkan shaderc_combined stdc++)
+target_link_libraries(mango mango_vulkan)

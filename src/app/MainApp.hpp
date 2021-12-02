@@ -9,7 +9,7 @@
 #pragma once
 
 #include <memory>
-#include "../api/default.hpp"
+#include "../third_party.hpp"
 #include <iostream>
 
 namespace mango {
@@ -35,7 +35,7 @@ class MainApp {
     
         virtual void setBaseApp(spBaseApp app) = 0;
     
-        virtual const KeyData glfwKeyState() const = 0;
+        [[nodiscard]] virtual const KeyData keyState() const = 0;
     
         virtual void exit() = 0;
         // Create window and setup
