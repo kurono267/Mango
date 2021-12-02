@@ -35,7 +35,7 @@ struct VulkanData {
 
 class VulkanInit : public mango::GPUInit {
 	public:
-		void init() override;
+		void init() final;
 
 		vk::Instance instance;
 		vk::PhysicalDevice pDevice;

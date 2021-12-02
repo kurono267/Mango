@@ -1,6 +1,6 @@
 find_package(GTest REQUIRED)
 
-add_executable(GPUInit GPU/GPUTest.cpp GPU/GPUTest.hpp)
+add_executable(GPUInit GPU/VulkanTest.cpp GPU/VulkanTest.hpp GPU/MetalTest.cpp GPU/MetalTest.hpp GPU/main.cpp)
 target_include_directories(GPUInit PRIVATE ${MANGO_PATH} ${GTEST_INCLUDE_DIRS})
 target_link_libraries(GPUInit mango ${GTEST_LIBRARIES})
 

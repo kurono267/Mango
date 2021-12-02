@@ -8,4 +8,4 @@ add_library(mango SHARED
         gpu/GPU.hpp
         gpu/GPU.cpp)
 target_include_directories(mango PUBLIC ${MANGO_INCLUDE})
-target_link_libraries(mango mango_vulkan)
+target_link_libraries(mango mango_vulkan mango_metal)

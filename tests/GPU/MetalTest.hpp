@@ -7,10 +7,10 @@
 #include <gtest/gtest.h>
 #include <mango.hpp>
 
-class GPUTest : public ::testing::Test {
+class MetalTest : public ::testing::Test {
 	public:
-		GPUTest();
-		~GPUTest();
+		MetalTest();
+		~MetalTest();
 		void SetUp() override;
 		void TearDown() override;
 	public:
