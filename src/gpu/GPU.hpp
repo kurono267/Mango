@@ -26,7 +26,7 @@ class GPU {
 		}
 
 		// GPU Init
-		static void init(GPUApi api, size_t cacheSize = 64*1024*1024);
+		static void init(GPUApi api);
 
 		// GPU Resources
 		/*static ResourceID createTexture(const TextureLayout &layout) {

@@ -12,7 +12,7 @@
 
 namespace mango {
 
-void GPU::init(GPUApi api, size_t cacheSize) {
+void GPU::init(GPUApi api) {
 	GPU& gpu = GPU::get();
 	switch(api){
 		case Vulkan:

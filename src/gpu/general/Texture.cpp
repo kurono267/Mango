@@ -9,10 +9,10 @@
 
 namespace mango {
 
-TextureLayout::TextureLayout(TextureType type_, uint32_t width_, uint32_t height_, uint32_t depth_, Format format_, uint32_t mipLevels_, uint32_t layers_)
+TextureDesc::TextureDesc(TextureType type_, uint32_t width_, uint32_t height_, uint32_t depth_, Format format_, uint32_t mipLevels_, uint32_t layers_)
     : type(type_),width(width_), height(height_), depth(depth_), format(format_), mipLevels(mipLevels_), layers(layers_) {}
 
-size_t bufferSize(const TextureLayout& layout) {
+size_t bufferSize(const TextureDesc& layout) {
     size_t size = 0;
     uint32_t w = layout.width;
     uint32_t h = layout.height;

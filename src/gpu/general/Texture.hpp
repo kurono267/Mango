@@ -27,8 +27,9 @@ struct Rect2D {
     glm::ivec2 size;
 };
 
-struct TextureLayout {
-    TextureLayout(TextureType type, uint32_t width, uint32_t height, uint32_t depth, Format format, uint32_t mipLevels = 1, uint32_t layers = 1);
+struct TextureDesc {
+	TextureDesc() = default;
+    TextureDesc(TextureType type, uint32_t width, uint32_t height, uint32_t depth, Format format, uint32_t mipLevels = 1, uint32_t layers = 1);
     
     uint32_t width = 0;
     uint32_t height = 0;
@@ -90,6 +91,6 @@ struct Sampler {
 	bool unnormalizedCoordinates;
 };
 
-size_t bufferSize(const TextureLayout& layout);
+size_t bufferSize(const TextureDesc& layout);
 
 }

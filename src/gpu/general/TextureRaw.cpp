@@ -9,7 +9,7 @@
 
 namespace mango {
 
-const TextureLayout &TextureRaw::layout() const {
+const TextureDesc &TextureRaw::layout() const {
 	return _layout;
 }
 

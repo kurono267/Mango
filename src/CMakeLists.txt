@@ -8,5 +8,5 @@ add_library(mango SHARED
         gpu/GPUInit.hpp
         gpu/GPU.hpp
         gpu/GPU.cpp)
-target_include_directories(mango PUBLIC ${MANGO_INCLUDE})
+#target_include_directories(mango PUBLIC ${MANGO_INCLUDE})
 target_link_libraries(mango gpu_vulkan gpu_metal)

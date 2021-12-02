@@ -17,7 +17,7 @@ class TextureRaw : public BufferRaw {
     public:
         TextureRaw(TextureType type, uint32_t width, uint32_t height, Format format) : BufferRaw(width*height*pixelSize(format)), _layout(type,width,height,1,format) {}
         TextureRaw(TextureType type, uint32_t width, uint32_t height, Format format, uint8_t* bytes, bool isOwned = false) : BufferRaw(width*height*pixelSize(format),bytes, isOwned), _layout(type,width,height,1,format) {}
-        TextureRaw(const TextureLayout& layout) : BufferRaw(layout.width*layout.height*layout.depth*pixelSize(layout.format)), _layout(layout) {}
+        TextureRaw(const TextureDesc& layout) : BufferRaw(layout.width * layout.height * layout.depth * pixelSize(layout.format)), _layout(layout) {}
 
         static std::shared_ptr<TextureRaw> make(TextureType type, uint32_t width, uint32_t height, Format format){
         	return std::make_shared<TextureRaw>(type,width,height,format);
@@ -27,7 +27,7 @@ class TextureRaw : public BufferRaw {
 			return std::make_shared<TextureRaw>(type,width,height,format,bytes,isOwned);
 		}
 
-		static std::shared_ptr<TextureRaw> make(const TextureLayout& layout){
+		static std::shared_ptr<TextureRaw> make(const TextureDesc& layout){
 			return std::make_shared<TextureRaw>(layout);
 		}
         
@@ -49,9 +49,9 @@ class TextureRaw : public BufferRaw {
             return ((T*)_data)[dataIndex];
         }
         
-        const TextureLayout& layout() const;
+        const TextureDesc& layout() const;
     protected:
-        TextureLayout _layout;
+        TextureDesc _layout;
 };
 
 typedef std::shared_ptr<TextureRaw> spTextureRaw;
