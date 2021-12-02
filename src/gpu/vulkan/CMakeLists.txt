@@ -1,7 +1,7 @@
 # Vulkan gpu based
-set(MANGO_VULKAN
+set(GPU_VULKAN
         VulkanInit.hpp VulkanInit.cpp)
 
-add_library(mango_vulkan ${MANGO_VULKAN})
-target_include_directories(mango_vulkan PRIVATE ${Vulkan_INCLUDE_DIR})
-target_link_libraries(mango_vulkan ${Vulkan_LIBRARIES} stdc++)
+add_library(gpu_vulkan ${GPU_VULKAN})
+target_include_directories(gpu_vulkan PUBLIC ${Vulkan_INCLUDE_DIR})
+target_link_libraries(gpu_vulkan gpu_general ${Vulkan_LIBRARIES} stdc++)

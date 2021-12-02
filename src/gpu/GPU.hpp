@@ -6,7 +6,7 @@
 
 #include <cstddef>
 #include <memory>
-#include "gpu/GPUInit.hpp"
+#include "GPUInit.hpp"
 //#include "gpu/GPURender.hpp"
 //#include "gpu/GPUResources.hpp"
 //#include "gpu/GPUWindow.hpp"
