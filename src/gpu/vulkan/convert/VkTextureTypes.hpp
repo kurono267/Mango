@@ -10,8 +10,15 @@
 
 using namespace mango;
 
+struct TextureTypeVK {
+	vk::ImageType image;
+	vk::ImageViewType view;
+};
+
 vk::Format formatVK(const Format &format);
 Format formatVK2Mango(const vk::Format &format);
+
+TextureTypeVK textureTypeVK(const TextureType& type);
 
 vk::SamplerAddressMode samplerAddressModeVK(const SamplerAddressMode &samplerAddressMode);
 vk::SamplerMipmapMode samplerMipmapModeVK(const SamplerMipmapMode &mipmapMode);

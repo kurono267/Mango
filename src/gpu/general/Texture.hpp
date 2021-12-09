@@ -13,9 +13,13 @@
 namespace mango {
 
 enum class TextureType {
+	Texture1D,
+	Texture1DArray,
 	Texture2D,
-	Texture3D,
-	TextureCube
+	Texture2DArray,
+	TextureCube,
+	TextureCubeArray,
+	Texture3D
 };
 
 struct Rect2D {

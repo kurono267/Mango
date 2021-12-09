@@ -17,10 +17,6 @@ enum class Format {
     R8Snorm,
     R8Uint,
     R8Sint,
-    R8G8Unorm,
-    R8G8Snorm,
-    R8G8Uint,
-    R8G8Sint,
     R8G8B8A8Unorm,
     R8G8B8A8Snorm,
     R8G8B8A8Uint,
@@ -56,7 +52,6 @@ enum class Format {
     R32G32B32A32Sint,
     R32G32B32A32Sfloat,
     D16Unorm,
-    D16UnormS8Uint,
     D24UnormS8Uint,
     D32Sfloat,
     D32SfloatS8Uint
@@ -71,11 +66,6 @@ inline uint32_t pixelSize(Format format) {
         case Format::R8Uint:
         case Format::R8Sint:
             return 1;
-        case Format::R8G8Unorm:
-        case Format::R8G8Snorm:
-        case Format::R8G8Uint:
-        case Format::R8G8Sint:
-            return 2;
         case Format::R8G8B8A8Unorm:
         case Format::R8G8B8A8Snorm:
         case Format::R8G8B8A8Uint:
@@ -94,8 +84,6 @@ inline uint32_t pixelSize(Format format) {
         case Format::R16Sfloat:
         case Format::D16Unorm:
             return 2;
-		case Format::D16UnormS8Uint:
-			return 3;
         case Format::R16G16Unorm:
         case Format::R16G16Snorm:
         case Format::R16G16Uint:
@@ -151,7 +139,7 @@ struct ComponentMapping {
 
 inline bool hasDepthComponent(Format format) {
 	return format == Format::D32SfloatS8Uint || format == Format::D24UnormS8Uint
-		   || format == Format::D16Unorm || format == Format::D16UnormS8Uint || format == Format::D32Sfloat;
+		   || format == Format::D16Unorm || format == Format::D32Sfloat;
 }
 
 inline bool hasStencilComponent(Format format) {

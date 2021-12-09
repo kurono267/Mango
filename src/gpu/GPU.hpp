@@ -7,8 +7,8 @@
 #include <cstddef>
 #include <memory>
 #include "GPUInit.hpp"
+#include "gpu/GPUResources.hpp"
 //#include "gpu/GPURender.hpp"
-//#include "gpu/GPUResources.hpp"
 //#include "gpu/GPUWindow.hpp"
 
 namespace mango {
@@ -29,14 +29,14 @@ class GPU {
 		static void init(GPUApi api);
 
 		// GPU Resources
-		/*static ResourceID createTexture(const TextureLayout &layout) {
-			return GPU::get()._resources->createTexture(layout);
+		static TextureID createTexture(const TextureDesc &desc) {
+			return GPU::get()._resources->createTexture(desc);
 		}
 
-		static ResourceID createBuffer(const BufferType &type, size_t sizeInBytes) {
-			return GPU::get()._resources->createBuffer(type,sizeInBytes);
+		static BufferID createBuffer(BufferType type, BufferMemory memory, size_t sizeInBytes) {
+			return GPU::get()._resources->createBuffer(type,memory,sizeInBytes);
 		}
-
+/*
 		static GPUTaskID store(const ResourceID &id, const spBufferRaw &raw) {
 			return GPU::get()._resources->store(id,raw);
 		}
@@ -77,7 +77,7 @@ class GPU {
 		}*/
 
 		std::shared_ptr<GPUInit> _init;
-		//std::shared_ptr<GPUResources> _resources;
+		std::shared_ptr<GPUResources> _resources;
 		//std::shared_ptr<GPUWindow> _window;
 		//std::shared_ptr<GPURender> _render;
 };

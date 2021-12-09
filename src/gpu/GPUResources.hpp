@@ -17,9 +17,6 @@ enum class TextureID : uint64_t {};
 
 class GPUResources {
 	public:
-		virtual void init(size_t cacheSize) = 0;
-		virtual void release() = 0;
-
 		virtual TextureID createTexture(const TextureDesc &desc) = 0;
 		virtual BufferID createBuffer(BufferType type, BufferMemory memory, size_t sizeInBytes) = 0;
 };

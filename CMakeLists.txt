@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.7.2)
 # Mango render library and examples
-project (MANGO)
+project (Mango)
 
 add_definitions(-std=c++17)
 

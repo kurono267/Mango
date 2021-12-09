@@ -4,6 +4,7 @@
 
 #include "MetalTest.hpp"
 #include "VulkanTest.hpp"
+#include "Resources.hpp"
 
 TEST_F(VulkanTest, InitVulkan) {
 	ASSERT_TRUE(status);
@@ -11,6 +12,14 @@ TEST_F(VulkanTest, InitVulkan) {
 
 TEST_F(MetalTest, InitMetal) {
 	ASSERT_TRUE(status);
+}
+
+TEST_F(VulkanTest, CreateTextureVulkan) {
+	textureCreateTest();
+}
+
+TEST_F(MetalTest, CreateTextureMetal) {
+	textureCreateTest();
 }
 
 int main(int argc, char** argv) {

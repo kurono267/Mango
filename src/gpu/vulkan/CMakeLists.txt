@@ -1,7 +1,7 @@
 # Vulkan gpu based
 set(GPU_VULKAN
-        utils/VkTextureTypes.cpp utils/VkTextureTypes.hpp
-        utils/VkRenderPipelineTypes.cpp utils/VkRenderPipelineTypes.hpp
+        convert/VkTextureTypes.cpp convert/VkTextureTypes.hpp
+        convert/VkRenderPipelineTypes.cpp convert/VkRenderPipelineTypes.hpp
         VulkanInit.hpp VulkanInit.cpp
         VulkanResources.cpp VulkanResources.hpp)
 

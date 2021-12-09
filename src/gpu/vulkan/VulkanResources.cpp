@@ -4,7 +4,7 @@
 
 #include "VulkanResources.hpp"
 #include <iostream>
-#include "utils/VkTextureTypes.hpp"
+#include "convert/VkTextureTypes.hpp"
 
 uint32_t findMemoryType(vk::PhysicalDevice pDevice,
 						uint32_t memoryTypeBitsRequirement,
@@ -35,12 +35,7 @@ TextureID VulkanResources::createTexture(const TextureDesc &desc) {
 	TextureVK texture;
 	texture.desc = desc;
 
-	vk::ImageType imageType = vk::ImageType::e2D;
-	vk::ImageViewType viewType = vk::ImageViewType::e2D;
-	if(desc.type == TextureType::Texture3D){
-		imageType = vk::ImageType::e3D;
-		viewType = vk::ImageViewType::e3D;
-	}
+	auto textureType = textureTypeVK(desc.type);
 
 	vk::Extent3D extent3D(desc.width,desc.height,desc.depth);
 	vk::Format format = formatVK(desc.format);
@@ -50,7 +45,7 @@ TextureID VulkanResources::createTexture(const TextureDesc &desc) {
 
 	vk::ImageCreateInfo imageInfo(
 			vk::ImageCreateFlags(), // Basic
-			imageType, // Type 1D,2D,3D
+			textureType.image, // Type 1D,2D,3D
 			format, // Format
 			extent3D, // Width, Height and Depth
 			desc.mipLevels, // Mip Levels
@@ -63,11 +58,17 @@ TextureID VulkanResources::createTexture(const TextureDesc &desc) {
 
 	// Create Image
 	texture.image = vk->device.createImage(imageInfo);
+	if(!texture.image){
+		throw std::runtime_error("Failed to create image");
+	}
 	auto memoryReq = vk->device.getImageMemoryRequirements(texture.image);
 
 	vk::MemoryPropertyFlags memory_type = vk::MemoryPropertyFlagBits::eDeviceLocal;
 	vk::MemoryAllocateInfo allocInfo(memoryReq.size,findMemoryType(vk->pDevice,memoryReq.memoryTypeBits, memory_type));
 	texture.memory = vk->device.allocateMemory(allocInfo);
+	if(!texture.memory){
+		throw std::runtime_error("Failed to allocate memory");
+	}
 
 	vk->device.bindImageMemory(texture.image,texture.memory,0);
 
@@ -79,7 +80,7 @@ TextureID VulkanResources::createTexture(const TextureDesc &desc) {
 	auto viewCreateInfo = vk::ImageViewCreateInfo(
 			vk::ImageViewCreateFlags(),
 			texture.image,
-			viewType,
+			textureType.view,
 			format,
 			componentMapping,
 			vk::ImageSubresourceRange(
@@ -87,6 +88,9 @@ TextureID VulkanResources::createTexture(const TextureDesc &desc) {
 					0, desc.mipLevels, 0, desc.layers)
 	);
 	texture.view = vk->device.createImageView(viewCreateInfo);
+	if(!texture.view){
+		throw std::runtime_error("Failed to create imageView");
+	}
 
 	_textures.push_back(texture);
 	return (TextureID)(_textures.size()-1);
@@ -113,6 +117,9 @@ TextureID VulkanResources::createTexture(const TextureDesc& desc, const vk::Imag
 					0, desc.mipLevels, 0, desc.layers)
 					);
 	texture.view = vk->device.createImageView(viewCreateInfo);
+	if(!texture.view){
+		throw std::runtime_error("Failed to create imageView");
+	}
 	texture.layout = vk::ImageLayout::ePreinitialized;
 
 	_textures.push_back(texture);
@@ -141,6 +148,9 @@ BufferID VulkanResources::createBuffer(BufferType type, BufferMemory memoryType,
 	vk::BufferCreateInfo bufferInfo(vk::BufferCreateFlags(),sizeInBytes,usage);
 
 	buffer.buffer = vk->device.createBuffer(bufferInfo);
+	if(!buffer.buffer){
+		throw std::runtime_error("Failed to create buffer");
+	}
 
 	vk::MemoryRequirements memRequirements = vk->device.getBufferMemoryRequirements(buffer.buffer);
 	vk::MemoryPropertyFlags memoryProperties;
@@ -155,6 +165,9 @@ BufferID VulkanResources::createBuffer(BufferType type, BufferMemory memoryType,
 
 	vk::MemoryAllocateInfo allocInfo(memRequirements.size,findMemoryType(vk->pDevice, memRequirements.memoryTypeBits, memoryProperties));
 	buffer.memory = vk->device.allocateMemory(allocInfo);
+	if(!buffer.memory){
+		throw std::runtime_error("Failed to allocate memory");
+	}
 
 	vk->device.bindBufferMemory(buffer.buffer,buffer.memory, 0);
 

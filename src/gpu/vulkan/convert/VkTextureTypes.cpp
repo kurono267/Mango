@@ -19,14 +19,6 @@ vk::Format formatVK(const Format &format) {
 			return vk::Format::eR8Uint;
 		case Format::R8Sint:
 			return vk::Format::eR8Sint;
-		case Format::R8G8Unorm:
-			return vk::Format::eR8G8Unorm;
-		case Format::R8G8Snorm:
-			return vk::Format::eR8G8Snorm;
-		case Format::R8G8Uint:
-			return vk::Format::eR8G8Uint;
-		case Format::R8G8Sint:
-			return vk::Format::eR8G8Sint;
 		case Format::R8G8B8A8Unorm:
 			return vk::Format::eR8G8B8A8Unorm;
 		case Format::R8G8B8A8Snorm:
@@ -97,8 +89,6 @@ vk::Format formatVK(const Format &format) {
 			return vk::Format::eR32G32B32A32Sfloat;
 		case Format::D16Unorm:
 			return vk::Format::eD16Unorm;
-		case Format::D16UnormS8Uint:
-			return vk::Format::eD16UnormS8Uint;
 		case Format::D24UnormS8Uint:
 			return vk::Format::eD24UnormS8Uint;
 		case Format::D32Sfloat:
@@ -118,14 +108,6 @@ Format formatVK2Mango(const vk::Format &format) {
 			return Format::R8Uint;
 		case vk::Format::eR8Sint:
 			return Format::R8Sint;
-		case vk::Format::eR8G8Unorm:
-			return Format::R8G8Unorm;
-		case vk::Format::eR8G8Snorm:
-			return Format::R8G8Snorm;
-		case vk::Format::eR8G8Uint:
-			return Format::R8G8Uint;
-		case vk::Format::eR8G8Sint:
-			return Format::R8G8Sint;
 		case vk::Format::eR8G8B8A8Unorm:
 			return Format::R8G8B8A8Unorm;
 		case vk::Format::eR8G8B8A8Snorm:
@@ -196,8 +178,6 @@ Format formatVK2Mango(const vk::Format &format) {
 			return Format::R32G32B32A32Sfloat;
 		case vk::Format::eD16Unorm:
 			return Format::D16Unorm;
-		case vk::Format::eD16UnormS8Uint:
-			return Format::D16UnormS8Uint;
 		case vk::Format::eD24UnormS8Uint:
 			return Format::D24UnormS8Uint;
 		case vk::Format::eD32Sfloat:
@@ -280,4 +260,39 @@ vk::Sampler samplerVK(vk::Device& device, const Sampler& sampler){
 	createInfo.mipLodBias = sampler.mipLodBias;
 	createInfo.mipmapMode = samplerMipmapModeVK(sampler.mipmapMode);
 	return device.createSampler(createInfo);
+}
+
+TextureTypeVK textureTypeVK(const TextureType& type) {
+	TextureTypeVK result;
+	switch(type){
+		case TextureType::Texture1D:
+			result.image = vk::ImageType::e1D;
+			result.view = vk::ImageViewType::e1D;
+			break;
+		case TextureType::Texture1DArray:
+			result.image = vk::ImageType::e1D;
+			result.view = vk::ImageViewType::e1DArray;
+			break;
+		case TextureType::Texture2D:
+			result.image = vk::ImageType::e2D;
+			result.view = vk::ImageViewType::e2D;
+			break;
+		case TextureType::Texture2DArray:
+			result.image = vk::ImageType::e2D;
+			result.view = vk::ImageViewType::e2DArray;
+			break;
+		case TextureType::TextureCube:
+			result.image = vk::ImageType::e2D;
+			result.view = vk::ImageViewType::eCube;
+			break;
+		case TextureType::TextureCubeArray:
+			result.image = vk::ImageType::e2D;
+			result.view = vk::ImageViewType::eCubeArray;
+			break;
+		case TextureType::Texture3D:
+			result.image = vk::ImageType::e3D;
+			result.view = vk::ImageViewType::e3D;
+			break;
+	}
+	return result;
 }
