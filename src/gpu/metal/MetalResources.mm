@@ -55,5 +55,5 @@ BufferID MetalResources::createBuffer(BufferType type, BufferMemory memory, size
 	bufferMetal.buffer = buffer;
 
 	_buffers.push_back(bufferMetal);
-	return (BufferID)(_buffers.size());
+	return (BufferID)(_buffers.size()-1);
 }
