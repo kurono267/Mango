@@ -9,5 +9,7 @@
 
 void textureCreateTest();
 
+void bufferCreateTest();
+
 
 

@@ -22,6 +22,14 @@ TEST_F(MetalTest, CreateTextureMetal) {
 	textureCreateTest();
 }
 
+TEST_F(VulkanTest, CreateBufferVulkan) {
+	bufferCreateTest();
+}
+
+TEST_F(MetalTest, CreateBufferMetal) {
+	bufferCreateTest();
+}
+
 int main(int argc, char** argv) {
 	testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();

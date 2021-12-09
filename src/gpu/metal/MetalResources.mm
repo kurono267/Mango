@@ -35,6 +35,25 @@ TextureID MetalResources::createTexture(const TextureDesc &desc) {
 }
 
 BufferID MetalResources::createBuffer(BufferType type, BufferMemory memory, size_t sizeInBytes) {
-	BufferID result;
-	return result;
+	id<MTLDevice> device = (id<MTLDevice>)metal->device;
+
+	MTLResourceOptions options;
+	switch(memory){
+		case BufferMemory::CPU:
+			options = MTLResourceCPUCacheModeWriteCombined | MTLResourceStorageModeShared;
+			break;
+		case BufferMemory::GPU:
+			options = MTLResourceStorageModePrivate;
+			break;
+	}
+
+	id<MTLBuffer> buffer = [device newBufferWithLength:sizeInBytes options:options];
+	if(!buffer){
+		throw std::runtime_error("Failed to create buffer");
+	}
+	BufferMetal bufferMetal;
+	bufferMetal.buffer = buffer;
+
+	_buffers.push_back(bufferMetal);
+	return (BufferID)(_buffers.size());
 }

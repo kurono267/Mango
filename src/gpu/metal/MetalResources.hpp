@@ -15,6 +15,10 @@ struct TextureMetal {
 	void* texture;
 };
 
+struct BufferMetal {
+	void* buffer;
+};
+
 class MetalResources : public GPUResources {
 	public:
 		MetalResources(std::shared_ptr<MetalInit> metal);
@@ -25,6 +29,7 @@ class MetalResources : public GPUResources {
 		std::shared_ptr<MetalInit> metal;
 	private:
 		std::vector<TextureMetal> _textures;
+		std::vector<BufferMetal> _buffers;
 };
 
 
